@@ -1,17 +1,15 @@
 from dataclasses import dataclass, field
-from functools import cached_property
 import requests
 from datetime import datetime
 from typing import List, Dict, Union, Any
 from ...utils.decorators import fetch_property
 from ..GameVersion import GameVersion
-from ..Infinity import Infinity
+from bloonspy.utils.Infinity import Infinity
 from ..Asset import Asset
 from .Restriction import Restriction, TowerRestriction
 from .Gamemode import Gamemode
 from .Power import Power
 from .Tower import Tower
-from .User import User
 
 
 @dataclass(kw_only=True)
