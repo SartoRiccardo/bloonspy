@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 
-@dataclass(kw_only=True)
+@dataclass
 class Asset:
     name: str
     url: str

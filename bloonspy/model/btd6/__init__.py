@@ -3,7 +3,6 @@ from .Challenge import *
 from .ChallengeFilter import *
 from .ContestedTerritory import *
 from .Gamemode import *
-from .Map import *
 from .Medals import *
 from .Odyssey import *
 from .Power import *

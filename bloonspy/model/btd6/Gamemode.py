@@ -27,7 +27,33 @@ class Mode(Enum):
     CHIMPS = "CHIMPs"
 
 
-@dataclass(kw_only=True)
+@dataclass
 class Gamemode:
     difficulty: Difficulty
     mode: Mode
+
+    @staticmethod
+    def from_strings(difficulty, mode) -> "Gamemode":
+        difficulty_switch = {
+            "Easy": Difficulty.EASY,
+            "Medium": Difficulty.MEDIUM,
+            "Hard": Difficulty.HARD,
+            "Impoppable": Difficulty.IMPOPPABLE,
+        }
+        # TODO get the actual strings
+        mode_switch = {
+            "Standard": Mode.STANDARD,
+            "PrimaryOnly": Mode.PRIMARY_ONLY,
+            "Deflation": Mode.DEFLATION,
+            "MilitaryOnly": Mode.MILITARY_ONLY,
+            "Reverse": Mode.REVERSE,
+            "Apopalypse": Mode.APOPALYPSE,
+            "MagicOnly": Mode.MAGIC_ONLY,
+            "DoubleHPMoabs": Mode.DOUBLE_HP_MOABS,
+            "ABR": Mode.ALTERNATE_BLOON_ROUNDS,
+            "Chimps": Mode.CHIMPS,
+        }
+
+        found_difficulty = difficulty_switch[difficulty] if difficulty in difficulty_switch else None
+        found_mode = mode_switch[mode] if mode in mode_switch else None
+        return Gamemode(found_difficulty, found_mode)
