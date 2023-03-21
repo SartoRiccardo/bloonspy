@@ -1,4 +1,3 @@
-from functools import cached_property
 from typing import Dict, Any
 from enum import Enum
 from ...exceptions import NotFound
@@ -84,7 +83,6 @@ class Team(Loadable):
     def owner_id(self) -> str:
         return self._data["owner_id"]
 
-    @cached_property
     @fetch_property(Loadable._load_resource)
     def owner(self) -> User or None:
         if self.owner_id is None:

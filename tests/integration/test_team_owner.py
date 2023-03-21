@@ -1,6 +1,4 @@
 import unittest
-from datetime import datetime
-import bloonspy
 from bloonspy import btd6
 
 
@@ -11,8 +9,9 @@ class TestTeamOwner(unittest.TestCase):
         """
         team_id = "9fbd42d98ac2faa41d40884a5b21b577cb064ebacf168e3f"
         team = btd6.Team(team_id)
-        self.assertIsNotNone(team.owner)
-        self.assertIn(team.owner.name.lower(), ["thargos", "vaneckpm"])
+        owner = team.owner()
+        self.assertIsNotNone(owner)
+        self.assertIn(owner.name.lower(), ["thargos", "vaneckpm"])
 
     # Unlucky for me I know none of these.
     # def test_team_disbanded(self) -> None:

@@ -1,6 +1,4 @@
 from dataclasses import dataclass, field
-from functools import cached_property
-import requests
 from datetime import datetime
 from typing import List, Dict, Union, Any
 from ...utils.decorators import fetch_property
@@ -186,7 +184,6 @@ class Challenge(Loadable):
     def creator_id(self) -> str:
         return self._data["creatorId"]
 
-    @cached_property
     @fetch_property(Loadable._load_resource)
     def creator(self) -> User or None:
         if self.creator_id is None:
