@@ -90,6 +90,18 @@ class TestChallenge(unittest.TestCase):
                 msg=f"Assert if {power.value} is allowed infinite times"
             )
 
+    def test_challenge_fail(self) -> None:
+        """
+        Test that the correct exception is raised when attempting to fetch a nonexistant challenge.
+        """
+        challenge_code = "blatantlywrongchallengecode"
+        correct_exception = False
+        try:
+            btd6.Challenge(challenge_code, eager=True)
+        except btd6.NotFound:
+            correct_exception = True
+        self.assertTrue(correct_exception, msg="Wrong challenges IDs should raise bloonspy.exceptions.NotFound")
+
 
 if __name__ == '__main__':
     unittest.main()

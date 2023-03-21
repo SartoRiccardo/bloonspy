@@ -3,6 +3,7 @@ import requests
 from datetime import datetime
 from typing import List, Dict, Union, Any
 from ...utils.decorators import fetch_property
+from ...exceptions import NotFound
 from ..GameVersion import GameVersion
 from bloonspy.utils.Infinity import Infinity
 from ..Asset import Asset
@@ -66,7 +67,7 @@ class Challenge:
         towers (Dict[Tower, Restriction]): Tower restrictions
     """
 
-    ENDPOINT = "https://data.ninjakiwi.com/btd6/challenges/challenge/{}"
+    endpoint = "https://data.ninjakiwi.com/btd6/challenges/challenge/{}"
 
     def __init__(self, challenge_id: str, eager: bool = False):
         self._id = challenge_id
@@ -79,15 +80,21 @@ class Challenge:
         if self._loaded and only_if_unloaded:
             return
 
-        resp = requests.get(self.ENDPOINT.format(self._id))
+        resp = requests.get(self.endpoint.format(self._id))
         if resp.status_code != 200:
             return
 
         data = resp.json()
         if not data["success"]:
-            raise Exception(data["error"])
+            self._handle_exceptions(data["error"])
 
         self._parse_json(data["body"])
+
+    @staticmethod
+    def _handle_exceptions(error_msg: str) -> None:
+        if error_msg == "No challenge with that ID exists":
+            raise NotFound(error_msg)
+        raise Exception(error_msg)
 
     def _parse_json(self, raw_challenge: Dict[str, Any]) -> None:
         self._loaded = False
