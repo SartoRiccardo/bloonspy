@@ -1,9 +1,11 @@
 from dataclasses import dataclass
+from typing import Union
+from ...utils.Infinity import Infinity
 
 
 @dataclass(kw_only=True)
 class Restriction:
-    max_towers: int
+    max_towers: Union[int, Infinity]
 
 
 @dataclass(kw_only=True)

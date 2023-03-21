@@ -79,7 +79,6 @@ class Challenge:
         if self._loaded and only_if_unloaded:
             return
 
-        print("FETCHING DATA FOR THE CHALLENGE")
         resp = requests.get(self.ENDPOINT.format(self._id))
         if resp.status_code != 200:
             return
@@ -107,7 +106,7 @@ class Challenge:
         # self._data["maxParagons"] = Infinity() if raw_challenge["maxParagons"] == 10 else raw_challenge["maxParagons"]
         self._data["leastCash"] = Infinity() if raw_challenge["leastCashUsed"] == -1 else raw_challenge["leastCashUsed"]
         self._data["leastTiers"] = Infinity() if raw_challenge["leastTiersUsed"] == -1 else raw_challenge["leastTiersUsed"]
-        self._data["createdAt"] = datetime.fromtimestamp(raw_challenge["createdAt"]/1000)
+        self._data["createdAt"] = datetime.fromtimestamp(int(raw_challenge["createdAt"]/1000))
         self._data["gameVersion"] = GameVersion.from_string(raw_challenge["gameVersion"])
         self._data["map"] = Asset(raw_challenge["map"], raw_challenge["mapURL"])
         self._data["gamemode"] = Gamemode.from_strings(raw_challenge["difficulty"], raw_challenge["mode"])
@@ -205,7 +204,7 @@ class Challenge:
     # def creator(self) -> User or None:
     #     if self.creator_id is None:
     #         return None
-    #     return User(self.creator_id)
+    #     return User(self.creator_id, eager=True)
 
     @property
     @fetch_property(_load_challenge)
@@ -225,7 +224,7 @@ class Challenge:
     @property
     @fetch_property(_load_challenge)
     def disable_instas(self) -> bool:
-        return self._data["disableDoubleCash"]
+        return self._data["disableInstas"]
 
     @property
     @fetch_property(_load_challenge)
@@ -245,7 +244,7 @@ class Challenge:
     @property
     @fetch_property(_load_challenge)
     def disable_continues(self) -> bool:
-        return not self._data["noContinues"]
+        return self._data["noContinues"]
 
     @property
     @fetch_property(_load_challenge)
@@ -255,7 +254,7 @@ class Challenge:
     @property
     @fetch_property(_load_challenge)
     def starting_lives(self) -> int:
-        return self._data["startingLives"]
+        return self._data["lives"]
 
     @property
     @fetch_property(_load_challenge)
@@ -309,18 +308,23 @@ class Challenge:
 
     @property
     @fetch_property(_load_challenge)
-    def upvotes(self) -> int:
+    def losses_unique(self) -> int:
         return self._data["lossesUnique"]
 
     @property
     @fetch_property(_load_challenge)
+    def upvotes(self) -> int:
+        return self._data["upvotes"]
+
+    @property
+    @fetch_property(_load_challenge)
     def least_cash_used(self) -> Union[int, Infinity]:
-        return self._data["leastCashUsed"]
+        return self._data["leastCash"]
 
     @property
     @fetch_property(_load_challenge)
     def least_tiers_used(self) -> Union[int, Infinity]:
-        return self._data["leastTiersUsed"]
+        return self._data["leastTiers"]
 
     @property
     @fetch_property(_load_challenge)

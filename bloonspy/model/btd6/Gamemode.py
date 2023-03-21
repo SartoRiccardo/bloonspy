@@ -22,7 +22,7 @@ class Mode(Enum):
     MAGIC_ONLY = "Magic Only"
     DOUBLE_HP_MOABS = "Double HP MOABs"
     HALF_CASH = "Half Cash"
-    ALTERNATE_BLOON_ROUNDS = "Alternate Bloon Rounds"
+    ALTERNATE_BLOONS_ROUNDS = "Alternate Bloons Rounds"
 
     CHIMPS = "CHIMPs"
 
@@ -50,7 +50,7 @@ class Gamemode:
             "Apopalypse": Mode.APOPALYPSE,
             "MagicOnly": Mode.MAGIC_ONLY,
             "DoubleHPMoabs": Mode.DOUBLE_HP_MOABS,
-            "ABR": Mode.ALTERNATE_BLOON_ROUNDS,
+            "ABR": Mode.ALTERNATE_BLOONS_ROUNDS,
             "Chimps": Mode.CHIMPS,
         }
 

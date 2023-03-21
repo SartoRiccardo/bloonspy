@@ -1,55 +1,55 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass(kw_only=True)
 class Medals:
-    first: int
-    second: int
-    third: int
-    top_50: int
-    top_1_percent: int
-    top_10_percent: int
-    top_25_percent: int
-    top_50_percent: int
-    top_75_percent: int
+    first: int = field(default=0)
+    second: int = field(default=0)
+    third: int = field(default=0)
+    top_50: int = field(default=0)
+    top_1_percent: int = field(default=0)
+    top_10_percent: int = field(default=0)
+    top_25_percent: int = field(default=0)
+    top_50_percent: int = field(default=0)
+    top_75_percent: int = field(default=0)
 
 
 @dataclass(kw_only=True)
 class CTLocalMedals:
-    first: int
-    second: int
-    third: int
-    top_10: int
-    top_20: int
-    top_40: int
-    top_60: int
+    first: int = field(default=0)
+    second: int = field(default=0)
+    third: int = field(default=0)
+    top_10: int = field(default=0)
+    top_20: int = field(default=0)
+    top_40: int = field(default=0)
+    top_60: int = field(default=0)
 
 
 @dataclass(kw_only=True)
 class CTGlobalMedals:
-    top_25: int
-    top_100: int
-    top_1_percent: int
-    top_10_percent: int
-    top_25_percent: int
-    top_50_percent: int
-    top_75_percent: int
+    top_25: int = field(default=0)
+    top_100: int = field(default=0)
+    top_1_percent: int = field(default=0)
+    top_10_percent: int = field(default=0)
+    top_25_percent: int = field(default=0)
+    top_50_percent: int = field(default=0)
+    top_75_percent: int = field(default=0)
 
 
 @dataclass(kw_only=True)
 class MapMedals:
-    easy: int
-    primary_only: int
-    deflation: int
-    medium: int
-    military_only: int
-    apopalypse: int
-    reverse: int
-    hard: int
-    magic_only: int
-    double_hp_moabs: int
-    half_cash: int
-    alternate_bloon_rounds: int
-    impoppable: int
-    chimps_red: int
-    chimps_black: int
+    easy: int = field(default=0)
+    primary_only: int = field(default=0)
+    deflation: int = field(default=0)
+    medium: int = field(default=0)
+    military_only: int = field(default=0)
+    apopalypse: int = field(default=0)
+    reverse: int = field(default=0)
+    hard: int = field(default=0)
+    magic_only: int = field(default=0)
+    double_hp_moabs: int = field(default=0)
+    half_cash: int = field(default=0)
+    alternate_bloons_rounds: int = field(default=0)
+    impoppable: int = field(default=0)
+    chimps_red: int = field(default=0)
+    chimps_black: int = field(default=0)
