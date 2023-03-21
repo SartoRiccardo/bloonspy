@@ -80,7 +80,6 @@ class Challenge(Loadable):
     def _parse_json(self, raw_challenge: Dict[str, Any]) -> None:
         self._loaded = False
 
-        self._data = {}
         copy_keys = [
             "name", "disableDoubleCash", "disableInstas", "disableMK", "disablePowers", "disableSelling",
             "startingCash", "noContinues", "seed", "roundSets", "lives", "maxLives",

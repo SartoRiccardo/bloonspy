@@ -34,7 +34,8 @@ class Team(Loadable):
         super().handle_exception(error_msg)
 
     def _parse_json(self, raw_resource: Dict[str, Any]) -> None:
-        self._data = {}
+        self._loaded = False
+
         copy_keys = ["name", "numMembers"]
         for key in copy_keys:
             self._data[key] = raw_resource[key]
@@ -45,6 +46,8 @@ class Team(Loadable):
             self._data[asset_name] = Asset(raw_resource[asset_name], raw_resource[asset_url])
         self._data["status"] = TeamStatus.from_string(raw_resource["status"])
         self._data["owner_id"] = raw_resource["owner"].split("/")[-1]
+
+        self._loaded = True
 
     @property
     @fetch_property(Loadable._load_resource)

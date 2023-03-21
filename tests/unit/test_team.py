@@ -43,7 +43,7 @@ class TestTeam(unittest.TestCase):
             btd6.Team(team_id, eager=True)
         except btd6.NotFound:
             correct_exception = True
-        self.assertTrue(correct_exception, msg="Wrong user IDs should raise bloonspy.exceptions.NotFound")
+        self.assertTrue(correct_exception, msg="Wrong team IDs should raise bloonspy.exceptions.NotFound")
 
 
 if __name__ == '__main__':

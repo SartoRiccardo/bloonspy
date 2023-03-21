@@ -61,7 +61,6 @@ class User(Loadable):
     def _parse_json(self, raw_user: Dict[str, Any]) -> None:
         self._loaded = False
 
-        self._data = {}
         copy_keys = ["displayName", "rank", "veteranRank", "achievements", "followers"]
         for key in copy_keys:
             self._data[key] = raw_user[key]
