@@ -4,8 +4,8 @@ import bloonspy
 from bloonspy import btd6
 
 
-class TestChallenge(unittest.TestCase):
-    def test_challenge(self) -> None:
+class TestUser(unittest.TestCase):
+    def test_user(self) -> None:
         """
         Test that a challenge is loaded correctly.
         """

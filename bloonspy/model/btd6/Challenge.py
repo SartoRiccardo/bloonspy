@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from functools import cached_property
 import requests
 from datetime import datetime
 from typing import List, Dict, Union, Any
@@ -11,6 +12,7 @@ from .Restriction import Restriction, TowerRestriction
 from .Gamemode import Gamemode
 from .Power import Power
 from .Tower import Tower
+from .User import User
 
 
 @dataclass(kw_only=True)
@@ -206,12 +208,12 @@ class Challenge:
     def creator_id(self) -> str:
         return self._data["creatorId"]
 
-    # @cached_property
-    # @fetch_property(_load_challenge)
-    # def creator(self) -> User or None:
-    #     if self.creator_id is None:
-    #         return None
-    #     return User(self.creator_id, eager=True)
+    @cached_property
+    @fetch_property(_load_challenge)
+    def creator(self) -> User or None:
+        if self.creator_id is None:
+            return None
+        return User(self.creator_id, eager=True)
 
     @property
     @fetch_property(_load_challenge)
