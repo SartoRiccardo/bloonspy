@@ -4,6 +4,7 @@ from typing import Dict, List, Any
 from ...exceptions import NotFound
 from ...utils.decorators import fetch_property
 from ...utils.dictionaries import rename_keys
+from ..Loadable import Loadable
 from ..Asset import Asset
 from .Tower import Tower
 from .Medals import Medals, MapMedals, CTGlobalMedals, CTLocalMedals
@@ -49,35 +50,13 @@ class GameplayStats:
     bloons_popped: BloonsPoppedStats = field(default_factory=BloonsPoppedStats)
 
 
-class User:
+class User(Loadable):
     endpoint = "https://data.ninjakiwi.com/btd6/users/{}"
 
-    def __init__(self, user_id: str, eager: bool = False):
-        self._id = user_id
-        self._data = {}
-        self._loaded = False
-        if eager:
-            self._load_user()
-
-    def _load_user(self, only_if_unloaded: bool = True) -> None:
-        if self._loaded and only_if_unloaded:
-            return
-
-        resp = requests.get(self.endpoint.format(self._id))
-        if resp.status_code != 200:
-            return
-
-        data = resp.json()
-        if not data["success"]:
-            self._handle_exceptions(data["error"])
-
-        self._parse_json(data["body"])
-
-    @staticmethod
-    def _handle_exceptions(error_msg: str) -> None:
+    def handle_exceptions(self, error_msg: str) -> None:
         if error_msg == "Invalid user ID / Player Does not play this game":
             raise NotFound(error_msg)
-        raise Exception(error_msg)
+        super().handle_exceptions(error_msg)
 
     def _parse_json(self, raw_user: Dict[str, Any]) -> None:
         self._loaded = False
@@ -183,85 +162,81 @@ class User:
         self._loaded = True
 
     @property
-    def id(self) -> str:
-        return self._id
-
-    @property
-    @fetch_property(_load_user)
+    @fetch_property(Loadable._load_resource)
     def name(self) -> str:
         return self._data["displayName"]
 
     @property
-    @fetch_property(_load_user)
+    @fetch_property(Loadable._load_resource)
     def rank(self) -> int:
         return self._data["rank"]
 
     @property
-    @fetch_property(_load_user)
+    @fetch_property(Loadable._load_resource)
     def veteran_rank(self) -> int:
         return self._data["veteranRank"]
 
     @property
-    @fetch_property(_load_user)
+    @fetch_property(Loadable._load_resource)
     def achievements(self) -> int:
         return self._data["achievements"]
 
     @property
-    @fetch_property(_load_user)
+    @fetch_property(Loadable._load_resource)
     def followers(self) -> int:
         return self._data["followers"]
 
     @property
-    @fetch_property(_load_user)
+    @fetch_property(Loadable._load_resource)
     def avatar(self) -> Asset:
         return self._data["avatar"]
 
     @property
-    @fetch_property(_load_user)
+    @fetch_property(Loadable._load_resource)
     def banner(self) -> Asset:
         return self._data["banner"]
 
     @property
-    @fetch_property(_load_user)
+    @fetch_property(Loadable._load_resource)
     def single_player_medals(self) -> MapMedals:
         return self._data["single_player_medals"]
 
     @property
-    @fetch_property(_load_user)
+    @fetch_property(Loadable._load_resource)
     def coop_medals(self) -> MapMedals:
         return self._data["coop_medals"]
 
     @property
-    @fetch_property(_load_user)
+    @fetch_property(Loadable._load_resource)
     def boss_normal_medals(self) -> Medals:
         return self._data["boss_normal_medals"]
 
     @property
-    @fetch_property(_load_user)
+    @fetch_property(Loadable._load_resource)
     def boss_elite_medals(self) -> Medals:
         return self._data["boss_elite_medals"]
 
     # @property
-    # @fetch_property(_load_user)
+    # @fetch_property(Loadable._load_resource)
     # def race_medals(self) -> Medals:
     #     return self._data["race_medals"]
 
     @property
-    @fetch_property(_load_user)
+    @fetch_property(Loadable._load_resource)
     def ct_local_medals(self) -> CTLocalMedals:
         return self._data["ct_local_medals"]
 
     @property
-    @fetch_property(_load_user)
+    @fetch_property(Loadable._load_resource)
     def ct_global_medals(self) -> CTGlobalMedals:
         return self._data["ct_global_medals"]
 
     @property
-    @fetch_property(_load_user)
+    @fetch_property(Loadable._load_resource)
     def stats(self) -> GameplayStats:
         return self._data["stats"]
 
     @property
-    @fetch_property(_load_user)
+    @fetch_property(Loadable._load_resource)
     def heroes_placed(self) -> Dict[Tower, int]:
         return self._data["heroes_placed"]
