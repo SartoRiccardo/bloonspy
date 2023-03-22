@@ -49,41 +49,41 @@ class Team(Loadable):
         self._loaded = True
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def name(self) -> str:
         return self._data["name"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def member_count(self) -> int:
         return self._data["numMembers"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def status(self) -> TeamStatus:
         return self._data["status"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def banner(self) -> Asset:
         return self._data["banner"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def icon(self) -> Asset:
         return self._data["icon"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def frame(self) -> Asset:
         return self._data["frame"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def owner_id(self) -> str:
         return self._data["owner_id"]
 
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def owner(self) -> User or None:
         if self.owner_id is None:
             return None

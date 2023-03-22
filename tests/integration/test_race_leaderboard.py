@@ -2,7 +2,7 @@ import unittest
 from datetime import datetime, timedelta
 import requests
 import random
-from bloonspy import btd6
+from bloonspy import btd6, Client
 
 
 class TestRaceLeaderboard(unittest.TestCase):
@@ -10,13 +10,13 @@ class TestRaceLeaderboard(unittest.TestCase):
         """
         Test a challenge with a creator.
         """
-        races = requests.get("https://data.ninjakiwi.com/btd6/races")
-        race_id = races.json()["body"][1]["id"]
+        races = Client.races()
+        race = races[1]
         # Get #51-#100
-        race_leaderboard = btd6.Race(race_id).leaderboard(pages=2, start_from_page=2)
+        race_leaderboard = race.leaderboard(pages=2, start_from_page=2)
 
         self.assertGreater(len(race_leaderboard), 0)
-        some_player = race_leaderboard[random.randint(0, len(race_leaderboard))]
+        some_player = race_leaderboard[random.randint(0, len(race_leaderboard)-1)]
         self.assertIsInstance(some_player, btd6.RacePlayer,
                               msg=f"Assert if result is RacePlayer")
 

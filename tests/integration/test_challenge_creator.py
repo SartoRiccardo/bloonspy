@@ -1,5 +1,5 @@
 import unittest
-from bloonspy import btd6
+from bloonspy import Client
 
 
 class TestChallengeCreator(unittest.TestCase):
@@ -7,8 +7,7 @@ class TestChallengeCreator(unittest.TestCase):
         """
         Test a challenge with a creator.
         """
-        challenge_id = "ZMDCDTB"
-        challenge = btd6.Challenge(challenge_id)
+        challenge = Client.get_challenge("ZMDCDTB")
         creator = challenge.creator()
         self.assertEqual(creator.name, "Sarto")
         self.assertEqual(creator.id, "9cee138c8c94ffac1910864c0b73e577ca554ce8cb18db6c")
@@ -17,8 +16,7 @@ class TestChallengeCreator(unittest.TestCase):
         """
         Test a challenge with a missing creator.
         """
-        challenge_id = "rot168220230320"
-        challenge = btd6.Challenge(challenge_id)
+        challenge = Client.get_challenge("rot168220230320")
         creator = challenge.creator()
         self.assertIsNone(creator)
 

@@ -70,6 +70,16 @@ class Challenge(Loadable):
 
     endpoint = "https://data.ninjakiwi.com/btd6/challenges/challenge/{}"
 
+    def __init__(self, challenge_id: str, eager: bool = False, name: str = None, created_at: int = None,
+                 creator_id: str = None):
+        super().__init__(challenge_id, eager=eager)
+        if name:
+            self._data["name"] = name
+        if created_at:
+            self._data["createdAt"] = datetime.fromtimestamp(int(created_at/1000))
+        if creator_id:
+            self._data["creatorId"] = creator_id
+
     def handle_exceptions(self, error_msg: str) -> None:
         if error_msg == "No challenge with that ID exists":
             raise NotFound(error_msg)
@@ -165,172 +175,172 @@ class Challenge(Loadable):
         return self._loaded
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource, should_load=Loadable._should_load_property("name"))
     def name(self) -> str:
         return self._data["name"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource, should_load=Loadable._should_load_property("createdAt"))
     def created_at(self) -> datetime:
         return self._data["createdAt"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def game_version(self) -> GameVersion:
         return self._data["gameVersion"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource, should_load=Loadable._should_load_property("creatorId"))
     def creator_id(self) -> str:
         return self._data["creatorId"]
 
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def creator(self) -> User or None:
         if self.creator_id is None:
             return None
         return User(self.creator_id, eager=True)
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def challenge_map(self) -> Asset:
         return self._data["map"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def gamemode(self) -> Gamemode:
         return self._data["gamemode"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def disable_double_cash(self) -> bool:
         return self._data["disableDoubleCash"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def disable_instas(self) -> bool:
         return self._data["disableInstas"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def disable_monkey_knowledge(self) -> bool:
         return self._data["disableMK"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def disable_powers(self) -> bool:
         return self._data["disablePowers"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def disable_selling(self) -> bool:
         return self._data["disableSelling"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def disable_continues(self) -> bool:
         return self._data["noContinues"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def starting_cash(self) -> int:
         return self._data["startingCash"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def starting_lives(self) -> int:
         return self._data["lives"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def max_lives(self) -> int:
         return self._data["maxLives"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def max_towers(self) -> int:
         return self._data["maxTowers"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def max_paragons(self) -> int:
         return self._data["maxParagons"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def start_round(self) -> int:
         return self._data["startRound"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def end_round(self) -> int:
         return self._data["endRound"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def plays(self) -> int:
         return self._data["plays"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def plays_unique(self) -> int:
         return self._data["playsUnique"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def wins(self) -> int:
         return self._data["winsUnique"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def wins_unique(self) -> int:
         return self._data["winsUnique"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def losses(self) -> int:
         return self._data["losses"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def losses_unique(self) -> int:
         return self._data["lossesUnique"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def upvotes(self) -> int:
         return self._data["upvotes"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def least_cash_used(self) -> Union[int, Infinity]:
         return self._data["leastCash"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def least_tiers_used(self) -> Union[int, Infinity]:
         return self._data["leastTiers"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def seed(self) -> int:
         return self._data["seed"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def round_sets(self) -> List[str]:
         return self._data["roundSets"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def powers(self) -> Dict[Power, Union[int, Infinity]]:
         return self._data["powers"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def modifiers(self) -> Dict[ChallengeModifier, float]:
         return self._data["modifiers"]
 
     @property
-    @fetch_property(Loadable._load_resource)
+    @fetch_property(Loadable.load_resource)
     def towers(self) -> Dict[Tower, Restriction]:
         return self._data["towers"]

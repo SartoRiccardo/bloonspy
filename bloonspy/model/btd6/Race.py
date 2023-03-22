@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
 import requests
-from typing import List, Dict
+from typing import List, Dict, Any
 from ...utils.decorators import fetch_property
+from ...utils.dictionaries import has_all_keys
 from ...exceptions import NotFound
 from .Challenge import Challenge
 from .User import User
@@ -32,13 +33,15 @@ class Race(Challenge):
     event_endpoint = "https://data.ninjakiwi.com/btd6/races"
     lb_endpoint = "https://data.ninjakiwi.com/btd6/races/{}/leaderboard"
 
-    def __init__(self, race_id: str, eager: bool = False):
+    def __init__(self, race_id: str, eager: bool = False, race_json: Dict[str, Any] = None):
         super().__init__(race_id, eager=eager)
-        self._race_loaded = eager
         self._start = datetime.fromtimestamp(0)
         self._end = datetime.fromtimestamp(0)
         self._total_scores = 0
-        if eager:
+        self._race_loaded = eager
+        if race_json and has_all_keys(race_json, ["name", "start", "end", "totalScores"]):
+            self._parse_race(race_json)
+        if eager and not self._race_loaded:
             self._load_race()
 
     def _load_race(self, only_if_unloaded: bool = True) -> None:
@@ -58,14 +61,17 @@ class Race(Challenge):
         race_list = data["body"]
         for race in race_list:
             if race["id"] == self._id:
-                self._data["name"] = race["name"]
-                self._start = datetime.fromtimestamp(race["start"]/1000)
-                self._end = datetime.fromtimestamp(race["end"]/1000)
-                self._total_scores = race["totalScores"]
-                self._race_loaded = True
+                self._parse_race(race)
                 return
 
         raise NotFound("No Race with that ID exists")
+
+    def _parse_race(self, data: Dict[str, Any]) -> None:
+        self._data["name"] = data["name"]
+        self._start = datetime.fromtimestamp(data["start"]/1000)
+        self._end = datetime.fromtimestamp(data["end"]/1000)
+        self._total_scores = data["totalScores"]
+        self._race_loaded = True
 
     def handle_exceptions(self, error_msg: str) -> None:
         if error_msg == "No Race with that ID exists":

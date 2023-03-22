@@ -16,3 +16,10 @@ def rename_keys(dictionary: Dict[str, Any], keys: List[Tuple[str, str]]) -> Dict
             new_dict[new_key] = item
 
     return new_dict
+
+
+def has_all_keys(dictionary: Dict[str, Any], key_list: List[str]):
+    for key in key_list:
+        if key not in dictionary.keys():
+            return False
+    return True

@@ -5,14 +5,14 @@ import requests
 class Loadable:
     endpoint = "{}"
 
-    def __init__(self, user_id: str, eager: bool = False):
-        self._id = user_id
+    def __init__(self, resource_id: str, eager: bool = False):
+        self._id = resource_id
         self._data = {}
         self._loaded = False
         if eager:
-            self._load_resource()
+            self.load_resource()
 
-    def _load_resource(self, only_if_unloaded: bool = True) -> None:
+    def load_resource(self, only_if_unloaded: bool = True) -> None:
         if self._loaded and only_if_unloaded:
             return
 
@@ -25,6 +25,12 @@ class Loadable:
             self.handle_exceptions(data["error"])
 
         self._parse_json(data["body"])
+
+    @staticmethod
+    def _should_load_property(key_name: str) -> callable:
+        def _inner(self: Loadable) -> bool:
+            return key_name not in self._data
+        return _inner
 
     def handle_exceptions(self, error_msg: str) -> None:
         raise Exception(error_msg)

@@ -1,4 +1,5 @@
 from typing import List
+import requests
 from .model.btd6 import \
     Odyssey,\
     Boss, \
@@ -35,15 +36,21 @@ class Client:
         return None
 
     @staticmethod
-    def race() -> List[Race]:
-        return []
+    def races() -> List[Race]:
+        resp = requests.get("https://data.ninjakiwi.com/btd6/races")
+        races_data = resp.json()
+
+        race_list = []
+        for race in races_data["body"]:
+            race_list.append(Race(race["id"], race_json=race))
+        return race_list
 
     @staticmethod
     def get_race(race_id: str, eager: bool = False) -> Race:
-        return None
+        return Race(race_id, eager=eager)
 
     @staticmethod
-    def boss() -> List[Boss]:
+    def bosses() -> List[Boss]:
         return []
 
     @staticmethod
@@ -51,12 +58,23 @@ class Client:
         return None
 
     @staticmethod
-    def challenges(filter: ChallengeFilter) -> List[Challenge]:
-        return []
+    def challenges(challenge_filter: ChallengeFilter, eager: bool = False) -> List[Challenge]:
+        resp = requests.get(f"https://data.ninjakiwi.com/btd6/challenges/filter/{challenge_filter.value}")
+        challenges_data = resp.json()
+
+        challenge_list = []
+        for race in challenges_data["body"]:
+            challenge_list.append(Challenge(race["id"], name=race["name"], created_at=race["createdAt"],
+                                            creator_id=race["creator"].split("/")[-1]))
+        if eager:
+            # TODO Load them all concurrently instead of sequentially
+            for challenge in challenge_list:
+                challenge.load_resource()
+        return challenge_list
 
     @staticmethod
-    def get_challenge(challenge_id: str) -> Boss:
-        return None
+    def get_challenge(challenge_id: str) -> Challenge:
+        return Challenge(challenge_id, eager=True)
 
     @staticmethod
     def get_player(identifier: str) -> User:
