@@ -36,7 +36,7 @@ class Loadable:
         raise Exception(error_msg)
 
     def _parse_json(self, raw_user: Dict[str, Any]) -> None:
-        pass
+        self._loaded = True
 
     @property
     def id(self) -> str:

@@ -1,7 +1,7 @@
 from typing import List
 import requests
 from .model.btd6 import \
-    Odyssey, \
+    OdysseyEvent, \
     Boss, BossEvent, \
     Race, \
     ContestedTerritory, Team, \
@@ -13,13 +13,19 @@ class Client:
     def __init__(self, open_access_key: str):
         self.__oak = open_access_key
 
-    # @staticmethod
-    # def odysseys() -> List[Odyssey]:
-    #     return []
-    #
-    # @staticmethod
-    # def get_odyssey(odyssey_id: str) -> Odyssey:
-    #     return None
+    @staticmethod
+    def odysseys() -> List[OdysseyEvent]:
+        resp = requests.get("https://data.ninjakiwi.com/btd6/odyssey")
+        odysseys_data = resp.json()
+
+        odyssey_list = []
+        for odyssey in odysseys_data["body"]:
+            odyssey_list.append(OdysseyEvent(odyssey["id"], event_json=odyssey))
+        return odyssey_list
+
+    @staticmethod
+    def get_odyssey(odyssey_id: str) -> OdysseyEvent:
+        return OdysseyEvent(odyssey_id, eager=True)
 
     # @staticmethod
     # def contested_territories() -> List[ContestedTerritory]:

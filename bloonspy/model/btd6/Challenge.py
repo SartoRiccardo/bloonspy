@@ -78,8 +78,10 @@ class Challenge(Loadable):
     endpoint = "https://data.ninjakiwi.com/btd6/challenges/challenge/{}"
 
     def __init__(self, challenge_id: str, eager: bool = False, name: str = None, created_at: int = None,
-                 creator_id: str = None):
+                 creator_id: str = None, raw_challenge: Dict[str, Any] = None):
         super().__init__(challenge_id, eager=eager)
+        if raw_challenge:
+            self._parse_json(raw_challenge)
         if name:
             self._data["name"] = name
         if created_at:
@@ -155,21 +157,22 @@ class Challenge(Loadable):
         self._data["modifiers"] = ChallengeModifier(**modifiers)
 
         self._data["towers"] = {}
-        for restriction_data in raw_challenge["_towers"]:
-            tower = Tower.from_string(restriction_data["tower"])
-            max_towers = Infinity() if restriction_data["max"] == -1 else restriction_data["max"]
-            if tower is None or max_towers == 0:
-                continue
+        if raw_challenge["_towers"] is not None:  # Is null in Odysseys
+            for restriction_data in raw_challenge["_towers"]:
+                tower = Tower.from_string(restriction_data["tower"])
+                max_towers = Infinity() if restriction_data["max"] == -1 else restriction_data["max"]
+                if tower is None or max_towers == 0:
+                    continue
 
-            if tower.is_hero():
-                self._data["towers"][tower] = Restriction(max_towers=max_towers)
-            else:
-                self._data["towers"][tower] = TowerRestriction(
-                    max_towers=max_towers,
-                    top_path_blocked=restriction_data["path1NumBlockedTiers"],
-                    middle_path_blocked=restriction_data["path2NumBlockedTiers"],
-                    bottom_path_blocked=restriction_data["path3NumBlockedTiers"]
-                )
+                if tower.is_hero():
+                    self._data["towers"][tower] = Restriction(max_towers=max_towers)
+                else:
+                    self._data["towers"][tower] = TowerRestriction(
+                        max_towers=max_towers,
+                        top_path_blocked=restriction_data["path1NumBlockedTiers"],
+                        middle_path_blocked=restriction_data["path2NumBlockedTiers"],
+                        bottom_path_blocked=restriction_data["path3NumBlockedTiers"]
+                    )
 
         self._loaded = True
 

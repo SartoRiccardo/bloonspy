@@ -144,7 +144,6 @@ class BossEvent:
     def handle_exceptions(self, error_msg: str) -> None:
         if error_msg == "No Boss with that ID exists":
             raise NotFound(error_msg)
-        super().handle_exceptions(error_msg)
 
     @staticmethod
     def _should_load_property(key_name: str) -> callable:
