@@ -1,4 +1,3 @@
-from dataclasses import dataclass, field
 import requests
 from enum import Enum
 from datetime import datetime, timedelta
@@ -6,6 +5,7 @@ from typing import List, Dict, Any
 from ...exceptions import NotFound
 from ...utils.dictionaries import has_all_keys
 from ...utils.decorators import fetch_property
+from ..Event import Event
 from .Challenge import Challenge
 from .User import User
 
@@ -94,99 +94,36 @@ class Boss(Challenge):
         return boss_players
 
 
-class BossEvent:
+class BossEvent(Event):
     event_endpoint = "https://data.ninjakiwi.com/btd6/bosses"
+    event_dict_keys = ["name", "bossType", "bossTypeURL", "start", "end", "totalScores_stanaard",
+                       "totalScores_elite"]
+    event_name: str = "Boss"
 
-    def __init__(self, boss_id: str, eager: bool = False, boss_json: Dict[str, Any] = None):
-        self._id = boss_id
-
-        self._data = {}
-
-        self._boss_loaded = False
-        if boss_json and has_all_keys(boss_json, ["name", "bossType", "bossTypeURL", "start", "end", "totalScores_stanaard",
-                                                  "totalScores_elite"]):
-            self._parse_boss(boss_json)
-        if eager and not self._boss_loaded:
-            self._load_boss()
-
-    def _load_boss(self, only_if_unloaded: bool = True) -> None:
-        if self._boss_loaded and only_if_unloaded:
-            return
-
-        self._boss_loaded = False
-
-        resp = requests.get(self.event_endpoint)
-        if resp.status_code != 200:
-            return
-
-        data = resp.json()
-        if not data["success"]:
-            self.handle_exceptions(data["error"])
-
-        boss_list = data["body"]
-        for boss in boss_list:
-            if boss["id"] == self._id:
-                self._parse_boss(boss)
-                return
-
-        raise NotFound("No Boss with that ID exists")
-
-    def _parse_boss(self, data: Dict[str, Any]) -> None:
-        self._data["name"] = data["name"]
+    def _parse_event(self, data: Dict[str, Any]) -> None:
         self._data["boss_bloon"] = BossBloon.from_string(data["bossType"])
         self._data["boss_banner"] = data["bossTypeURL"]
-        self._data["start"] = datetime.fromtimestamp(data["start"]/1000)
-        self._data["end"] = datetime.fromtimestamp(data["end"]/1000)
         self._data["total_scores_standard"] = data["totalScores_standard"]
         self._data["total_scores_elite"] = data["totalScores_elite"]
-        self._boss_loaded = True
-
-    def handle_exceptions(self, error_msg: str) -> None:
-        if error_msg == "No Boss with that ID exists":
-            raise NotFound(error_msg)
-
-    @staticmethod
-    def _should_load_property(key_name: str) -> callable:
-        def _inner(self: BossEvent) -> bool:
-            return key_name not in self._data
-        return _inner
+        super()._parse_event(data)
 
     @property
-    def id(self) -> str:
-        return self._id
-
-    @property
-    @fetch_property(_load_boss, should_load=_should_load_property)
-    def name(self) -> str:
-        return self._data["name"]
-
-    @property
-    @fetch_property(_load_boss, should_load=_should_load_property)
+    @fetch_property(Event.load_event, should_load=Event._should_load_property)
     def boss_bloon(self) -> BossBloon:
         return self._data["boss_bloon"]
 
     @property
-    @fetch_property(_load_boss, should_load=_should_load_property)
+    @fetch_property(Event.load_event, should_load=Event._should_load_property)
     def boss_banner(self) -> str:
         return self._data["boss_banner"]
 
     @property
-    @fetch_property(_load_boss, should_load=_should_load_property)
-    def start(self) -> datetime:
-        return self._data["start"]
-
-    @property
-    @fetch_property(_load_boss, should_load=_should_load_property)
-    def end(self) -> datetime:
-        return self._data["end"]
-
-    @property
-    @fetch_property(_load_boss, should_load=_should_load_property)
+    @fetch_property(Event.load_event, should_load=Event._should_load_property)
     def total_scores_standard(self) -> int:
         return self._data["total_scores_standard"]
 
     @property
-    @fetch_property(_load_boss, should_load=_should_load_property)
+    @fetch_property(Event.load_event, should_load=Event._should_load_property)
     def total_scores_elite(self) -> int:
         return self._data["total_scores_elite"]
 
