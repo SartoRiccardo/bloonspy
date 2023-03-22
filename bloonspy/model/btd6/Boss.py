@@ -132,7 +132,7 @@ class BossEvent:
         raise NotFound("No Boss with that ID exists")
 
     def _parse_boss(self, data: Dict[str, Any]) -> None:
-        self._data["name"] = datetime.fromtimestamp(data["start"]/1000)
+        self._data["name"] = data["name"]
         self._data["boss_bloon"] = BossBloon.from_string(data["bossType"])
         self._data["boss_banner"] = data["bossTypeURL"]
         self._data["start"] = datetime.fromtimestamp(data["start"]/1000)

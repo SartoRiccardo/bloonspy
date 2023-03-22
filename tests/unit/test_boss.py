@@ -16,7 +16,7 @@ class TestBoss(unittest.TestCase):
         boss_elite = boss_event.elite()
 
         check_instance = [
-            ("id", str), ("start", datetime), ("end", datetime), ("total_scores_standard", int),
+            ("id", str), ("name", str), ("start", datetime), ("end", datetime), ("total_scores_standard", int),
             ("total_scores_elite", int), ("boss_banner", str), ("boss_bloon", btd6.BossBloon)
         ]
         for attr_name, attr_type in check_instance:
