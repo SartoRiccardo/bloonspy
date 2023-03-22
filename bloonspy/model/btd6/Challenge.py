@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from enum import Enum
 from datetime import datetime
 from typing import List, Dict, Union, Any
 from ...utils.decorators import fetch_property
@@ -12,6 +13,12 @@ from .Gamemode import Gamemode
 from .Power import Power
 from .Tower import Tower
 from .User import User
+
+
+class ChallengeFilter(Enum):
+    NEWEST = "newest"
+    TRENDING = "trending"
+    DAILY = "daily"
 
 
 @dataclass(kw_only=True)

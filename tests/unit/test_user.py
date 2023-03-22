@@ -104,7 +104,7 @@ class TestUser(unittest.TestCase):
         for hero, times_placed in expected_results_ge:
             self.assertIn(hero, user.heroes_placed.keys(),
                           msg=f"Assert {hero.value} appears in User.heroes_placed")
-            self.assertGreaterEqual(times_placed, user.heroes_placed[hero],
+            self.assertGreaterEqual(user.heroes_placed[hero], times_placed,
                                     msg=f"Assert correctness of User.heroes_placed[{hero.value}]")
 
         self.assertIsInstance(user.stats.most_experienced_monkey, btd6.Tower,

@@ -1,6 +1,5 @@
 from .Boss import *
 from .Challenge import *
-from .ChallengeFilter import *
 from .ContestedTerritory import *
 from .Gamemode import *
 from .Medals import *
