@@ -1,5 +1,5 @@
 import unittest
-from bloonspy import btd6
+from bloonspy import btd6, Client
 
 
 class TestTeamOwner(unittest.TestCase):
@@ -8,7 +8,7 @@ class TestTeamOwner(unittest.TestCase):
         Test getting a team's owner.
         """
         team_id = "9fbd42d98ac2faa41d40884a5b21b577cb064ebacf168e3f"
-        team = btd6.Team(team_id)
+        team = Client.get_team(team_id)
         owner = team.owner()
         self.assertIsNotNone(owner)
         self.assertIn(owner.name.lower(), ["thargos", "vaneckpm"])

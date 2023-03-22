@@ -32,8 +32,8 @@ class Client:
         return None
 
     @staticmethod
-    def get_team(team_id: str, eager: bool = False) -> Team:
-        return None
+    def get_team(team_id: str) -> Team:
+        return Team(team_id, eager=True)
 
     @staticmethod
     def races() -> List[Race]:
@@ -77,5 +77,5 @@ class Client:
         return Challenge(challenge_id, eager=True)
 
     @staticmethod
-    def get_player(identifier: str) -> User:
-        return None
+    def get_user(identifier: str) -> User:
+        return User(identifier, eager=True)
