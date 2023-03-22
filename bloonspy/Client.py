@@ -1,13 +1,11 @@
 from typing import List
 import requests
 from .model.btd6 import \
-    Odyssey,\
-    Boss, \
+    Odyssey, \
+    Boss, BossEvent, \
     Race, \
-    ContestedTerritory, \
-    Team, \
-    Challenge, \
-    ChallengeFilter, \
+    ContestedTerritory, Team, \
+    Challenge, ChallengeFilter, \
     User
 
 
@@ -15,21 +13,21 @@ class Client:
     def __init__(self, open_access_key: str):
         self.__oak = open_access_key
 
-    @staticmethod
-    def odysseys() -> List[Odyssey]:
-        return []
+    # @staticmethod
+    # def odysseys() -> List[Odyssey]:
+    #     return []
+    #
+    # @staticmethod
+    # def get_odyssey(odyssey_id: str) -> Odyssey:
+    #     return None
 
-    @staticmethod
-    def get_odyssey(odyssey_id: str) -> Odyssey:
-        return None
-
-    @staticmethod
-    def contested_territories() -> List[ContestedTerritory]:
-        return []
-
-    @staticmethod
-    def get_contested_territory(ct_id: str, eager: bool = False) -> ContestedTerritory:
-        return None
+    # @staticmethod
+    # def contested_territories() -> List[ContestedTerritory]:
+    #     return []
+    #
+    # @staticmethod
+    # def get_contested_territory(ct_id: str, eager: bool = False) -> ContestedTerritory:
+    #     return None
 
     @staticmethod
     def get_team(team_id: str) -> Team:
@@ -50,12 +48,18 @@ class Client:
         return Race(race_id, eager=eager)
 
     @staticmethod
-    def bosses() -> List[Boss]:
-        return []
+    def bosses() -> List[BossEvent]:
+        resp = requests.get("https://data.ninjakiwi.com/btd6/bosses")
+        bosses_data = resp.json()
+
+        boss_list = []
+        for boss in bosses_data["body"]:
+            boss_list.append(BossEvent(boss["id"], boss_json=boss))
+        return boss_list
 
     @staticmethod
-    def get_boss(boss_id: str, eager: bool = False) -> Boss:
-        return None
+    def get_boss(boss_id: str, eager: bool = False) -> BossEvent:
+        return BossEvent(boss_id, eager=eager)
 
     @staticmethod
     def challenges(challenge_filter: ChallengeFilter, eager: bool = False) -> List[Challenge]:
