@@ -75,7 +75,7 @@ class Challenge(Loadable):
         towers (Dict[Tower, Restriction]): Tower restrictions
     """
 
-    endpoint = "https://data.ninjakiwi.com/btd6/challenges/challenge/{}"
+    endpoint = "/btd6/challenges/challenge/{}"
 
     def __init__(self, challenge_id: str, eager: bool = False, name: str = None, created_at: int = None,
                  creator_id: str = None, raw_challenge: Dict[str, Any] = None):
@@ -89,10 +89,11 @@ class Challenge(Loadable):
         if creator_id:
             self._data["creatorId"] = creator_id
 
-    def handle_exceptions(self, error_msg: str) -> None:
+    def _handle_exceptions(self, exception: Exception) -> None:
+        error_msg = str(exception)
         if error_msg == "No challenge with that ID exists":
             raise NotFound(error_msg)
-        super().handle_exceptions(error_msg)
+        super().handle_exceptions(exception)
 
     def _parse_json(self, raw_challenge: Dict[str, Any]) -> None:
         self._loaded = False

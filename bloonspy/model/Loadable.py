@@ -1,5 +1,6 @@
 from typing import Dict, Any
-import requests
+from ..utils.api import get
+from ..utils.decorators import exception_handler
 
 
 class Loadable:
@@ -12,28 +13,25 @@ class Loadable:
         if eager:
             self.load_resource()
 
+    def handle_exceptions(self, exception: Exception) -> None:
+        return self._handle_exceptions(exception)
+
+    def _handle_exceptions(self, exception: Exception) -> None:
+        raise exception
+
+    @exception_handler(handle_exceptions)
     def load_resource(self, only_if_unloaded: bool = True) -> None:
         if self._loaded and only_if_unloaded:
             return
 
-        resp = requests.get(self.endpoint.format(self._id))
-        if resp.status_code != 200:
-            return
-
-        data = resp.json()
-        if not data["success"]:
-            self.handle_exceptions(data["error"])
-
-        self._parse_json(data["body"])
+        data = get(self.endpoint.format(self._id))
+        self._parse_json(data)
 
     @staticmethod
     def _should_load_property(key_name: str) -> callable:
         def _inner(self: Loadable) -> bool:
             return key_name not in self._data
         return _inner
-
-    def handle_exceptions(self, error_msg: str) -> None:
-        raise Exception(error_msg)
 
     def _parse_json(self, raw_user: Dict[str, Any]) -> None:
         self._loaded = True

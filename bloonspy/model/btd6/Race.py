@@ -1,9 +1,10 @@
 from datetime import datetime, timedelta
-import requests
 from typing import List, Dict, Any
-from ...utils.decorators import fetch_property
+from ...utils.decorators import fetch_property, exception_handler
 from ...utils.dictionaries import has_all_keys
+from ...utils.api import get
 from ...exceptions import NotFound
+from ..Loadable import Loadable
 from .Challenge import Challenge
 from .User import User
 
@@ -29,9 +30,9 @@ class RacePlayer(User):
 
 
 class Race(Challenge):
-    endpoint = "https://data.ninjakiwi.com/btd6/races/{}/metadata"
-    event_endpoint = "https://data.ninjakiwi.com/btd6/races"
-    lb_endpoint = "https://data.ninjakiwi.com/btd6/races/{}/leaderboard"
+    endpoint = "/btd6/races/{}/metadata"
+    event_endpoint = "/btd6/races"
+    lb_endpoint = "/btd6/races/{}/leaderboard"
 
     def __init__(self, race_id: str, eager: bool = False, race_json: Dict[str, Any] = None):
         super().__init__(race_id, eager=eager)
@@ -44,21 +45,20 @@ class Race(Challenge):
         if eager and not self._race_loaded:
             self._load_race()
 
+    def _handle_exceptions(self, exception: Exception) -> None:
+        error_msg = str(exception)
+        if error_msg == "No Race with that ID exists":
+            raise NotFound(error_msg)
+        super().handle_exceptions(exception)
+
+    @exception_handler(Challenge.handle_exceptions)
     def _load_race(self, only_if_unloaded: bool = True) -> None:
         if self._race_loaded and only_if_unloaded:
             return
 
         self._race_loaded = False
 
-        resp = requests.get(self.event_endpoint)
-        if resp.status_code != 200:
-            return
-
-        data = resp.json()
-        if not data["success"]:
-            self.handle_exceptions(data["error"])
-
-        race_list = data["body"]
+        race_list = get(self.event_endpoint)
         for race in race_list:
             if race["id"] == self._id:
                 self._parse_race(race)
@@ -72,11 +72,6 @@ class Race(Challenge):
         self._end = datetime.fromtimestamp(data["end"]/1000)
         self._total_scores = data["totalScores"]
         self._race_loaded = True
-
-    def handle_exceptions(self, error_msg: str) -> None:
-        if error_msg == "No Race with that ID exists":
-            raise NotFound(error_msg)
-        super().handle_exceptions(error_msg)
 
     @property
     @fetch_property(_load_race)
@@ -98,15 +93,13 @@ class Race(Challenge):
     def total_scores(self) -> int:
         return self._total_scores
 
+    @exception_handler(Challenge.handle_exceptions)
     def leaderboard(self, pages: int = 1, start_from_page: int = 0) -> List[RacePlayer]:
         race_players = []
 
         for page_num in range(start_from_page, start_from_page+pages):
-            resp = requests.get(self.lb_endpoint.format(self._id), params={"page": page_num})
-            page = resp.json()
-            if not page["success"]:
-                self.handle_exceptions(page["error"])
-            for player in page["body"]:
+            page = get(self.lb_endpoint.format(self._id), params={"page": page_num})
+            for player in page:
                 race_players.append(RacePlayer(
                     player["profile"].split("/")[-1], player["displayName"], player["score"], player["submissionTime"]
                 ))

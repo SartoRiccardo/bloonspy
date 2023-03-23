@@ -1,10 +1,9 @@
-import requests
 from enum import Enum
 from datetime import datetime, timedelta
 from typing import List, Dict, Any
-from ...exceptions import NotFound
-from ...utils.dictionaries import has_all_keys
-from ...utils.decorators import fetch_property
+from ...utils.decorators import fetch_property, exception_handler
+from ...utils.api import get
+from ..Loadable import Loadable
 from ..Event import Event
 from .Challenge import Challenge
 from .User import User
@@ -50,8 +49,8 @@ class BossPlayer(User):
 
 
 class Boss(Challenge):
-    endpoint = "https://data.ninjakiwi.com/btd6/bosses/{}/metadata/:difficulty:"
-    lb_endpoint = "https://data.ninjakiwi.com/btd6/bosses/{}/leaderboard/:difficulty:/{}"
+    endpoint = "/btd6/bosses/{}/metadata/:difficulty:"
+    lb_endpoint = "/btd6/bosses/{}/leaderboard/:difficulty:/{}"
 
     def __init__(self, boss_id: str, name: str, boss_bloon: BossBloon, total_scores: int, elite: bool,
                  eager: bool = False):
@@ -75,6 +74,7 @@ class Boss(Challenge):
     def is_elite(self) -> bool:
         return self._is_elite
 
+    @exception_handler(Loadable.handle_exceptions)
     def leaderboard(self, pages: int = 1, start_from_page: int = 0, team_size: int = 1) -> List[BossPlayer]:
         if team_size not in range(1, 5):
             raise ValueError("team_size must be between 1 and 4")
@@ -82,11 +82,8 @@ class Boss(Challenge):
         boss_players = []
 
         for page_num in range(start_from_page, start_from_page + pages):
-            resp = requests.get(self.lb_endpoint.format(self._id, team_size), params={"page": page_num})
-            page = resp.json()
-            if not page["success"]:
-                self.handle_exceptions(page["error"])
-            for player in page["body"]:
+            page = get(self.lb_endpoint.format(self._id, team_size), params={"page": page_num})
+            for player in page:
                 boss_players.append(BossPlayer(
                     player["profile"].split("/")[-1], player["displayName"], player["score"], player["submissionTime"]
                 ))
@@ -95,7 +92,7 @@ class Boss(Challenge):
 
 
 class BossEvent(Event):
-    event_endpoint = "https://data.ninjakiwi.com/btd6/bosses"
+    event_endpoint = "/btd6/bosses"
     event_dict_keys = ["name", "bossType", "bossTypeURL", "start", "end", "totalScores_standard",
                        "totalScores_elite"]
     event_name: str = "Boss"

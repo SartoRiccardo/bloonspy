@@ -1,5 +1,5 @@
 from typing import List
-import requests
+from .utils.api import get
 from .model.btd6 import \
     OdysseyEvent, \
     Boss, BossEvent, \
@@ -15,11 +15,9 @@ class Client:
 
     @staticmethod
     def odysseys() -> List[OdysseyEvent]:
-        resp = requests.get("https://data.ninjakiwi.com/btd6/odyssey")
-        odysseys_data = resp.json()
-
+        odysseys_data = get("/btd6/odyssey")
         odyssey_list = []
-        for odyssey in odysseys_data["body"]:
+        for odyssey in odysseys_data:
             odyssey_list.append(OdysseyEvent(odyssey["id"], event_json=odyssey))
         return odyssey_list
 
@@ -29,11 +27,9 @@ class Client:
 
     @staticmethod
     def contested_territories() -> List[ContestedTerritoryEvent]:
-        resp = requests.get("https://data.ninjakiwi.com/btd6/ct")
-        ct_data = resp.json()
-
+        ct_data = get("/btd6/ct")
         ct_list = []
-        for ct in ct_data["body"]:
+        for ct in ct_data:
             ct_list.append(ContestedTerritoryEvent(ct["id"], event_json=ct))
         return ct_list
 
@@ -47,11 +43,9 @@ class Client:
 
     @staticmethod
     def races() -> List[Race]:
-        resp = requests.get("https://data.ninjakiwi.com/btd6/races")
-        races_data = resp.json()
-
+        races_data = get("/btd6/races")
         race_list = []
-        for race in races_data["body"]:
+        for race in races_data:
             race_list.append(Race(race["id"], race_json=race))
         return race_list
 
@@ -61,11 +55,9 @@ class Client:
 
     @staticmethod
     def bosses() -> List[BossEvent]:
-        resp = requests.get("https://data.ninjakiwi.com/btd6/bosses")
-        bosses_data = resp.json()
-
+        bosses_data = get("/btd6/bosses")
         boss_list = []
-        for boss in bosses_data["body"]:
+        for boss in bosses_data:
             boss_list.append(BossEvent(boss["id"], event_json=boss))
         return boss_list
 
@@ -75,11 +67,9 @@ class Client:
 
     @staticmethod
     def challenges(challenge_filter: ChallengeFilter, eager: bool = False) -> List[Challenge]:
-        resp = requests.get(f"https://data.ninjakiwi.com/btd6/challenges/filter/{challenge_filter.value}")
-        challenges_data = resp.json()
-
+        challenges_data = get(f"/btd6/challenges/filter/{challenge_filter.value}")
         challenge_list = []
-        for race in challenges_data["body"]:
+        for race in challenges_data:
             challenge_list.append(Challenge(race["id"], name=race["name"], created_at=race["createdAt"],
                                             creator_id=race["creator"].split("/")[-1]))
         if eager:

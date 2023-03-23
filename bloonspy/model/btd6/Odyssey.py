@@ -1,12 +1,8 @@
-from dataclasses import dataclass, field
-import requests
-from datetime import datetime
 from enum import Enum
 from typing import List, Dict, Any
-from ...utils.dictionaries import has_all_keys
-from ...utils.decorators import fetch_property
+from ...utils.decorators import fetch_property, exception_handler
 from ...utils.Infinity import Infinity
-from ...exceptions import NotFound
+from ...utils.api import get
 from ..Event import Event
 from ..Loadable import Loadable
 from .Restriction import Restriction, TowerRestriction
@@ -22,8 +18,8 @@ class OdysseyDifficulty(Enum):
 
 
 class Odyssey(Loadable):
-    endpoint = "https://data.ninjakiwi.com/btd6/odyssey/{}/:difficulty:"
-    map_endpoint = "https://data.ninjakiwi.com/btd6/odyssey/{}/:difficulty:/maps"
+    endpoint = "/btd6/odyssey/{}/:difficulty:"
+    map_endpoint = "/btd6/odyssey/{}/:difficulty:/maps"
 
     def __init__(self, resource_id: str, name: str, difficulty: OdysseyDifficulty, eager: bool = False):
         self.endpoint = self.endpoint.replace(":difficulty:", difficulty.value)
@@ -127,25 +123,17 @@ class Odyssey(Loadable):
     def default_towers(self) -> Dict[Tower, int]:
         return self._data["defaultTowers"]
 
+    @exception_handler(Loadable.handle_exceptions)
     def maps(self) -> List[Challenge]:
-        resp = requests.get(self.map_endpoint.format(self._id))
-        if resp.status_code != 200:
-            # TODO Raise some exception
-            return []
-
-        data = resp.json()
-        if not data["success"]:
-            self.handle_exceptions(data["error"])
-
+        odyssey_map = get(self.map_endpoint.format(self._id))
         islands = []
-        odyssey_map = data["body"]
         for island in odyssey_map:
             islands.append(Challenge(island["id"], raw_challenge=island))
         return islands
 
 
 class OdysseyEvent(Event):
-    event_endpoint = "https://data.ninjakiwi.com/btd6/odyssey"
+    event_endpoint = "/btd6/odyssey"
     event_name = "Odyssey"
 
     def easy(self, eager: bool = False) -> Odyssey:
