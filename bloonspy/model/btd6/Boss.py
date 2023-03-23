@@ -96,7 +96,7 @@ class Boss(Challenge):
 
 class BossEvent(Event):
     event_endpoint = "https://data.ninjakiwi.com/btd6/bosses"
-    event_dict_keys = ["name", "bossType", "bossTypeURL", "start", "end", "totalScores_stanaard",
+    event_dict_keys = ["name", "bossType", "bossTypeURL", "start", "end", "totalScores_standard",
                        "totalScores_elite"]
     event_name: str = "Boss"
 

@@ -4,7 +4,7 @@ from .model.btd6 import \
     OdysseyEvent, \
     Boss, BossEvent, \
     Race, \
-    ContestedTerritory, Team, \
+    ContestedTerritoryEvent, Team, \
     Challenge, ChallengeFilter, \
     User
 
@@ -24,16 +24,22 @@ class Client:
         return odyssey_list
 
     @staticmethod
-    def get_odyssey(odyssey_id: str) -> OdysseyEvent:
-        return OdysseyEvent(odyssey_id, eager=True)
+    def get_odyssey(odyssey_id: str, eager: bool = False) -> OdysseyEvent:
+        return OdysseyEvent(odyssey_id, eager=eager)
 
-    # @staticmethod
-    # def contested_territories() -> List[ContestedTerritory]:
-    #     return []
-    #
-    # @staticmethod
-    # def get_contested_territory(ct_id: str, eager: bool = False) -> ContestedTerritory:
-    #     return None
+    @staticmethod
+    def contested_territories() -> List[ContestedTerritoryEvent]:
+        resp = requests.get("https://data.ninjakiwi.com/btd6/ct")
+        ct_data = resp.json()
+
+        ct_list = []
+        for ct in ct_data["body"]:
+            ct_list.append(ContestedTerritoryEvent(ct["id"], event_json=ct))
+        return ct_list
+
+    @staticmethod
+    def get_contested_territory(ct_id: str, eager: bool = False) -> ContestedTerritoryEvent:
+        return ContestedTerritoryEvent(ct_id, eager=eager)
 
     @staticmethod
     def get_team(team_id: str) -> Team:
@@ -60,7 +66,7 @@ class Client:
 
         boss_list = []
         for boss in bosses_data["body"]:
-            boss_list.append(BossEvent(boss["id"], boss_json=boss))
+            boss_list.append(BossEvent(boss["id"], event_json=boss))
         return boss_list
 
     @staticmethod
