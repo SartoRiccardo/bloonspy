@@ -54,7 +54,7 @@ class Boss(Challenge):
     lb_endpoint = "/btd6/bosses/{}/leaderboard/:difficulty:/{}"
 
     def __init__(self, boss_id: str, name: str, boss_bloon: BossBloon, total_scores: int, elite: bool,
-                 eager: bool = False):
+                 eager: bool = True):
         self._is_elite = elite
         self.endpoint = self.endpoint.replace(":difficulty:", "elite" if self._is_elite else "standard")
         self.lb_endpoint = self.lb_endpoint.replace(":difficulty:", "elite" if self._is_elite else "standard")
@@ -136,10 +136,10 @@ class BossEvent(Event):
     def total_scores_elite(self) -> int:
         return self._data["total_scores_elite"]
 
-    def standard(self, eager: bool = False) -> Boss:
+    def standard(self, eager: bool = True) -> Boss:
         return Boss(self.id, self.name, self.boss_bloon,
                     self.total_scores_standard, False, eager=eager)
 
-    def elite(self, eager: bool = False) -> Boss:
+    def elite(self, eager: bool = True) -> Boss:
         return Boss(self.id, self.name, self.boss_bloon,
                     self.total_scores_elite, True, eager=eager)

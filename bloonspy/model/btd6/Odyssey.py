@@ -22,7 +22,7 @@ class Odyssey(Loadable):
     endpoint = "/btd6/odyssey/{}/:difficulty:"
     map_endpoint = "/btd6/odyssey/{}/:difficulty:/maps"
 
-    def __init__(self, resource_id: str, name: str, difficulty: OdysseyDifficulty, eager: bool = False):
+    def __init__(self, resource_id: str, name: str, difficulty: OdysseyDifficulty, eager: bool = True):
         self.endpoint = self.endpoint.replace(":difficulty:", difficulty.value)
         self.map_endpoint = self.map_endpoint.replace(":difficulty:", difficulty.value)
         super().__init__(resource_id, eager)
@@ -149,11 +149,11 @@ class OdysseyEvent(Event):
     event_endpoint = "/btd6/odyssey"
     event_name = "Odyssey"
 
-    def easy(self, eager: bool = False) -> Odyssey:
+    def easy(self, eager: bool = True) -> Odyssey:
         return Odyssey(self.id, self.name, OdysseyDifficulty.EASY, eager=eager)
 
-    def medium(self, eager: bool = False) -> Odyssey:
+    def medium(self, eager: bool = True) -> Odyssey:
         return Odyssey(self.id, self.name, OdysseyDifficulty.EASY, eager=eager)
 
-    def hard(self, eager: bool = False) -> Odyssey:
+    def hard(self, eager: bool = True) -> Odyssey:
         return Odyssey(self.id, self.name, OdysseyDifficulty.EASY, eager=eager)

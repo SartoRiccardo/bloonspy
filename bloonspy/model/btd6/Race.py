@@ -34,7 +34,7 @@ class Race(Challenge):
     event_endpoint = "/btd6/races"
     lb_endpoint = "/btd6/races/{}/leaderboard"
 
-    def __init__(self, race_id: str, eager: bool = False, race_json: Dict[str, Any] = None):
+    def __init__(self, race_id: str, eager: bool = True, race_json: Dict[str, Any] = None):
         super().__init__(race_id, eager=eager)
         self._start = datetime.fromtimestamp(0)
         self._end = datetime.fromtimestamp(0)

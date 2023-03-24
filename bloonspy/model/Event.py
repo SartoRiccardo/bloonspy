@@ -11,7 +11,7 @@ class Event:
     event_dict_keys: List[str] = ["name", "start", "end"]
     event_name: str = "event"
 
-    def __init__(self, event_id: str, eager: bool = False, event_json: Dict[str, Any] = None):
+    def __init__(self, event_id: str, eager: bool = True, event_json: Dict[str, Any] = None):
         self._id = event_id
         self._data = {}
         self._event_loaded = False

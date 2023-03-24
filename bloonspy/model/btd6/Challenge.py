@@ -77,7 +77,7 @@ class Challenge(Loadable):
 
     endpoint = "/btd6/challenges/challenge/{}"
 
-    def __init__(self, challenge_id: str, eager: bool = False, name: str = None, created_at: int = None,
+    def __init__(self, challenge_id: str, eager: bool = True, name: str = None, created_at: int = None,
                  creator_id: str = None, raw_challenge: Dict[str, Any] = None):
         super().__init__(challenge_id, eager=eager)
         if raw_challenge:

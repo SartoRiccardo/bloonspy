@@ -6,7 +6,7 @@ from ..utils.decorators import exception_handler
 class Loadable:
     endpoint = "{}"
 
-    def __init__(self, resource_id: str, eager: bool = False):
+    def __init__(self, resource_id: str, eager: bool = True):
         self._id = resource_id
         self._data = {}
         self._loaded = False

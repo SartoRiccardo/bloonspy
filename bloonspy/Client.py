@@ -24,7 +24,7 @@ class Client:
         return odyssey_list
 
     @staticmethod
-    def get_odyssey(odyssey_id: str, eager: bool = False) -> OdysseyEvent:
+    def get_odyssey(odyssey_id: str, eager: bool = True) -> OdysseyEvent:
         return OdysseyEvent(odyssey_id, eager=eager)
 
     @staticmethod
@@ -36,7 +36,7 @@ class Client:
         return ct_list
 
     @staticmethod
-    def get_contested_territory(ct_id: str, eager: bool = False) -> ContestedTerritoryEvent:
+    def get_contested_territory(ct_id: str, eager: bool = True) -> ContestedTerritoryEvent:
         return ContestedTerritoryEvent(ct_id, eager=eager)
 
     @staticmethod
@@ -52,7 +52,7 @@ class Client:
         return race_list
 
     @staticmethod
-    def get_race(race_id: str, eager: bool = False) -> Race:
+    def get_race(race_id: str, eager: bool = True) -> Race:
         return Race(race_id, eager=eager)
 
     @staticmethod
@@ -64,11 +64,11 @@ class Client:
         return boss_list
 
     @staticmethod
-    def get_boss(boss_id: str, eager: bool = False) -> BossEvent:
+    def get_boss(boss_id: str, eager: bool = True) -> BossEvent:
         return BossEvent(boss_id, eager=eager)
 
     @staticmethod
-    def challenges(challenge_filter: ChallengeFilter, eager: bool = False) -> List[Challenge]:
+    def challenges(challenge_filter: ChallengeFilter, eager: bool = True) -> List[Challenge]:
         challenges_data = get(f"/btd6/challenges/filter/{challenge_filter.value}")
         challenge_list = []
         for race in challenges_data:
