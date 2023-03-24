@@ -25,13 +25,13 @@ class TeamStatus(Enum):
 
 
 class Team(Loadable):
+    """A BTD6 Team."""
     endpoint = "/btd6/guild/{}"
 
     def _handle_exceptions(self, exception: Exception) -> None:
         error_msg = str(exception)
         if error_msg == "Invalid guild ID":
             raise NotFound(error_msg)
-        super().handle_exception(exception)
 
     def _parse_json(self, raw_resource: Dict[str, Any]) -> None:
         self._loaded = False
@@ -52,40 +52,52 @@ class Team(Loadable):
     @property
     @fetch_property(Loadable.load_resource)
     def name(self) -> str:
+        """The name of the team."""
         return self._data["name"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def member_count(self) -> int:
+        """The team's member count."""
         return self._data["numMembers"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def status(self) -> TeamStatus:
+        """The team's entry status (public, closed, ...)."""
         return self._data["status"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def banner(self) -> Asset:
+        """The team's equipped banner."""
         return self._data["banner"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def icon(self) -> Asset:
+        """The team's equipped icon."""
         return self._data["icon"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def frame(self) -> Asset:
+        """The team's equipped frame."""
         return self._data["frame"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def owner_id(self) -> str:
+        """The ID of the user who currently owns the team."""
         return self._data["owner_id"]
 
     @fetch_property(Loadable.load_resource)
     def owner(self) -> User or None:
+        """Fetch the owner of the team.
+
+        :return: The owner of the team.
+        :rtype: User or None
+        """
         if self.owner_id is None:
             return None
         return User(self.owner_id, eager=True)

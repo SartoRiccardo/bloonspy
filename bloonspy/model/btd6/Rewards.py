@@ -4,13 +4,15 @@ from .Tower import Tower
 
 @dataclass
 class InstaMonkey:
-    tower: Tower
-    top_path: int
-    middle_path: int
-    bottom_path: int
+    """An Insta Monkey."""
+    tower: Tower  #: The tower this Insta Monkey is for.
+    top_path: int  #: Top path upgrades.
+    middle_path: int  #: Middle path upgrades.
+    bottom_path: int  #: Bottom path upgrades.
 
 
 @dataclass
 class Reward:
-    type: str
-    amount: int
+    """A generic reward."""
+    type: str  #: Name of the reward, e.g. `MonkeyMoney`.
+    amount: int  #: Amount of the reward.

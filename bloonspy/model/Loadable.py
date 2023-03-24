@@ -4,9 +4,10 @@ from ..utils.decorators import exception_handler
 
 
 class Loadable:
+    """Represents a resource that can be loaded."""
     endpoint = "{}"
 
-    def __init__(self, resource_id: str, eager: bool = True):
+    def __init__(self, resource_id: str, eager: bool = False):
         self._id = resource_id
         self._data = {}
         self._loaded = False
@@ -21,6 +22,14 @@ class Loadable:
 
     @exception_handler(handle_exceptions)
     def load_resource(self, only_if_unloaded: bool = True) -> None:
+        """Load the resource.
+
+        :param only_if_unloaded: Only make an API call if the resource is unloaded.
+            If `False`, it essentially "reloads" the resource.
+        :type only_if_unloaded: :class:`bool`
+
+        :raises bloonspy.exceptions.NotFound: If the resource is not found.
+        """
         if self._loaded and only_if_unloaded:
             return
 
@@ -38,4 +47,10 @@ class Loadable:
 
     @property
     def id(self) -> str:
+        """The unique ID of the resource."""
         return self._id
+
+    @property
+    def loaded(self) -> bool:
+        """`True` if the resource is loaded."""
+        return self._loaded

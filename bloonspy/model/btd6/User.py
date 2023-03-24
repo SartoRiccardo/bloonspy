@@ -6,57 +6,59 @@ from ...utils.dictionaries import rename_keys
 from ..Loadable import Loadable
 from ..Asset import Asset
 from .Tower import Tower
-from .Medals import Medals, MapMedals, CTGlobalMedals, CTLocalMedals
+from .Medals import EventMedals, MapMedals, CTGlobalMedals, CTLocalMedals
 
 
 @dataclass(kw_only=True)
 class BloonsPoppedStats:
-    total: int = field(default=0)
-    total_coop: int = field(default=0)
-    camos: int = field(default=0)
-    regrows: int = field(default=0)
-    purples: int = field(default=0)
-    leads: int = field(default=0)
-    ceramics: int = field(default=0)
-    moabs: int = field(default=0)
-    bfbs: int = field(default=0)
-    zomgs: int = field(default=0)
-    bads: int = field(default=0)
-    golden: int = field(default=0)
+    """How many bloons a user has popped of each type."""
+    total: int = field(default=0)  #: Total bloons popped.
+    total_coop: int = field(default=0)  #: Total bloons popped in coop games.
+    camos: int = field(default=0)  #: Number of camo bloons popped.
+    regrows: int = field(default=0)  #: Number of regrow bloons popped.
+    purples: int = field(default=0)  #: Number of purple bloons popped.
+    leads: int = field(default=0)  #: Number of lead bloons popped.
+    ceramics: int = field(default=0)  #: Number of ceramic bloons popped.
+    moabs: int = field(default=0)  #: Number of MOAB bloons popped.
+    bfbs: int = field(default=0)  #: Number of BFB bloons popped.
+    zomgs: int = field(default=0)  #: Number of ZOMG bloons popped.
+    bads: int = field(default=0)  #: Number of BAD bloons popped.
+    golden: int = field(default=0)  #: Number of golden bloons popped.
 
 
 @dataclass(kw_only=True)
 class GameplayStats:
-    most_experienced_monkey: Tower = field(default=Tower.DART_MONKEY)
-    cash_earned: int = field(default=0)
-    challenges_completed: int = field(default=0)
-    collection_chests_opened: int = field(default=0)
-    coop_cash_given: int = field(default=0)
-    daily_rewards: int = field(default=0)
-    game_count: int = field(default=0)
-    games_won: int = field(default=0)
-    highest_round: int = field(default=0)
-    highest_round_chimps: int = field(default=0)
-    highest_round_deflation: int = field(default=0)
-    insta_monkey_collection: int = field(default=0)
-    monkey_teams_wins: int = field(default=0)
-    powers_used: int = field(default=0)
-    total_odysseys_completed: int = field(default=0)
-    total_odyssey_stars: int = field(default=0)
-    total_trophies_earned: int = field(default=0)
-    necro_bloons_reanimated: int = field(default=0)
-    bloons_leaked: int = field(default=0)
-    bloons_popped: BloonsPoppedStats = field(default_factory=BloonsPoppedStats)
+    """User's gameplay stats."""
+    most_experienced_monkey: Tower = field(default=Tower.DART_MONKEY)  #: Monkey with the most XP.
+    cash_earned: int = field(default=0)  #: Total cash earned.
+    challenges_completed: int = field(default=0)  #: Total challenges completed.
+    collection_chests_opened: int = field(default=0)  #: Number of collection chests opened.
+    coop_cash_given: int = field(default=0)  #: Total cash gifted in coop games.
+    daily_rewards: int = field(default=0)  #: Total daily rewards collected.
+    game_count: int = field(default=0)  #: Number of games played
+    games_won: int = field(default=0)  #: Number of games won
+    highest_round: int = field(default=0)  #: Highest round beaten
+    highest_round_chimps: int = field(default=0)  #: Highest round beaten in CHIMPS mode
+    highest_round_deflation: int = field(default=0)  #: Highest round beaten in Deflation mode
+    insta_monkey_collection: int = field(default=0)  #: Number of unique Insta Monkeys collected
+    monkey_teams_wins: int = field(default=0)  #: Number of games won with the Monkey Teams restrictions.
+    powers_used: int = field(default=0)  #: Number of powers used.
+    total_odysseys_completed: int = field(default=0)  #: Number of odysseys completed.
+    total_odyssey_stars: int = field(default=0)  #: Total odyssey stars.
+    total_trophies_earned: int = field(default=0)  #: Lifetime trophies earned through events.
+    necro_bloons_reanimated: int = field(default=0)  #: Number of necro bloons reanimated.
+    bloons_leaked: int = field(default=0)  #: Total RBE leaked.
+    bloons_popped: BloonsPoppedStats = field(default_factory=BloonsPoppedStats)  #: In depth stats about bloons popped.
 
 
 class User(Loadable):
+    """A BTD6 player. Inherits from :class:`bloonspy.model.Loadable`."""
     endpoint = "/btd6/users/{}"
 
     def _handle_exceptions(self, exception: Exception) -> None:
         error_msg = str(exception)
         if error_msg == "Invalid user ID / Player Does not play this game":
             raise NotFound(error_msg)
-        super().handle_exceptions(exception)
 
     def _parse_json(self, raw_user: Dict[str, Any]) -> None:
         self._loaded = False
@@ -87,10 +89,10 @@ class User(Loadable):
             ("DoubleGold", "top_1_percent"), ("GoldSilver", "top_10_percent"), ("DoubleSilver", "top_25_percent"),
             ("Silver", "top_50_percent"), ("Bronze", "top_75_percent")
         ]
-        self._data["boss_normal_medals"] = Medals(
+        self._data["boss_normal_medals"] = EventMedals(
             **rename_keys(raw_user["_medalsBoss"], event_medal_keys)
         )
-        self._data["boss_elite_medals"] = Medals(
+        self._data["boss_elite_medals"] = EventMedals(
             **rename_keys(raw_user["_medalsBossElite"], event_medal_keys)
         )
         # self._data["race_medals"] = Medals(
@@ -163,79 +165,95 @@ class User(Loadable):
     @property
     @fetch_property(Loadable.load_resource)
     def name(self) -> str:
+        """The name of the user."""
         return self._data["displayName"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def rank(self) -> int:
+        """The user's rank."""
         return self._data["rank"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def veteran_rank(self) -> int:
+        """The user's veteran rank, or 0 if they haven't reached it yet."""
         return self._data["veteranRank"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def achievements(self) -> int:
+        """Number of achievements this user unlocked."""
         return self._data["achievements"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def followers(self) -> int:
+        """Number of followers this user has."""
         return self._data["followers"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def avatar(self) -> Asset:
+        """The user's current avatar."""
         return self._data["avatar"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def banner(self) -> Asset:
+        """The user's current banner."""
         return self._data["banner"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def single_player_medals(self) -> MapMedals:
+        """Medals earned in single player mode."""
         return self._data["single_player_medals"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def coop_medals(self) -> MapMedals:
+        """Medals earned in coop mode."""
         return self._data["coop_medals"]
 
     @property
     @fetch_property(Loadable.load_resource)
-    def boss_normal_medals(self) -> Medals:
+    def boss_normal_medals(self) -> EventMedals:
+        """Ranked normal boss mdeals."""
         return self._data["boss_normal_medals"]
 
     @property
     @fetch_property(Loadable.load_resource)
-    def boss_elite_medals(self) -> Medals:
+    def boss_elite_medals(self) -> EventMedals:
+        """Ranked elite boss medals."""
         return self._data["boss_elite_medals"]
 
     # @property
     # @fetch_property(Loadable.load_resource)
-    # def race_medals(self) -> Medals:
+    # def race_medals(self) -> EventMedals:
+    #     """Race event medals."""
     #     return self._data["race_medals"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def ct_local_medals(self) -> CTLocalMedals:
+        """Contested Territory local medals."""
         return self._data["ct_local_medals"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def ct_global_medals(self) -> CTGlobalMedals:
+        """Contested Territory global medals."""
         return self._data["ct_global_medals"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def stats(self) -> GameplayStats:
+        """Gameplay stats."""
         return self._data["stats"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def heroes_placed(self) -> Dict[Tower, int]:
+        """Number of times each hero has been placed."""
         return self._data["heroes_placed"]

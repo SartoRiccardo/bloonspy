@@ -15,7 +15,7 @@ class TestFetchUser(unittest.TestCase):
             ("name", str),
             ("banner", btd6.Asset),
             ("single_player_medals", btd6.MapMedals),
-            ("boss_normal_medals", btd6.Medals),
+            ("boss_normal_medals", btd6.EventMedals),
             ("ct_local_medals", btd6.CTLocalMedals),
             ("stats", btd6.GameplayStats),
         ]

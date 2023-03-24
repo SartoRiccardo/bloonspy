@@ -20,7 +20,7 @@ class TestCtLeaderboard(unittest.TestCase):
                               msg=f"Assert if result is CtPlayer")
 
         check_instance = [
-            ("name", str), ("score", int), ("achievements", int), ("boss_normal_medals", btd6.Medals)
+            ("name", str), ("score", int), ("achievements", int), ("boss_normal_medals", btd6.EventMedals)
         ]
         for attr_name, attr_type in check_instance:
             self.assertIsInstance(getattr(some_player, attr_name), attr_type,
