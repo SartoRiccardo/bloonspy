@@ -25,12 +25,13 @@ class TeamStatus(Enum):
 
 
 class Team(Loadable):
-    endpoint = "https://data.ninjakiwi.com/btd6/guild/{}"
+    endpoint = "/btd6/guild/{}"
 
-    def handle_exceptions(self, error_msg: str) -> None:
+    def _handle_exceptions(self, exception: Exception) -> None:
+        error_msg = str(exception)
         if error_msg == "Invalid guild ID":
             raise NotFound(error_msg)
-        super().handle_exception(error_msg)
+        super().handle_exception(exception)
 
     def _parse_json(self, raw_resource: Dict[str, Any]) -> None:
         self._loaded = False

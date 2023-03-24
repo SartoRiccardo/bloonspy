@@ -1,7 +1,8 @@
-import requests
 from datetime import datetime
 from typing import List, Dict, Any
-from ...utils.decorators import fetch_property
+from concurrent.futures import ThreadPoolExecutor
+from ...utils.decorators import fetch_property, exception_handler
+from ...utils.api import get, get_lb_page
 from ..Event import Event
 from .User import User
 from .Team import Team
@@ -38,9 +39,9 @@ class CtTeam(Team):
 
 
 class ContestedTerritoryEvent(Event):
-    event_endpoint = "https://data.ninjakiwi.com/btd6/ct"
-    lb_endpoint_player = "https://data.ninjakiwi.com/btd6/ct/{}/leaderboard/player"
-    lb_endpoint_team = "https://data.ninjakiwi.com/btd6/ct/{}/leaderboard/team"
+    event_endpoint = "/btd6/ct"
+    lb_endpoint_player = "/btd6/ct/{}/leaderboard/player"
+    lb_endpoint_team = "/btd6/ct/{}/leaderboard/team"
     event_dict_keys = ["name", "start", "end", "totalScores_player", "totalScores_team"]
     event_name = "CT"
 
@@ -71,30 +72,32 @@ class ContestedTerritoryEvent(Event):
     def total_scores_team(self) -> int:
         return self._data["totalScores_team"]
 
+    @exception_handler(Event.handle_exceptions)
     def leaderboard_player(self, pages: int = 1, start_from_page: int = 0) -> List[CtPlayer]:
-        players = []
+        futures = []
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            for page_num in range(start_from_page, start_from_page + pages):
+                futures.append(executor.submit(get_lb_page, self.lb_endpoint_player.format(self._id), page_num))
 
-        for page_num in range(start_from_page, start_from_page + pages):
-            resp = requests.get(self.lb_endpoint_player.format(self._id), params={"page": page_num})
-            page = resp.json()
-            if not page["success"]:
-                self.handle_exceptions(page["error"])
-            for player in page["body"]:
+        players = []
+        for page in futures:
+            for player in page.result():
                 players.append(CtPlayer(
                     player["profile"].split("/")[-1], player["displayName"], player["score"]
                 ))
 
         return players
 
+    @exception_handler(Event.handle_exceptions)
     def leaderboard_team(self, pages: int = 1, start_from_page: int = 0) -> List[CtTeam]:
-        teams = []
+        futures = []
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            for page_num in range(start_from_page, start_from_page + pages):
+                futures.append(executor.submit(get_lb_page, self.lb_endpoint_team.format(self._id), page_num))
 
-        for page_num in range(start_from_page, start_from_page + pages):
-            resp = requests.get(self.lb_endpoint_team.format(self._id), params={"page": page_num})
-            page = resp.json()
-            if not page["success"]:
-                self.handle_exceptions(page["error"])
-            for team in page["body"]:
+        teams = []
+        for page in futures:
+            for team in page.result():
                 teams.append(CtTeam(
                     team["profile"].split("/")[-1], team["displayName"], team["score"]
                 ))

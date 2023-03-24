@@ -1,6 +1,5 @@
 from dataclasses import dataclass, field
-import requests
-from typing import Dict, List, Any
+from typing import Dict, Any
 from ...exceptions import NotFound
 from ...utils.decorators import fetch_property
 from ...utils.dictionaries import rename_keys
@@ -51,12 +50,13 @@ class GameplayStats:
 
 
 class User(Loadable):
-    endpoint = "https://data.ninjakiwi.com/btd6/users/{}"
+    endpoint = "/btd6/users/{}"
 
-    def handle_exceptions(self, error_msg: str) -> None:
+    def _handle_exceptions(self, exception: Exception) -> None:
+        error_msg = str(exception)
         if error_msg == "Invalid user ID / Player Does not play this game":
             raise NotFound(error_msg)
-        super().handle_exceptions(error_msg)
+        super().handle_exceptions(exception)
 
     def _parse_json(self, raw_user: Dict[str, Any]) -> None:
         self._loaded = False

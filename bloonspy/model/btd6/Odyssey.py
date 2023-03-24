@@ -1,15 +1,12 @@
-from dataclasses import dataclass, field
-import requests
-from datetime import datetime
 from enum import Enum
-from typing import List, Dict, Any
-from ...utils.dictionaries import has_all_keys
-from ...utils.decorators import fetch_property
+from typing import List, Dict, Any, Union
+from ...utils.decorators import fetch_property, exception_handler
 from ...utils.Infinity import Infinity
-from ...exceptions import NotFound
+from ...utils.api import get
 from ..Event import Event
 from ..Loadable import Loadable
 from .Restriction import Restriction, TowerRestriction
+from .Rewards import InstaMonkey, Reward
 from .Challenge import Challenge
 from .Power import Power
 from .Tower import Tower
@@ -22,10 +19,10 @@ class OdysseyDifficulty(Enum):
 
 
 class Odyssey(Loadable):
-    endpoint = "https://data.ninjakiwi.com/btd6/odyssey/{}/:difficulty:"
-    map_endpoint = "https://data.ninjakiwi.com/btd6/odyssey/{}/:difficulty:/maps"
+    endpoint = "/btd6/odyssey/{}/:difficulty:"
+    map_endpoint = "/btd6/odyssey/{}/:difficulty:/maps"
 
-    def __init__(self, resource_id: str, name: str, difficulty: OdysseyDifficulty, eager: bool = False):
+    def __init__(self, resource_id: str, name: str, difficulty: OdysseyDifficulty, eager: bool = True):
         self.endpoint = self.endpoint.replace(":difficulty:", difficulty.value)
         self.map_endpoint = self.map_endpoint.replace(":difficulty:", difficulty.value)
         super().__init__(resource_id, eager)
@@ -41,6 +38,19 @@ class Odyssey(Loadable):
         for key in copy_keys:
             self._data[key] = raw_odyssey[key]
 
+        self._data["rewards"] = []
+        for raw_reward in raw_odyssey["_rewards"]:
+            reward_type, reward = raw_reward.split(":", 1)
+            if reward_type == "InstaMonkey":
+                tower, path = reward.split(",")
+                path = int(path)
+                self._data["rewards"].append(InstaMonkey(
+                    Tower.from_string(tower), int(path/100), int(path/10) % 10, path % 10
+                ))
+            elif reward_type == "Power":
+                self._data["rewards"].append(Power.from_string(reward))
+            else:
+                self._data["rewards"].append(Reward(reward_type, reward))
         self._data["rewards"] = raw_odyssey["_rewards"]
 
         self._data["availablePowers"] = {}
@@ -105,10 +115,9 @@ class Odyssey(Loadable):
     def starting_lives(self) -> int:
         return self._data["startingHealth"]
 
-    # TODO make a proper object for the rewards, Insta Monkeys, etc
     @property
     @fetch_property(Loadable.load_resource)
-    def rewards(self) -> List[str]:
+    def rewards(self) -> List[Union[Power, InstaMonkey, Reward]]:
         return self._data["rewards"]
 
     @property
@@ -127,32 +136,24 @@ class Odyssey(Loadable):
     def default_towers(self) -> Dict[Tower, int]:
         return self._data["defaultTowers"]
 
+    @exception_handler(Loadable.handle_exceptions)
     def maps(self) -> List[Challenge]:
-        resp = requests.get(self.map_endpoint.format(self._id))
-        if resp.status_code != 200:
-            # TODO Raise some exception
-            return []
-
-        data = resp.json()
-        if not data["success"]:
-            self.handle_exceptions(data["error"])
-
+        odyssey_map = get(self.map_endpoint.format(self._id))
         islands = []
-        odyssey_map = data["body"]
         for island in odyssey_map:
             islands.append(Challenge(island["id"], raw_challenge=island))
         return islands
 
 
 class OdysseyEvent(Event):
-    event_endpoint = "https://data.ninjakiwi.com/btd6/odyssey"
+    event_endpoint = "/btd6/odyssey"
     event_name = "Odyssey"
 
-    def easy(self, eager: bool = False) -> Odyssey:
+    def easy(self, eager: bool = True) -> Odyssey:
         return Odyssey(self.id, self.name, OdysseyDifficulty.EASY, eager=eager)
 
-    def medium(self, eager: bool = False) -> Odyssey:
+    def medium(self, eager: bool = True) -> Odyssey:
         return Odyssey(self.id, self.name, OdysseyDifficulty.EASY, eager=eager)
 
-    def hard(self, eager: bool = False) -> Odyssey:
+    def hard(self, eager: bool = True) -> Odyssey:
         return Odyssey(self.id, self.name, OdysseyDifficulty.EASY, eager=eager)

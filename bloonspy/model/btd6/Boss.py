@@ -1,10 +1,10 @@
-import requests
 from enum import Enum
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 from typing import List, Dict, Any
-from ...exceptions import NotFound
-from ...utils.dictionaries import has_all_keys
-from ...utils.decorators import fetch_property
+from ...utils.decorators import fetch_property, exception_handler
+from ...utils.api import get, get_lb_page
+from ..Loadable import Loadable
 from ..Event import Event
 from .Challenge import Challenge
 from .User import User
@@ -50,11 +50,11 @@ class BossPlayer(User):
 
 
 class Boss(Challenge):
-    endpoint = "https://data.ninjakiwi.com/btd6/bosses/{}/metadata/:difficulty:"
-    lb_endpoint = "https://data.ninjakiwi.com/btd6/bosses/{}/leaderboard/:difficulty:/{}"
+    endpoint = "/btd6/bosses/{}/metadata/:difficulty:"
+    lb_endpoint = "/btd6/bosses/{}/leaderboard/:difficulty:/{}"
 
     def __init__(self, boss_id: str, name: str, boss_bloon: BossBloon, total_scores: int, elite: bool,
-                 eager: bool = False):
+                 eager: bool = True):
         self._is_elite = elite
         self.endpoint = self.endpoint.replace(":difficulty:", "elite" if self._is_elite else "standard")
         self.lb_endpoint = self.lb_endpoint.replace(":difficulty:", "elite" if self._is_elite else "standard")
@@ -75,18 +75,27 @@ class Boss(Challenge):
     def is_elite(self) -> bool:
         return self._is_elite
 
+    def _get_lb_page(self, page_num: int, team_size: int):
+        try:
+            return get(self.lb_endpoint.format(self._id, team_size), params={"page": page_num})
+        except Exception as exc:
+            if str(exc) == "No Scores Available":
+                return []
+            raise exc
+
+    @exception_handler(Loadable.handle_exceptions)
     def leaderboard(self, pages: int = 1, start_from_page: int = 0, team_size: int = 1) -> List[BossPlayer]:
         if team_size not in range(1, 5):
             raise ValueError("team_size must be between 1 and 4")
 
-        boss_players = []
+        futures = []
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            for page_num in range(start_from_page, start_from_page + pages):
+                futures.append(executor.submit(get_lb_page, self.lb_endpoint.format(self._id, team_size), page_num))
 
-        for page_num in range(start_from_page, start_from_page + pages):
-            resp = requests.get(self.lb_endpoint.format(self._id, team_size), params={"page": page_num})
-            page = resp.json()
-            if not page["success"]:
-                self.handle_exceptions(page["error"])
-            for player in page["body"]:
+        boss_players = []
+        for page in futures:
+            for player in page.result():
                 boss_players.append(BossPlayer(
                     player["profile"].split("/")[-1], player["displayName"], player["score"], player["submissionTime"]
                 ))
@@ -95,7 +104,7 @@ class Boss(Challenge):
 
 
 class BossEvent(Event):
-    event_endpoint = "https://data.ninjakiwi.com/btd6/bosses"
+    event_endpoint = "/btd6/bosses"
     event_dict_keys = ["name", "bossType", "bossTypeURL", "start", "end", "totalScores_standard",
                        "totalScores_elite"]
     event_name: str = "Boss"
@@ -127,10 +136,10 @@ class BossEvent(Event):
     def total_scores_elite(self) -> int:
         return self._data["total_scores_elite"]
 
-    def standard(self, eager: bool = False) -> Boss:
+    def standard(self, eager: bool = True) -> Boss:
         return Boss(self.id, self.name, self.boss_bloon,
                     self.total_scores_standard, False, eager=eager)
 
-    def elite(self, eager: bool = False) -> Boss:
+    def elite(self, eager: bool = True) -> Boss:
         return Boss(self.id, self.name, self.boss_bloon,
                     self.total_scores_elite, True, eager=eager)

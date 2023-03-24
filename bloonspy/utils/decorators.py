@@ -8,3 +8,14 @@ def fetch_property(loading_func: callable, should_load: callable = None):
             return wrapped(self, *args, **kwargs)
         return wrapper
     return _decorator
+
+
+def exception_handler(handler: callable) -> callable:
+    def _decorator(wrapped: callable) -> callable:
+        def wrapper(self, *args, **kwargs):
+            try:
+                return wrapped(self, *args, **kwargs)
+            except Exception as exc:
+                handler(self, exc)
+        return wrapper
+    return _decorator
