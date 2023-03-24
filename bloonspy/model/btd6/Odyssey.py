@@ -1,11 +1,12 @@
 from enum import Enum
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Union
 from ...utils.decorators import fetch_property, exception_handler
 from ...utils.Infinity import Infinity
 from ...utils.api import get
 from ..Event import Event
 from ..Loadable import Loadable
 from .Restriction import Restriction, TowerRestriction
+from .Rewards import InstaMonkey, Reward
 from .Challenge import Challenge
 from .Power import Power
 from .Tower import Tower
@@ -37,6 +38,19 @@ class Odyssey(Loadable):
         for key in copy_keys:
             self._data[key] = raw_odyssey[key]
 
+        self._data["rewards"] = []
+        for raw_reward in raw_odyssey["_rewards"]:
+            reward_type, reward = raw_reward.split(":", 1)
+            if reward_type == "InstaMonkey":
+                tower, path = reward.split(",")
+                path = int(path)
+                self._data["rewards"].append(InstaMonkey(
+                    Tower.from_string(tower), int(path/100), int(path/10) % 10, path % 10
+                ))
+            elif reward_type == "Power":
+                self._data["rewards"].append(Power.from_string(reward))
+            else:
+                self._data["rewards"].append(Reward(reward_type, reward))
         self._data["rewards"] = raw_odyssey["_rewards"]
 
         self._data["availablePowers"] = {}
@@ -101,10 +115,9 @@ class Odyssey(Loadable):
     def starting_lives(self) -> int:
         return self._data["startingHealth"]
 
-    # TODO make a proper object for the rewards, Insta Monkeys, etc
     @property
     @fetch_property(Loadable.load_resource)
-    def rewards(self) -> List[str]:
+    def rewards(self) -> List[Union[Power, InstaMonkey, Reward]]:
         return self._data["rewards"]
 
     @property
