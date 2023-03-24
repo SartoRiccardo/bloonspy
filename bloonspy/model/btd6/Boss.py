@@ -1,8 +1,9 @@
 from enum import Enum
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 from typing import List, Dict, Any
 from ...utils.decorators import fetch_property, exception_handler
-from ...utils.api import get
+from ...utils.api import get, get_lb_page
 from ..Loadable import Loadable
 from ..Event import Event
 from .Challenge import Challenge
@@ -74,16 +75,27 @@ class Boss(Challenge):
     def is_elite(self) -> bool:
         return self._is_elite
 
+    def _get_lb_page(self, page_num: int, team_size: int):
+        try:
+            return get(self.lb_endpoint.format(self._id, team_size), params={"page": page_num})
+        except Exception as exc:
+            if str(exc) == "No Scores Available":
+                return []
+            raise exc
+
     @exception_handler(Loadable.handle_exceptions)
     def leaderboard(self, pages: int = 1, start_from_page: int = 0, team_size: int = 1) -> List[BossPlayer]:
         if team_size not in range(1, 5):
             raise ValueError("team_size must be between 1 and 4")
 
-        boss_players = []
+        futures = []
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            for page_num in range(start_from_page, start_from_page + pages):
+                futures.append(executor.submit(get_lb_page, self.lb_endpoint.format(self._id, team_size), page_num))
 
-        for page_num in range(start_from_page, start_from_page + pages):
-            page = get(self.lb_endpoint.format(self._id, team_size), params={"page": page_num})
-            for player in page:
+        boss_players = []
+        for page in futures:
+            for player in page.result():
                 boss_players.append(BossPlayer(
                     player["profile"].split("/")[-1], player["displayName"], player["score"], player["submissionTime"]
                 ))

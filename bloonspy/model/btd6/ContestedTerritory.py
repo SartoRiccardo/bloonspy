@@ -1,7 +1,8 @@
 from datetime import datetime
 from typing import List, Dict, Any
+from concurrent.futures import ThreadPoolExecutor
 from ...utils.decorators import fetch_property, exception_handler
-from ...utils.api import get
+from ...utils.api import get, get_lb_page
 from ..Event import Event
 from .User import User
 from .Team import Team
@@ -73,11 +74,14 @@ class ContestedTerritoryEvent(Event):
 
     @exception_handler(Event.handle_exceptions)
     def leaderboard_player(self, pages: int = 1, start_from_page: int = 0) -> List[CtPlayer]:
-        players = []
+        futures = []
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            for page_num in range(start_from_page, start_from_page + pages):
+                futures.append(executor.submit(get_lb_page, self.lb_endpoint_player.format(self._id), page_num))
 
-        for page_num in range(start_from_page, start_from_page + pages):
-            page = get(self.lb_endpoint_player.format(self._id), params={"page": page_num})
-            for player in page:
+        players = []
+        for page in futures:
+            for player in page.result():
                 players.append(CtPlayer(
                     player["profile"].split("/")[-1], player["displayName"], player["score"]
                 ))
@@ -86,11 +90,14 @@ class ContestedTerritoryEvent(Event):
 
     @exception_handler(Event.handle_exceptions)
     def leaderboard_team(self, pages: int = 1, start_from_page: int = 0) -> List[CtTeam]:
-        teams = []
+        futures = []
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            for page_num in range(start_from_page, start_from_page + pages):
+                futures.append(executor.submit(get_lb_page, self.lb_endpoint_team.format(self._id), page_num))
 
-        for page_num in range(start_from_page, start_from_page + pages):
-            page = get(self.lb_endpoint_team.format(self._id), params={"page": page_num})
-            for team in page:
+        teams = []
+        for page in futures:
+            for team in page.result():
                 teams.append(CtTeam(
                     team["profile"].split("/")[-1], team["displayName"], team["score"]
                 ))

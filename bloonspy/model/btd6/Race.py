@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta
+from concurrent.futures import ThreadPoolExecutor
 from typing import List, Dict, Any
 from ...utils.decorators import fetch_property, exception_handler
 from ...utils.dictionaries import has_all_keys
-from ...utils.api import get
+from ...utils.api import get, get_lb_page
 from ...exceptions import NotFound
-from ..Loadable import Loadable
 from .Challenge import Challenge
 from .User import User
 
@@ -95,11 +95,14 @@ class Race(Challenge):
 
     @exception_handler(Challenge.handle_exceptions)
     def leaderboard(self, pages: int = 1, start_from_page: int = 0) -> List[RacePlayer]:
-        race_players = []
+        futures = []
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            for page_num in range(start_from_page, start_from_page + pages):
+                futures.append(executor.submit(get_lb_page, self.lb_endpoint.format(self._id), page_num))
 
-        for page_num in range(start_from_page, start_from_page+pages):
-            page = get(self.lb_endpoint.format(self._id), params={"page": page_num})
-            for player in page:
+        race_players = []
+        for page in futures:
+            for player in page.result():
                 race_players.append(RacePlayer(
                     player["profile"].split("/")[-1], player["displayName"], player["score"], player["submissionTime"]
                 ))

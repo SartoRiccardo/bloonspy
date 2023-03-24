@@ -1,4 +1,6 @@
+import concurrent.futures
 from typing import List
+from concurrent.futures import ThreadPoolExecutor
 from .utils.api import get
 from .model.btd6 import \
     OdysseyEvent, \
@@ -73,9 +75,12 @@ class Client:
             challenge_list.append(Challenge(race["id"], name=race["name"], created_at=race["createdAt"],
                                             creator_id=race["creator"].split("/")[-1]))
         if eager:
-            # TODO Load them all concurrently instead of sequentially
-            for challenge in challenge_list:
-                challenge.load_resource()
+            with ThreadPoolExecutor(max_workers=10) as executor:
+                futures = []
+                for challenge in challenge_list:
+                    futures.append(executor.submit(challenge.load_resource))
+                concurrent.futures.wait(futures)
+
         return challenge_list
 
     @staticmethod
