@@ -11,7 +11,7 @@ class Restriction:
 
 @dataclass(kw_only=True)
 class TowerRestriction(Restriction):
-    """Non-hero restriction. Inherits from :class:`bloonspy.model.btd6.Restriction`."""
+    """Non-hero restriction. Inherits from :class:`~bloonspy.model.btd6.Restriction`."""
     top_path_blocked: int  #: Number of restricted top path upgrades.
     middle_path_blocked: int  #: Number of restricted middle path upgrades.
     bottom_path_blocked: int  #: Number of restricted bottom path upgrades.

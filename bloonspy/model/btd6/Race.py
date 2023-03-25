@@ -11,7 +11,7 @@ from .User import User
 
 class RacePlayer(User):
     """An user who played a race and is now on the leaderboard.
-    Inherits from :class:`bloonspy.model.btd6.User`.
+    Inherits from :class:`~bloonspy.model.btd6.User`.
     """
     def __init__(self, user_id: str, name: str, score: int, submission_time: int, **kwargs):
         super().__init__(user_id, **kwargs)
@@ -36,7 +36,7 @@ class RacePlayer(User):
 
 
 class Race(Challenge):
-    """A race event. Inherits from :class:`bloonspy.model.btd6.Challenge`."""
+    """A race event. Inherits from :class:`~bloonspy.model.btd6.Challenge`."""
 
     endpoint = "/btd6/races/{}/metadata"
     event_endpoint = "/btd6/races"
@@ -108,15 +108,20 @@ class Race(Challenge):
     def leaderboard(self, pages: int = 1, start_from_page: int = 0) -> List[RacePlayer]:
         """Get a page of the leaderboard for this event.
 
+        .. note::
+           The returned :class:`~bloonspy.model.btd6.RacePlayer` objects will only
+           have the properties :attr:`~bloonspy.model.Loadable.id`, :attr:`~bloonspy.model.btd6.Player.name`,
+           :attr:`~bloonspy.model.RacePlayer.score`, and :attr:`~bloonspy.model.RacePlayer.submission_time` loaded.
+
         :param pages: Number of pages to fetch.
         :type pages: int
         :param start_from_page: The first page to fetch.
         :type start_from_page: int
 
         :return: A list of players in the leaderboard.
-        :rtype: List[:class:`bloonspy.model.btd6.RacePlayer`]
+        :rtype: List[:class:`~bloonspy.model.btd6.RacePlayer`]
 
-        :raise bloonspy.exceptions.NotFound: If the race doesn't exist or is expired.
+        :raise ~bloonspy.exceptions.NotFound: If the race doesn't exist or is expired.
         """
         futures = []
         with ThreadPoolExecutor(max_workers=10) as executor:

@@ -19,7 +19,7 @@ class OdysseyDifficulty(Enum):
 
 
 class Odyssey(Loadable):
-    """Represents a single Odyssey. Inherits from :class:`bloonspy.model.Loadable`."""
+    """Represents a single Odyssey. Inherits from :class:`~bloonspy.model.Loadable`."""
     endpoint = "/btd6/odyssey/{}/:difficulty:"
     map_endpoint = "/btd6/odyssey/{}/:difficulty:/maps"
 
@@ -160,39 +160,54 @@ class Odyssey(Loadable):
 
 
 class OdysseyEvent(Event):
-    """An Odyssey event. Inherits from :class:`bloonspy.model.Event`."""
+    """An Odyssey event. Inherits from :class:`~bloonspy.model.Event`."""
     event_endpoint = "/btd6/odyssey"
     event_name = "Odyssey"
 
     def easy(self, eager: bool = False) -> Odyssey:
         """Get the easy mode version of the Odyssey.
 
+        .. note::
+           If lazily loaded, the returned :class:`~bloonspy.model.btd6.Odyssey` object will only
+           have the properties :attr:`~bloonspy.model.Loadable.id`, :attr:`~bloonspy.model.btd6.Odyssey.name`,
+           and :attr:`~bloonspy.model.Odyssey.difficulty` loaded.
+
         :param eager: If `True`, it loads all of the data right away. Set it to `False`
             if you want to limit API calls and don't need all the data.
         :type eager: bool
         :return: The easy mode of the odyssey.
-        :rtype: bloonspy.model.btd6.Odyssey
+        :rtype: ~bloonspy.model.btd6.Odyssey
         """
         return Odyssey(self.id, self.name, OdysseyDifficulty.EASY, eager=eager)
 
     def medium(self, eager: bool = False) -> Odyssey:
         """Get the medium mode version of the Odyssey.
 
+        .. note::
+           If lazily loaded, the returned :class:`~bloonspy.model.btd6.Odyssey` object will only
+           have the properties :attr:`~bloonspy.model.Loadable.id`, :attr:`~bloonspy.model.btd6.Odyssey.name`,
+           and :attr:`~bloonspy.model.Odyssey.difficulty` loaded.
+
         :param eager: If `True`, it loads all of the data right away. Set it to `False`
             if you want to limit API calls and don't need all the data.
         :type eager: bool
         :return: The medium mode of the odyssey.
-        :rtype: bloonspy.model.btd6.Odyssey
+        :rtype: ~bloonspy.model.btd6.Odyssey
         """
         return Odyssey(self.id, self.name, OdysseyDifficulty.EASY, eager=eager)
 
     def hard(self, eager: bool = False) -> Odyssey:
         """Get the hard mode version of the Odyssey.
 
+        .. note::
+           If lazily loaded, the returned :class:`~bloonspy.model.btd6.Odyssey` object will only
+           have the properties :attr:`~bloonspy.model.Loadable.id`, :attr:`~bloonspy.model.btd6.Odyssey.name`,
+           and :attr:`~bloonspy.model.Odyssey.difficulty` loaded.
+
         :param eager: If `True`, it loads all of the data right away. Set it to `False`
             if you want to limit API calls and don't need all the data.
         :type eager: bool
         :return: The hard mode of the odyssey.
-        :rtype: bloonspy.model.btd6.Odyssey
+        :rtype: ~bloonspy.model.btd6.Odyssey
         """
         return Odyssey(self.id, self.name, OdysseyDifficulty.EASY, eager=eager)

@@ -10,7 +10,7 @@ from .Team import Team
 
 class CtPlayer(User):
     """A player who has played a CT event and is on the leaderboard.
-    Inherits from :class:`bloonspy.model.btd6.User`.
+    Inherits from :class:`~bloonspy.model.btd6.User`.
     """
     def __init__(self, user_id: str, name: str, score: int, **kwargs):
         super().__init__(user_id, **kwargs)
@@ -47,7 +47,7 @@ class CtTeam(Team):
 
 
 class ContestedTerritoryEvent(Event):
-    """A Contested Territory event. Inherits from :class:`bloonspy.model.Event`."""
+    """A Contested Territory event. Inherits from :class:`~bloonspy.model.Event`."""
     event_endpoint = "/btd6/ct"
     lb_endpoint_player = "/btd6/ct/{}/leaderboard/player"
     lb_endpoint_team = "/btd6/ct/{}/leaderboard/team"
@@ -88,15 +88,20 @@ class ContestedTerritoryEvent(Event):
     def leaderboard_player(self, pages: int = 1, start_from_page: int = 0) -> List[CtPlayer]:
         """Get a page of the player leaderboard.
 
+        .. note::
+           The returned :class:`~bloonspy.model.btd6.CtPlayer` objects will only
+           have the properties :attr:`~bloonspy.model.Loadable.id`, :attr:`~bloonspy.model.btd6.User.name`, and
+           :attr:`~bloonspy.model.CtPlayer.score` loaded.
+
         :param pages: Number of pages to fetch.
         :type pages: int
         :param start_from_page: The first page to fetch.
         :type start_from_page: int
 
         :return: A list of players in the leaderboard.
-        :rtype: List[:class:`bloonspy.model.btd6.CtPlayer`]
+        :rtype: List[:class:`~bloonspy.model.btd6.CtPlayer`]
 
-        :raise bloonspy.exceptions.NotFound: If the boss doesn't exist or is expired.
+        :raise ~bloonspy.exceptions.NotFound: If the boss doesn't exist or is expired.
         """
         futures = []
         with ThreadPoolExecutor(max_workers=10) as executor:
@@ -116,15 +121,20 @@ class ContestedTerritoryEvent(Event):
     def leaderboard_team(self, pages: int = 1, start_from_page: int = 0) -> List[CtTeam]:
         """Get a page of the team leaderboard.
 
+        .. note::
+           The returned :class:`~bloonspy.model.btd6.CtTeam` objects will only
+           have the properties :attr:`~bloonspy.model.Loadable.id`, :attr:`~bloonspy.model.btd6.Team.name`,
+           and :attr:`~bloonspy.model.CtTeam.score` loaded.
+
         :param pages: Number of pages to fetch.
         :type pages: int
         :param start_from_page: The first page to fetch.
         :type start_from_page: int
 
         :return: A list of teams in the leaderboard.
-        :rtype: List[:class:`bloonspy.model.btd6.CtTeam`]
+        :rtype: List[:class:`~bloonspy.model.btd6.CtTeam`]
 
-        :raise bloonspy.exceptions.NotFound: If the boss doesn't exist or is expired.
+        :raise ~bloonspy.exceptions.NotFound: If the boss doesn't exist or is expired.
         """
         futures = []
         with ThreadPoolExecutor(max_workers=10) as executor:

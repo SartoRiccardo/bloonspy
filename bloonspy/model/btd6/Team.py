@@ -95,6 +95,10 @@ class Team(Loadable):
     def owner(self) -> User or None:
         """Fetch the owner of the team.
 
+        .. warning::
+           This function needs the property :attr:`~bloonspy.model.btd6.Team.owner_id` to be
+           loaded, or it will make another API call to fetch that first.
+
         :return: The owner of the team.
         :rtype: User or None
         """

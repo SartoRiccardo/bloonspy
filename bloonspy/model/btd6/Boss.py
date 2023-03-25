@@ -31,7 +31,7 @@ class BossBloon(Enum):
 
 class BossPlayer(User):
     """An user who played the boss event and submitted a ranked score.
-    Inherits from :class:`bloonspy.model.btd6.User`.
+    Inherits from :class:`~bloonspy.model.btd6.User`.
     """
     def __init__(self, user_id: str, name: str, score: int, submission_time: int, **kwargs):
         super().__init__(user_id, **kwargs)
@@ -56,7 +56,7 @@ class BossPlayer(User):
 
 
 class Boss(Challenge):
-    """A Boss challenge. Inherits from :class:`bloonspy.model.btd6.Challenge`."""
+    """A Boss challenge. Inherits from :class:`~bloonspy.model.btd6.Challenge`."""
     endpoint = "/btd6/bosses/{}/metadata/:difficulty:"
     lb_endpoint = "/btd6/bosses/{}/leaderboard/:difficulty:/{}"
 
@@ -97,6 +97,11 @@ class Boss(Challenge):
     def leaderboard(self, pages: int = 1, start_from_page: int = 0, team_size: int = 1) -> List[BossPlayer]:
         """Get a page of the leaderboard for this boss.
 
+        .. note::
+           The returned :class:`~bloonspy.model.btd6.BossPlayer` objects will only
+           have the properties :attr:`~bloonspy.model.Loadable.id`, :attr:`~bloonspy.model.btd6.BossPlayer.name`,
+           :attr:`~bloonspy.model.BossPlayer.score`, and :attr:`~bloonspy.model.BossPlayer.submission_time` loaded.
+
         :param pages: Number of pages to fetch.
         :type pages: int
         :param start_from_page: The first page to fetch.
@@ -105,9 +110,9 @@ class Boss(Challenge):
         :type team_size: int
 
         :return: A list of players in the leaderboard.
-        :rtype: List[:class:`bloonspy.model.btd6.RacePlayer`]
+        :rtype: List[:class:`~bloonspy.model.btd6.RacePlayer`]
 
-        :raise bloonspy.exceptions.NotFound: If the boss doesn't exist or is expired.
+        :raise ~bloonspy.exceptions.NotFound: If the boss doesn't exist or is expired.
         :raise ValueError: If `team_size` is less than 1 or more than 4.
         """
         if team_size not in range(1, 5):
@@ -129,7 +134,7 @@ class Boss(Challenge):
 
 
 class BossEvent(Event):
-    """A boss event. Inherits from :class:`bloonspy.model.Event`."""
+    """A boss event. Inherits from :class:`~bloonspy.model.Event`."""
     event_endpoint = "/btd6/bosses"
     event_dict_keys = ["name", "bossType", "bossTypeURL", "start", "end", "totalScores_standard",
                        "totalScores_elite"]
@@ -169,21 +174,33 @@ class BossEvent(Event):
     def standard(self, eager: bool = False) -> Boss:
         """Get the standard boss challenge.
 
+        .. note::
+           If lazy loaded, the returned :class:`~bloonspy.model.btd6.Boss` object will only
+           have the properties :attr:`~bloonspy.model.Loadable.id`, :attr:`~bloonspy.model.btd6.Challenge.name`,
+           :attr:`~bloonspy.model.Boss.boss_bloon`, :attr:`~bloonspy.model.Boss.is_elite`,
+           and :attr:`~bloonspy.model.Boss.total_scores` loaded.
+
         :param eager: If `True`, it loads all of the data right away. Set it to `False`
             if you want to limit API calls and don't need all the data.
         :type eager: bool
         :return: The standard boss event.
-        :rtype: bloonspy.model.btd6.Boss"""
+        :rtype: ~bloonspy.model.btd6.Boss"""
         return Boss(self.id, self.name, self.boss_bloon,
                     self.total_scores_standard, False, eager=eager)
 
     def elite(self, eager: bool = False) -> Boss:
         """Get the elite boss challenge.
 
+        .. note::
+           If lazy loaded, the returned :class:`~bloonspy.model.btd6.Boss` object will only
+           have the properties :attr:`~bloonspy.model.Loadable.id`, :attr:`~bloonspy.model.btd6.Challenge.name`,
+           :attr:`~bloonspy.model.Boss.boss_bloon`, :attr:`~bloonspy.model.Boss.is_elite`,
+           and :attr:`~bloonspy.model.Boss.total_scores` loaded.
+
         :param eager: If `True`, it loads all of the data right away. Set it to `False`
             if you want to limit API calls and don't need all the data.
         :type eager: bool
         :return: The elite boss event.
-        :rtype: bloonspy.model.btd6.Boss"""
+        :rtype: ~bloonspy.model.btd6.Boss"""
         return Boss(self.id, self.name, self.boss_bloon,
                     self.total_scores_elite, True, eager=eager)

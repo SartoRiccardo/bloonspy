@@ -52,7 +52,7 @@ class GameplayStats:
 
 
 class User(Loadable):
-    """A BTD6 player. Inherits from :class:`bloonspy.model.Loadable`."""
+    """A BTD6 player. Inherits from :class:`~bloonspy.model.Loadable`."""
     endpoint = "/btd6/users/{}"
 
     def _handle_exceptions(self, exception: Exception) -> None:

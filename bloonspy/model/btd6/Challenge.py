@@ -38,7 +38,7 @@ class ChallengeModifier:
 
 
 class Challenge(Loadable):
-    """A BTD6 Challenge. It extends :class:`bloonspy.model.Loadable`."""
+    """A BTD6 Challenge. It extends :class:`~bloonspy.model.Loadable`."""
 
     endpoint = "/btd6/challenges/challenge/{}"
 
@@ -174,6 +174,10 @@ class Challenge(Loadable):
     @fetch_property(Loadable.load_resource)
     def creator(self) -> User or None:
         """Fetch the creator of the challenge.
+
+        .. warning::
+           This function needs the property :attr:`~bloonspy.model.btd6.Challenge.creator_id` to be
+           loaded, or it will make another API call to fetch that first.
 
         :return: The creator of the challenge of `None` if there isn't one.
         :rtype: User or None
