@@ -179,11 +179,18 @@ class Client:
         :return: A list of challenges (lazy loaded).
         :rtype: List[:class:`bloonspy.model.btd6.Challenge`]
         """
-        challenges_data = get(f"/btd6/challenges/filter/{challenge_filter.value}")
+
         challenge_list = []
-        for chlg in challenges_data:
-            challenge_list.append(Challenge(chlg["id"], name=chlg["name"], created_at=chlg["createdAt"],
-                                            creator_id=chlg["creator"].split("/")[-1]))
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            challenge_pages = []
+            for page_num in range(start_from_page, start_from_page+pages):
+                challenge_pages.append(executor.submit(
+                    get, f"/btd6/challenges/filter/{challenge_filter.value}", {"page": page_num}
+                ))
+            for page in challenge_pages:
+                for chlg in page.result():
+                    challenge_list.append(Challenge(chlg["id"], name=chlg["name"], created_at=chlg["createdAt"],
+                                                    creator_id=chlg["creator"].split("/")[-1]))
         # if eager:
         #     with ThreadPoolExecutor(max_workers=10) as executor:
         #         futures = []
