@@ -23,5 +23,5 @@ for player in boss_standard_top_3:
 ```
 
 ## Resources
-+ Documentation
++ [Documentation](https://bloonspy.readthedocs.io/en/latest/)
 + [Github](https://github.com/SartoRiccardo/bloonspy)
