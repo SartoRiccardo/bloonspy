@@ -1,10 +1,11 @@
 Installation
 ------------
 
-.. info::
-   Python 3.9 or higher is required.
+.. note::
+   Python 3.10 or higher is required.
 
-::
+.. code-block:: console
+
     python3 -m pip install bloonspy
 
 
