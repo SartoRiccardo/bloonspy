@@ -4,8 +4,8 @@ from typing import Union
 
 @dataclass
 class GameVersion:
-    major: int
-    minor: int
+    major: int  #: The major version of the game.
+    minor: int  #: The minor version of the game.
 
     @staticmethod
     def from_string(version: Union[str, int]) -> "GameVersion":

@@ -10,6 +10,9 @@ from .User import User
 
 
 class RacePlayer(User):
+    """An user who played a race and is now on the leaderboard.
+    Inherits from :class:`~bloonspy.model.btd6.User`.
+    """
     def __init__(self, user_id: str, name: str, score: int, submission_time: int, **kwargs):
         super().__init__(user_id, **kwargs)
         self._name = name
@@ -18,18 +21,23 @@ class RacePlayer(User):
 
     @property
     def name(self) -> str:
+        """The name of the user."""
         return self._name
 
     @property
     def score(self) -> timedelta:
+        """The time the user got."""
         return self._score
 
     @property
     def submission_time(self) -> datetime:
+        """The time the user's score was submitted at."""
         return self._submission_time
 
 
 class Race(Challenge):
+    """A race event. Inherits from :class:`~bloonspy.model.btd6.Challenge`."""
+
     endpoint = "/btd6/races/{}/metadata"
     event_endpoint = "/btd6/races"
     lb_endpoint = "/btd6/races/{}/leaderboard"
@@ -49,7 +57,6 @@ class Race(Challenge):
         error_msg = str(exception)
         if error_msg == "No Race with that ID exists":
             raise NotFound(error_msg)
-        super().handle_exceptions(exception)
 
     @exception_handler(Challenge.handle_exceptions)
     def _load_race(self, only_if_unloaded: bool = True) -> None:
@@ -76,25 +83,46 @@ class Race(Challenge):
     @property
     @fetch_property(_load_race)
     def name(self) -> str:
+        """The name of the race."""
         return self._data["name"]
 
     @property
     @fetch_property(_load_race)
     def start(self) -> datetime:
+        """When the event starts."""
         return self._start
 
     @property
     @fetch_property(_load_race)
     def end(self) -> datetime:
+        """When the event ends."""
         return self._end
 
     @property
     @fetch_property(_load_race)
     def total_scores(self) -> int:
+        """Number of users who played and submitted a score."""
         return self._total_scores
 
     @exception_handler(Challenge.handle_exceptions)
     def leaderboard(self, pages: int = 1, start_from_page: int = 0) -> List[RacePlayer]:
+        """Get a page of the leaderboard for this event.
+
+        .. note::
+           The returned :class:`~bloonspy.model.btd6.RacePlayer` objects will only
+           have the properties :attr:`~bloonspy.model.Loadable.id`, :attr:`~bloonspy.model.btd6.Player.name`,
+           :attr:`~bloonspy.model.RacePlayer.score`, and :attr:`~bloonspy.model.RacePlayer.submission_time` loaded.
+
+        :param pages: Number of pages to fetch.
+        :type pages: int
+        :param start_from_page: The first page to fetch.
+        :type start_from_page: int
+
+        :return: A list of players in the leaderboard.
+        :rtype: List[:class:`~bloonspy.model.btd6.RacePlayer`]
+
+        :raise ~bloonspy.exceptions.NotFound: If the race doesn't exist or is expired.
+        """
         futures = []
         with ThreadPoolExecutor(max_workers=10) as executor:
             for page_num in range(start_from_page, start_from_page + pages):

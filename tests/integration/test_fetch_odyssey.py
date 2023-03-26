@@ -2,7 +2,7 @@ import unittest
 from bloonspy import btd6, Client
 
 
-class TestFetchUser(unittest.TestCase):
+class TestFetchOdyssey(unittest.TestCase):
     def test_odyssey(self) -> None:
         """
         Test getting a random odyssey.

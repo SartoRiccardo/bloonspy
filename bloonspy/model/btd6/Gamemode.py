@@ -29,8 +29,9 @@ class Mode(Enum):
 
 @dataclass
 class Gamemode:
-    difficulty: Difficulty
-    mode: Mode
+    """Difficulty and mode for a game."""
+    difficulty: Difficulty  #: The game's difficulty.
+    mode: Mode  #: The game's mode.
 
     @staticmethod
     def from_strings(difficulty, mode) -> "Gamemode":

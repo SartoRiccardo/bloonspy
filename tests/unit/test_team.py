@@ -7,7 +7,7 @@ from bloonspy import btd6
 class TestTeam(unittest.TestCase):
     def test_team(self) -> None:
         """
-        Test that a challenge is loaded correctly.
+        Test that a team is loaded correctly.
         """
         team_id = "9fbd42d9d995ada44c4188180975e57e990049b59917893b"
         team = btd6.Team(team_id)

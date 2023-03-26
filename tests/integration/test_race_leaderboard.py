@@ -8,7 +8,7 @@ from bloonspy import btd6, Client
 class TestRaceLeaderboard(unittest.TestCase):
     def test_race_leaderboard(self) -> None:
         """
-        Test a challenge with a creator.
+        Test getting a race event's leaderboard.
         """
         races = Client.races()
         race = races[1]
@@ -22,7 +22,7 @@ class TestRaceLeaderboard(unittest.TestCase):
 
         check_instance = [
             ("name", str), ("score", timedelta), ("submission_time", datetime),
-            ("achievements", int), ("boss_normal_medals", btd6.Medals)
+            ("achievements", int), ("boss_normal_medals", btd6.EventMedals)
         ]
         for attr_name, attr_type in check_instance:
             self.assertIsInstance(getattr(some_player, attr_name), attr_type,

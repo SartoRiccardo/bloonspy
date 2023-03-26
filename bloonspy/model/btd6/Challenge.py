@@ -23,62 +23,28 @@ class ChallengeFilter(Enum):
 
 @dataclass(kw_only=True)
 class ChallengeModifier:
-    ability_cooldown_reduction: float = field(default=1.0)
-    removable_cost: float = field(default=1.0)
-    bloon_speed: float = field(default=1.0)
-    moab_speed: float = field(default=1.0)
-    boss_speed: float = field(default=1.0)
-    ceramic_health: float = field(default=1.0)
-    moab_health: float = field(default=1.0)
-    boss_health: float = field(default=1.0)
-    regrow_rate: float = field(default=1.0)
-    all_regrow: bool = field(default=False)
-    all_camo: bool = field(default=False)
+    """All the modifiers of a challenge."""
+    ability_cooldown_reduction: float = field(default=1.0)  #: Multiplier for ability cooldowns.
+    removable_cost: float = field(default=1.0)  #: Multiplier for the cost of track removables.
+    bloon_speed: float = field(default=1.0)  #: Bloon speed multiplier.
+    moab_speed: float = field(default=1.0)  #: MOAB speed multiplier.
+    boss_speed: float = field(default=1.0)  #: Boss bloon speed multiplier.
+    ceramic_health: float = field(default=1.0)  #: Ceramic layer health multiplier.
+    moab_health: float = field(default=1.0)  #: MOAB class bloon health multiplier.
+    boss_health: float = field(default=1.0)  #: Boss bloon health multiplier
+    regrow_rate: float = field(default=1.0)  #: Regrow rate multiplier
+    all_regrow: bool = field(default=False)  #: If `True`, all bloons will be regrow.
+    all_camo: bool = field(default=False)  #: If `True`, all bloons will be camo.
 
 
 class Challenge(Loadable):
-    """A BTD6 Challenge.
-
-    Attributes:
-        id (str): Unique Challenge ID
-        name (str): Challenge Name
-        created_at (datatime): Challenge creation time
-        game_version (GameVersion): Version of the game this challenge was created in
-        challenge_map (Asset): The map this challenge takes place in
-        mode (Gamemode): Difficulty and gamemode of the challenge
-        disable_double_cash (bool): `True` if Double Cash is disabled
-        disable_instas (bool): `True` if Insta Monkeys are disabled
-        disable_monkey_knowledge (bool): `True` if Monkey Knowledge is disabled
-        disable_powers (bool): `True` if Powers are disabled
-        disable_selling (bool): `True` if selling is disabled
-        disable_continues (bool): `True` if continues are disabled
-        starting_cash (int): Starting cash value
-        starting_lives (int): Starting lives
-        max_lives (int): Maximum allowed lives
-        max_towers (int): Maximum towers allowed
-        max_paragons (int): Maximum paragons allowed
-        start_round (int): Starting round
-        end_round (int): Ending round
-        plays (int): Total number of attempts
-        plays_unique (int): Total number of attempts by different people
-        wins (int): Total number of wins
-        wins_unique (int): Total number of wins by different people
-        losses (int): Total number of losses
-        losses_unique (int): Total number of losses
-        upvotes (int): Total number of upvotes
-        least_cash_used (int): Least Cash Used setting
-        least_tiers_used (int): Least Tiers Used setting
-        seed (int): The RNG seed
-        round_sets (List[str]): Bloon round information
-        powers (Dict[Power, int]): Power restrictions. Banned powers don't appear, and powers with no restrictions appear as Infinity.
-        modifiers (Dict[ChallengeModifier, float]): Challenge modifiers
-        towers (Dict[Tower, Restriction]): Tower restrictions
-    """
+    """A BTD6 Challenge. It extends :class:`~bloonspy.model.Loadable`."""
 
     endpoint = "/btd6/challenges/challenge/{}"
 
     def __init__(self, challenge_id: str, eager: bool = True, name: str = None, created_at: int = None,
                  creator_id: str = None, raw_challenge: Dict[str, Any] = None):
+        """Constructor method."""
         super().__init__(challenge_id, eager=eager)
         if raw_challenge:
             self._parse_json(raw_challenge)
@@ -93,7 +59,6 @@ class Challenge(Loadable):
         error_msg = str(exception)
         if error_msg == "No challenge with that ID exists":
             raise NotFound(error_msg)
-        super().handle_exceptions(exception)
 
     def _parse_json(self, raw_challenge: Dict[str, Any]) -> None:
         self._loaded = False
@@ -179,34 +144,44 @@ class Challenge(Loadable):
 
     @property
     def id(self) -> str:
+        """The unique ID of the challenge."""
         return self._id
-
-    @property
-    def loaded(self) -> bool:
-        return self._loaded
 
     @property
     @fetch_property(Loadable.load_resource, should_load=Loadable._should_load_property("name"))
     def name(self) -> str:
+        """The name of the challenge."""
         return self._data["name"]
 
     @property
     @fetch_property(Loadable.load_resource, should_load=Loadable._should_load_property("createdAt"))
     def created_at(self) -> datetime:
+        """The time the challenge was created at."""
         return self._data["createdAt"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def game_version(self) -> GameVersion:
+        """The latest game version the challenge was last beaten in."""
         return self._data["gameVersion"]
 
     @property
     @fetch_property(Loadable.load_resource, should_load=Loadable._should_load_property("creatorId"))
     def creator_id(self) -> str:
+        """The ID of the challenge's creator. `None` if there isn't one (e.g. Odyssey challenges)."""
         return self._data["creatorId"]
 
     @fetch_property(Loadable.load_resource)
     def creator(self) -> User or None:
+        """Fetch the creator of the challenge.
+
+        .. warning::
+           This function needs the property :attr:`~bloonspy.model.btd6.Challenge.creator_id` to be
+           loaded, or it will make another API call to fetch that first.
+
+        :return: The creator of the challenge of `None` if there isn't one.
+        :rtype: User or None
+        """
         if self.creator_id is None:
             return None
         return User(self.creator_id, eager=True)
@@ -214,144 +189,173 @@ class Challenge(Loadable):
     @property
     @fetch_property(Loadable.load_resource)
     def challenge_map(self) -> Asset:
+        """Name and URL of the map the challenge takes place in."""
         return self._data["map"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def gamemode(self) -> Gamemode:
+        """Gamemode of the challenge."""
         return self._data["gamemode"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def disable_double_cash(self) -> bool:
+        """`True` if Double Cash is disabled."""
         return self._data["disableDoubleCash"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def disable_instas(self) -> bool:
+        """`True` if Insta Monkeys is disabled."""
         return self._data["disableInstas"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def disable_monkey_knowledge(self) -> bool:
+        """`True` if Monkey Knowledge is disabled."""
         return self._data["disableMK"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def disable_powers(self) -> bool:
+        """`True` if Powers are disabled."""
         return self._data["disablePowers"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def disable_selling(self) -> bool:
+        """`True` if Selling is disabled."""
         return self._data["disableSelling"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def disable_continues(self) -> bool:
+        """`True` if Continues are disabled."""
         return self._data["noContinues"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def starting_cash(self) -> int:
+        """The amount of cash you start with."""
         return self._data["startingCash"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def starting_lives(self) -> int:
+        """The amount of lives you start with."""
         return self._data["lives"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def max_lives(self) -> int:
+        """The maximum amount of lives you can have."""
         return self._data["maxLives"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def max_towers(self) -> int:
+        """The maximum amount of towers you can have at any given time."""
         return self._data["maxTowers"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def max_paragons(self) -> int:
+        """The maximum amount of paragons you can have at any given time."""
         return self._data["maxParagons"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def start_round(self) -> int:
+        """The round the challenge starts at."""
         return self._data["startRound"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def end_round(self) -> int:
+        """The round the challenge ends at."""
         return self._data["endRound"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def plays(self) -> int:
+        """How many times the challenge has been played."""
         return self._data["plays"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def plays_unique(self) -> int:
+        """Amount of unique people that have played the challenge."""
         return self._data["playsUnique"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def wins(self) -> int:
+        """How many times the challenge has been won."""
         return self._data["winsUnique"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def wins_unique(self) -> int:
+        """Amount of unique people that have won the challenge."""
         return self._data["winsUnique"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def losses(self) -> int:
+        """How many times the challenge has been lost."""
         return self._data["losses"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def losses_unique(self) -> int:
+        """Amount of unique people that have lost the challenge."""
         return self._data["lossesUnique"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def upvotes(self) -> int:
+        """Amount of upvotes the challenge has."""
         return self._data["upvotes"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def least_cash_used(self) -> Union[int, Infinity]:
+        """Least Cash restriction on the challenge. If there's none, it's :class:`Infinity`."""
         return self._data["leastCash"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def least_tiers_used(self) -> Union[int, Infinity]:
+        """Least Tiers restriction on the challenge. If there's none, it's :class:`Infinity`."""
         return self._data["leastTiers"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def seed(self) -> int:
+        """The RNG seed for the challenge."""
         return self._data["seed"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def round_sets(self) -> List[str]:
+        """Names of the round sets of the challenge."""
         return self._data["roundSets"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def powers(self) -> Dict[Power, Union[int, Infinity]]:
+        """The powers allowed for the challenge, and how many you can use of each."""
         return self._data["powers"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def modifiers(self) -> Dict[ChallengeModifier, float]:
+        """Challenge modifiers, such as bloon speeds and health."""
         return self._data["modifiers"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def towers(self) -> Dict[Tower, Restriction]:
+        """Tower and Hero restrictions on the challenge."""
         return self._data["towers"]

@@ -7,7 +7,7 @@ from bloonspy import btd6
 class TestUser(unittest.TestCase):
     def test_user(self) -> None:
         """
-        Test that a challenge is loaded correctly.
+        Test that an user is loaded correctly.
         """
         user_id = "9cee138c8c94ffac1910864c0b73e577ca554ce8cb18db6c"
         user = btd6.User(user_id)
@@ -36,8 +36,8 @@ class TestUser(unittest.TestCase):
             ("banner", btd6.Asset),
             ("single_player_medals", btd6.MapMedals),
             ("coop_medals", btd6.MapMedals),
-            ("boss_normal_medals", btd6.Medals),
-            ("boss_elite_medals", btd6.Medals),
+            ("boss_normal_medals", btd6.EventMedals),
+            ("boss_elite_medals", btd6.EventMedals),
             # ("race_medals", btd6.Medals),
             ("ct_local_medals", btd6.CTLocalMedals),
             ("ct_global_medals", btd6.CTGlobalMedals),

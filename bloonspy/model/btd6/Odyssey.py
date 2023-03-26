@@ -19,6 +19,7 @@ class OdysseyDifficulty(Enum):
 
 
 class Odyssey(Loadable):
+    """Represents a single Odyssey. Inherits from :class:`~bloonspy.model.Loadable`."""
     endpoint = "/btd6/odyssey/{}/:difficulty:"
     map_endpoint = "/btd6/odyssey/{}/:difficulty:/maps"
 
@@ -84,60 +85,73 @@ class Odyssey(Loadable):
 
     @property
     def name(self) -> str:
+        """The Odyssey's name"""
         return self._name
 
     @property
     def difficulty(self) -> OdysseyDifficulty:
+        """The Odysseys's difficulty"""
         return self._difficulty
 
     @property
     @fetch_property(Loadable.load_resource)
     def is_extreme(self) -> bool:
+        """`True` if the odyssey is extreme."""
         return self._data["isExtreme"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def max_monkey_seats(self) -> int:
+        """Max number of monkey types you can take."""
         return self._data["maxMonkeySeats"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def max_boat_seats(self) -> int:
+        """Max number of monkeys you can take."""
         return self._data["maxMonkeysOnBoat"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def max_power_slots(self) -> int:
+        """Max number of powers you can take."""
         return self._data["maxPowerSlots"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def starting_lives(self) -> int:
+        """Odyssey's starting lives"""
         return self._data["startingHealth"]
 
     @property
     @fetch_property(Loadable.load_resource)
     def rewards(self) -> List[Union[Power, InstaMonkey, Reward]]:
+        """Rewards for completing the odyssey."""
         return self._data["rewards"]
 
     @property
     def available_powers(self) -> Dict[Power, int]:
+        """Available powers to choose from for the odyssey."""
         return self._data["availablePowers"]
 
     @property
     def default_powers(self) -> Dict[Power, int]:
+        """Default powers for the odyssey."""
         return self._data["defaultPowers"]
 
     @property
     def available_towers(self) -> Dict[Tower, Restriction]:
+        """Available towers to choose from for the odyssey."""
         return self._data["availableTowers"]
 
     @property
     def default_towers(self) -> Dict[Tower, int]:
+        """Default towers for the odyssey."""
         return self._data["defaultTowers"]
 
     @exception_handler(Loadable.handle_exceptions)
     def maps(self) -> List[Challenge]:
+        """Get all of the odyssey's challenges."""
         odyssey_map = get(self.map_endpoint.format(self._id))
         islands = []
         for island in odyssey_map:
@@ -146,14 +160,57 @@ class Odyssey(Loadable):
 
 
 class OdysseyEvent(Event):
+    """An Odyssey event. Inherits from :class:`~bloonspy.model.Event`."""
     event_endpoint = "/btd6/odyssey"
     event_name = "Odyssey"
 
-    def easy(self, eager: bool = True) -> Odyssey:
+    def easy(self, eager: bool = False) -> Odyssey:
+        """Get the easy mode version of the Odyssey.
+
+        .. note::
+           If lazily loaded, the returned :class:`~bloonspy.model.btd6.Odyssey` object will only
+           have the properties :attr:`~bloonspy.model.Loadable.id`, :attr:`~bloonspy.model.btd6.Odyssey.name`,
+           and :attr:`~bloonspy.model.Odyssey.difficulty` loaded.
+
+        :param eager: If `True`, it loads all of the data right away. Set it to `False`
+            if you want to limit API calls and don't need all the data. For more information,
+            please read `Lazy and Eager Loading <async.html#lazy-and-eager-loading>`_.
+        :type eager: bool
+        :return: The easy mode of the odyssey.
+        :rtype: ~bloonspy.model.btd6.Odyssey
+        """
         return Odyssey(self.id, self.name, OdysseyDifficulty.EASY, eager=eager)
 
-    def medium(self, eager: bool = True) -> Odyssey:
+    def medium(self, eager: bool = False) -> Odyssey:
+        """Get the medium mode version of the Odyssey.
+
+        .. note::
+           If lazily loaded, the returned :class:`~bloonspy.model.btd6.Odyssey` object will only
+           have the properties :attr:`~bloonspy.model.Loadable.id`, :attr:`~bloonspy.model.btd6.Odyssey.name`,
+           and :attr:`~bloonspy.model.Odyssey.difficulty` loaded.
+
+        :param eager: If `True`, it loads all of the data right away. Set it to `False`
+            if you want to limit API calls and don't need all the data. For more information,
+            please read `Lazy and Eager Loading <async.html#lazy-and-eager-loading>`_.
+        :type eager: bool
+        :return: The medium mode of the odyssey.
+        :rtype: ~bloonspy.model.btd6.Odyssey
+        """
         return Odyssey(self.id, self.name, OdysseyDifficulty.EASY, eager=eager)
 
-    def hard(self, eager: bool = True) -> Odyssey:
+    def hard(self, eager: bool = False) -> Odyssey:
+        """Get the hard mode version of the Odyssey.
+
+        .. note::
+           If lazily loaded, the returned :class:`~bloonspy.model.btd6.Odyssey` object will only
+           have the properties :attr:`~bloonspy.model.Loadable.id`, :attr:`~bloonspy.model.btd6.Odyssey.name`,
+           and :attr:`~bloonspy.model.Odyssey.difficulty` loaded.
+
+        :param eager: If `True`, it loads all of the data right away. Set it to `False`
+            if you want to limit API calls and don't need all the data. For more information,
+            please read `Lazy and Eager Loading <async.html#lazy-and-eager-loading>`_.
+        :type eager: bool
+        :return: The hard mode of the odyssey.
+        :rtype: ~bloonspy.model.btd6.Odyssey
+        """
         return Odyssey(self.id, self.name, OdysseyDifficulty.EASY, eager=eager)

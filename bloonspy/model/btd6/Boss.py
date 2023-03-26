@@ -30,6 +30,9 @@ class BossBloon(Enum):
 
 
 class BossPlayer(User):
+    """An user who played the boss event and submitted a ranked score.
+    Inherits from :class:`~bloonspy.model.btd6.User`.
+    """
     def __init__(self, user_id: str, name: str, score: int, submission_time: int, **kwargs):
         super().__init__(user_id, **kwargs)
         self._name = name
@@ -38,18 +41,22 @@ class BossPlayer(User):
 
     @property
     def name(self) -> str:
+        """The name of the user."""
         return self._name
 
     @property
     def score(self) -> timedelta:
+        """The time the user got."""
         return self._score
 
     @property
     def submission_time(self) -> datetime:
+        """The time the user’s score was submitted at."""
         return self._submission_time
 
 
 class Boss(Challenge):
+    """A Boss challenge. Inherits from :class:`~bloonspy.model.btd6.Challenge`."""
     endpoint = "/btd6/bosses/{}/metadata/:difficulty:"
     lb_endpoint = "/btd6/bosses/{}/leaderboard/:difficulty:/{}"
 
@@ -65,14 +72,17 @@ class Boss(Challenge):
 
     @property
     def boss_bloon(self) -> BossBloon:
+        """The boss in this challenge."""
         return self._boss_bloon
 
     @property
     def total_scores(self) -> int:
+        """The total scores submitted."""
         return self._total_scores
 
     @property
     def is_elite(self) -> bool:
+        """`True` if the boss is Elite."""
         return self._is_elite
 
     def _get_lb_page(self, page_num: int, team_size: int):
@@ -85,6 +95,26 @@ class Boss(Challenge):
 
     @exception_handler(Loadable.handle_exceptions)
     def leaderboard(self, pages: int = 1, start_from_page: int = 0, team_size: int = 1) -> List[BossPlayer]:
+        """Get a page of the leaderboard for this boss.
+
+        .. note::
+           The returned :class:`~bloonspy.model.btd6.BossPlayer` objects will only
+           have the properties :attr:`~bloonspy.model.Loadable.id`, :attr:`~bloonspy.model.btd6.BossPlayer.name`,
+           :attr:`~bloonspy.model.BossPlayer.score`, and :attr:`~bloonspy.model.BossPlayer.submission_time` loaded.
+
+        :param pages: Number of pages to fetch.
+        :type pages: int
+        :param start_from_page: The first page to fetch.
+        :type start_from_page: int
+        :param team_size: The team size to get the leaderboard for.
+        :type team_size: int
+
+        :return: A list of players in the leaderboard.
+        :rtype: List[:class:`~bloonspy.model.btd6.RacePlayer`]
+
+        :raise ~bloonspy.exceptions.NotFound: If the boss doesn't exist or is expired.
+        :raise ValueError: If `team_size` is less than 1 or more than 4.
+        """
         if team_size not in range(1, 5):
             raise ValueError("team_size must be between 1 and 4")
 
@@ -104,6 +134,7 @@ class Boss(Challenge):
 
 
 class BossEvent(Event):
+    """A boss event. Inherits from :class:`~bloonspy.model.Event`."""
     event_endpoint = "/btd6/bosses"
     event_dict_keys = ["name", "bossType", "bossTypeURL", "start", "end", "totalScores_standard",
                        "totalScores_elite"]
@@ -119,27 +150,59 @@ class BossEvent(Event):
     @property
     @fetch_property(Event.load_event, should_load=Event._should_load_property)
     def boss_bloon(self) -> BossBloon:
+        """The boss bloon in this event."""
         return self._data["boss_bloon"]
 
     @property
     @fetch_property(Event.load_event, should_load=Event._should_load_property)
     def boss_banner(self) -> str:
+        """The URL to the banner used to advertise the event."""
         return self._data["boss_banner"]
 
     @property
     @fetch_property(Event.load_event, should_load=Event._should_load_property)
     def total_scores_standard(self) -> int:
+        """Total scores submitted in the standard boss."""
         return self._data["total_scores_standard"]
 
     @property
     @fetch_property(Event.load_event, should_load=Event._should_load_property)
     def total_scores_elite(self) -> int:
+        """Total scores submitted in the elite boss."""
         return self._data["total_scores_elite"]
 
-    def standard(self, eager: bool = True) -> Boss:
+    def standard(self, eager: bool = False) -> Boss:
+        """Get the standard boss challenge.
+
+        .. note::
+           If lazy loaded, the returned :class:`~bloonspy.model.btd6.Boss` object will only
+           have the properties :attr:`~bloonspy.model.Loadable.id`, :attr:`~bloonspy.model.btd6.Challenge.name`,
+           :attr:`~bloonspy.model.Boss.boss_bloon`, :attr:`~bloonspy.model.Boss.is_elite`,
+           and :attr:`~bloonspy.model.Boss.total_scores` loaded.
+
+        :param eager: If `True`, it loads all of the data right away. Set it to `False`
+            if you want to limit API calls and don't need all the data. For more information,
+            please read `Lazy and Eager Loading <async.html#lazy-and-eager-loading>`_.
+        :type eager: bool
+        :return: The standard boss event.
+        :rtype: ~bloonspy.model.btd6.Boss"""
         return Boss(self.id, self.name, self.boss_bloon,
                     self.total_scores_standard, False, eager=eager)
 
-    def elite(self, eager: bool = True) -> Boss:
+    def elite(self, eager: bool = False) -> Boss:
+        """Get the elite boss challenge.
+
+        .. note::
+           If lazy loaded, the returned :class:`~bloonspy.model.btd6.Boss` object will only
+           have the properties :attr:`~bloonspy.model.Loadable.id`, :attr:`~bloonspy.model.btd6.Challenge.name`,
+           :attr:`~bloonspy.model.Boss.boss_bloon`, :attr:`~bloonspy.model.Boss.is_elite`,
+           and :attr:`~bloonspy.model.Boss.total_scores` loaded.
+
+        :param eager: If `True`, it loads all of the data right away. Set it to `False`
+            if you want to limit API calls and don't need all the data. For more information,
+            please read `Lazy and Eager Loading <async.html#lazy-and-eager-loading>`_.
+        :type eager: bool
+        :return: The elite boss event.
+        :rtype: ~bloonspy.model.btd6.Boss"""
         return Boss(self.id, self.name, self.boss_bloon,
                     self.total_scores_elite, True, eager=eager)

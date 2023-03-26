@@ -9,7 +9,7 @@ class TestChallengeBrowser(unittest.TestCase):
         """
         Test getting the newest challenges.
         """
-        challenges = Client.challenges(ChallengeFilter.NEWEST)
+        challenges = Client.challenges(ChallengeFilter.NEWEST, start_from_page=2, pages=2)
         self.assertGreater(len(challenges), 0)
         some_challenge = challenges[random.randint(0, len(challenges)-1)]
 
