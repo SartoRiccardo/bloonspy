@@ -61,7 +61,7 @@ class Boss(Challenge):
     lb_endpoint = "/btd6/bosses/{}/leaderboard/:difficulty:/{}"
 
     def __init__(self, boss_id: str, name: str, boss_bloon: BossBloon, total_scores: int, elite: bool,
-                 eager: bool = True):
+                 eager: bool = False):
         self._is_elite = elite
         self.endpoint = self.endpoint.replace(":difficulty:", "elite" if self._is_elite else "standard")
         self.lb_endpoint = self.lb_endpoint.replace(":difficulty:", "elite" if self._is_elite else "standard")
@@ -94,7 +94,7 @@ class Boss(Challenge):
             raise exc
 
     @exception_handler(Loadable.handle_exceptions)
-    def leaderboard(self, pages: int = 1, start_from_page: int = 0, team_size: int = 1) -> List[BossPlayer]:
+    def leaderboard(self, pages: int = 1, start_from_page: int = 1, team_size: int = 1) -> List[BossPlayer]:
         """Get a page of the leaderboard for this boss.
 
         .. note::

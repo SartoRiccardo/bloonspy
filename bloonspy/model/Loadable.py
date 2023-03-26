@@ -7,7 +7,7 @@ class Loadable:
     """Represents a resource that can be loaded."""
     endpoint = "{}"
 
-    def __init__(self, resource_id: str, eager: bool = True):
+    def __init__(self, resource_id: str, eager: bool = False):
         self._id = resource_id
         self._data = {}
         self._loaded = False

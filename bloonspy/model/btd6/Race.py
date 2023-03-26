@@ -42,7 +42,7 @@ class Race(Challenge):
     event_endpoint = "/btd6/races"
     lb_endpoint = "/btd6/races/{}/leaderboard"
 
-    def __init__(self, race_id: str, eager: bool = True, race_json: Dict[str, Any] = None):
+    def __init__(self, race_id: str, eager: bool = False, race_json: Dict[str, Any] = None):
         super().__init__(race_id, eager=eager)
         self._start = datetime.fromtimestamp(0)
         self._end = datetime.fromtimestamp(0)
@@ -105,7 +105,7 @@ class Race(Challenge):
         return self._total_scores
 
     @exception_handler(Challenge.handle_exceptions)
-    def leaderboard(self, pages: int = 1, start_from_page: int = 0) -> List[RacePlayer]:
+    def leaderboard(self, pages: int = 1, start_from_page: int = 1) -> List[RacePlayer]:
         """Get a page of the leaderboard for this event.
 
         .. note::
