@@ -5,6 +5,7 @@ Installation
    Python 3.10 or higher is required.
 
 .. code-block:: console
+
     python3 -m pip install bloonspy
 
 
