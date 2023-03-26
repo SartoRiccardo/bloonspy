@@ -26,7 +26,7 @@ class TestChallengeBrowser(unittest.TestCase):
         """
         Test getting the newest challenges, fully loaded.
         """
-        challenges = Client.challenges(ChallengeFilter.NEWEST, eager=True)
+        challenges = Client.challenges(ChallengeFilter.NEWEST)
         self.assertGreater(len(challenges), 0)
 
         for challenge in challenges:

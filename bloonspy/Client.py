@@ -30,7 +30,7 @@ class Client:
         return odyssey_list
 
     @staticmethod
-    def get_odyssey(odyssey_id: str, eager: bool = True) -> OdysseyEvent:
+    def get_odyssey(odyssey_id: str, eager: bool = False) -> OdysseyEvent:
         """Fetch a specific Odyssey by its ID.
 
         .. note::
@@ -61,7 +61,7 @@ class Client:
         return ct_list
 
     @staticmethod
-    def get_contested_territory(ct_id: str, eager: bool = True) -> ContestedTerritoryEvent:
+    def get_contested_territory(ct_id: str, eager: bool = False) -> ContestedTerritoryEvent:
         """Fetch a specific Contested Territory event by its ID.
 
         .. note::
@@ -113,7 +113,7 @@ class Client:
         return race_list
 
     @staticmethod
-    def get_race(race_id: str, eager: bool = True) -> Race:
+    def get_race(race_id: str, eager: bool = False) -> Race:
         """Fetch a specific Race by its ID.
 
         .. note::
@@ -144,7 +144,7 @@ class Client:
         return boss_list
 
     @staticmethod
-    def get_boss(boss_id: str, eager: bool = True) -> BossEvent:
+    def get_boss(boss_id: str, eager: bool = False) -> BossEvent:
         """Fetch a specific Boss event by its ID.
 
         .. note::

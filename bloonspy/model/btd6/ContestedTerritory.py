@@ -85,7 +85,7 @@ class ContestedTerritoryEvent(Event):
         return self._data["totalScores_team"]
 
     @exception_handler(Event.handle_exceptions)
-    def leaderboard_player(self, pages: int = 1, start_from_page: int = 0) -> List[CtPlayer]:
+    def leaderboard_player(self, pages: int = 1, start_from_page: int = 1) -> List[CtPlayer]:
         """Get a page of the player leaderboard.
 
         .. note::
@@ -118,7 +118,7 @@ class ContestedTerritoryEvent(Event):
         return players
 
     @exception_handler(Event.handle_exceptions)
-    def leaderboard_team(self, pages: int = 1, start_from_page: int = 0) -> List[CtTeam]:
+    def leaderboard_team(self, pages: int = 1, start_from_page: int = 1) -> List[CtTeam]:
         """Get a page of the team leaderboard.
 
         .. note::
