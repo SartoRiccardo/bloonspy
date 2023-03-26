@@ -61,7 +61,7 @@ class Boss(Challenge):
     lb_endpoint = "/btd6/bosses/{}/leaderboard/:difficulty:/{}"
 
     def __init__(self, boss_id: str, name: str, boss_bloon: BossBloon, total_scores: int, elite: bool,
-                 eager: bool = False):
+                 eager: bool = True):
         self._is_elite = elite
         self.endpoint = self.endpoint.replace(":difficulty:", "elite" if self._is_elite else "standard")
         self.lb_endpoint = self.lb_endpoint.replace(":difficulty:", "elite" if self._is_elite else "standard")

@@ -23,7 +23,7 @@ class Odyssey(Loadable):
     endpoint = "/btd6/odyssey/{}/:difficulty:"
     map_endpoint = "/btd6/odyssey/{}/:difficulty:/maps"
 
-    def __init__(self, resource_id: str, name: str, difficulty: OdysseyDifficulty, eager: bool = False):
+    def __init__(self, resource_id: str, name: str, difficulty: OdysseyDifficulty, eager: bool = True):
         self.endpoint = self.endpoint.replace(":difficulty:", difficulty.value)
         self.map_endpoint = self.map_endpoint.replace(":difficulty:", difficulty.value)
         super().__init__(resource_id, eager)
