@@ -181,7 +181,8 @@ class BossEvent(Event):
            and :attr:`~bloonspy.model.Boss.total_scores` loaded.
 
         :param eager: If `True`, it loads all of the data right away. Set it to `False`
-            if you want to limit API calls and don't need all the data.
+            if you want to limit API calls and don't need all the data. For more information,
+            please read `Lazy and Eager Loading <async.html#lazy-and-eager-loading>`_.
         :type eager: bool
         :return: The standard boss event.
         :rtype: ~bloonspy.model.btd6.Boss"""
@@ -198,7 +199,8 @@ class BossEvent(Event):
            and :attr:`~bloonspy.model.Boss.total_scores` loaded.
 
         :param eager: If `True`, it loads all of the data right away. Set it to `False`
-            if you want to limit API calls and don't need all the data.
+            if you want to limit API calls and don't need all the data. For more information,
+            please read `Lazy and Eager Loading <async.html#lazy-and-eager-loading>`_.
         :type eager: bool
         :return: The elite boss event.
         :rtype: ~bloonspy.model.btd6.Boss"""

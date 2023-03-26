@@ -173,7 +173,8 @@ class OdysseyEvent(Event):
            and :attr:`~bloonspy.model.Odyssey.difficulty` loaded.
 
         :param eager: If `True`, it loads all of the data right away. Set it to `False`
-            if you want to limit API calls and don't need all the data.
+            if you want to limit API calls and don't need all the data. For more information,
+            please read `Lazy and Eager Loading <async.html#lazy-and-eager-loading>`_.
         :type eager: bool
         :return: The easy mode of the odyssey.
         :rtype: ~bloonspy.model.btd6.Odyssey
@@ -189,7 +190,8 @@ class OdysseyEvent(Event):
            and :attr:`~bloonspy.model.Odyssey.difficulty` loaded.
 
         :param eager: If `True`, it loads all of the data right away. Set it to `False`
-            if you want to limit API calls and don't need all the data.
+            if you want to limit API calls and don't need all the data. For more information,
+            please read `Lazy and Eager Loading <async.html#lazy-and-eager-loading>`_.
         :type eager: bool
         :return: The medium mode of the odyssey.
         :rtype: ~bloonspy.model.btd6.Odyssey
@@ -205,7 +207,8 @@ class OdysseyEvent(Event):
            and :attr:`~bloonspy.model.Odyssey.difficulty` loaded.
 
         :param eager: If `True`, it loads all of the data right away. Set it to `False`
-            if you want to limit API calls and don't need all the data.
+            if you want to limit API calls and don't need all the data. For more information,
+            please read `Lazy and Eager Loading <async.html#lazy-and-eager-loading>`_.
         :type eager: bool
         :return: The hard mode of the odyssey.
         :rtype: ~bloonspy.model.btd6.Odyssey

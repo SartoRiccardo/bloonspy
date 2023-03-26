@@ -39,7 +39,8 @@ class Client:
         :param odyssey_id: The ID of the odyssey.
         :type odyssey_id: str
         :param eager: If `True`, it loads all of the data right away. Set it to `False`
-            if you want to limit API calls and don't need all the data.
+            if you want to limit API calls and don't need all the data. For more information,
+            please read `Lazy and Eager Loading <async.html#lazy-and-eager-loading>`_.
         :type eager: bool
 
         :raise ~bloonspy.exceptions.NotFound: If no odyssey with that ID is found.
@@ -69,7 +70,8 @@ class Client:
         :param ct_id: The ID of the event.
         :type ct_id: str
         :param eager: If `True`, it loads all of the data right away. Set it to `False`
-            if you want to limit API calls and don't need all the data.
+            if you want to limit API calls and don't need all the data. For more information,
+            please read `Lazy and Eager Loading <async.html#lazy-and-eager-loading>`_.
         :type eager: bool
 
         :raise ~bloonspy.exceptions.NotFound: If no CT with that ID is found.
@@ -120,7 +122,8 @@ class Client:
         :param race_id: The ID of the race.
         :type race_id: str
         :param eager: If `True`, it loads all of the data right away. Set it to `False`
-            if you want to limit API calls and don't need all the data.
+            if you want to limit API calls and don't need all the data. For more information,
+            please read `Lazy and Eager Loading <async.html#lazy-and-eager-loading>`_.
         :type eager: bool
 
         :raise ~bloonspy.exceptions.NotFound: If no race with that ID is found.
@@ -150,7 +153,8 @@ class Client:
         :param boss_id: The boss ID.
         :type boss_id: str
         :param eager: If `True`, it loads all of the data right away. Set it to `False`
-            if you want to limit API calls and don't need all the data.
+            if you want to limit API calls and don't need all the data. For more information,
+            please read `Lazy and Eager Loading <async.html#lazy-and-eager-loading>`_.
         :type eager: bool
 
         :raise ~bloonspy.exceptions.NotFound: If no boss event with that ID is found.
