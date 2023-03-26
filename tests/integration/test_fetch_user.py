@@ -2,8 +2,8 @@ import unittest
 from bloonspy import btd6, Client
 
 
-class TestFetchUser(unittest.TestCase):
-    def test_team(self) -> None:
+class TestFetchTeamOwner(unittest.TestCase):
+    def test_team_owner(self) -> None:
         """
         Test getting a team's owner.
         """

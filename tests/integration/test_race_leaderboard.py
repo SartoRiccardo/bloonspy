@@ -8,7 +8,7 @@ from bloonspy import btd6, Client
 class TestRaceLeaderboard(unittest.TestCase):
     def test_race_leaderboard(self) -> None:
         """
-        Test a challenge with a creator.
+        Test getting a race event's leaderboard.
         """
         races = Client.races()
         race = races[1]
