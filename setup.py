@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="bloonspy",
-    version="0.1",
+    version="0.1.1",
     author="TheSartorsss",
     description="A Python wrapper for the Ninja Kiwi Open Data API",
     long_description=long_description,
