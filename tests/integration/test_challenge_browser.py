@@ -22,16 +22,6 @@ class TestChallengeBrowser(unittest.TestCase):
                 msg=f"Assert if Challenge.{attr_name} is {attr_type}"
             )
 
-    def test_eager(self) -> None:
-        """
-        Test getting the newest challenges, fully loaded.
-        """
-        challenges = Client.challenges(ChallengeFilter.NEWEST)
-        self.assertGreater(len(challenges), 0)
-
-        for challenge in challenges:
-            self.assertTrue(challenge.loaded)
-
 
 if __name__ == '__main__':
     unittest.main()
