@@ -42,6 +42,7 @@ class Tower(Enum):
     BANANA_FARM = "Banana Farm"
     ENGINEER_MONKEY = "Engineer Monkey"
     SPIKE_FACTORY = "Spike Factory"
+    BEAST_HANDLER = "Beast Handler"
 
     @staticmethod
     def from_string(value: str) -> "Tower":
@@ -81,7 +82,8 @@ class Tower(Enum):
             "MonkeyVillage": Tower.MONKEY_VILLAGE,
             "BananaFarm": Tower.BANANA_FARM,
             "EngineerMonkey": Tower.ENGINEER_MONKEY,
-            "SpikeFactory": Tower.SPIKE_FACTORY
+            "SpikeFactory": Tower.SPIKE_FACTORY,
+            "BeastHandler": Tower.BEAST_HANDLER,
         }
         return tower_switch[value] if value in tower_switch else None
 
