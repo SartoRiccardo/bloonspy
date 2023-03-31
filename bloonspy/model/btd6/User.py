@@ -23,6 +23,7 @@ class BloonsPoppedStats:
     bfbs: int = field(default=0)  #: Number of BFB bloons popped.
     zomgs: int = field(default=0)  #: Number of ZOMG bloons popped.
     bads: int = field(default=0)  #: Number of BAD bloons popped.
+    # bosses: int = field(default=0)  #: Number of Boss bloons popped.
     golden: int = field(default=0)  #: Number of golden bloons popped.
 
 
@@ -30,6 +31,7 @@ class BloonsPoppedStats:
 class GameplayStats:
     """User's gameplay stats."""
     most_experienced_monkey: Tower = field(default=Tower.DART_MONKEY)  #: Monkey with the most XP.
+    # most_experienced_monkey_xp: int = field(default=0)  #: XP collected for the most experienced monkey.
     cash_earned: int = field(default=0)  #: Total cash earned.
     challenges_completed: int = field(default=0)  #: Total challenges completed.
     collection_chests_opened: int = field(default=0)  #: Number of collection chests opened.
@@ -49,6 +51,9 @@ class GameplayStats:
     necro_bloons_reanimated: int = field(default=0)  #: Number of necro bloons reanimated.
     bloons_leaked: int = field(default=0)  #: Total RBE leaked.
     bloons_popped: BloonsPoppedStats = field(default_factory=BloonsPoppedStats)  #: In depth stats about bloons popped.
+    damage_done_to_bosses: int = field(default=0)  #: Total damage done to Boss bloons
+    transforming_tonics_used: int = field(default=0)  #: Number of times the Transformation Tonic ability was used.
+    # monkeys_placed: int = field(default=0)  #: Total monkeys placed.
 
 
 class User(Loadable):
@@ -95,9 +100,9 @@ class User(Loadable):
         self._data["boss_elite_medals"] = EventMedals(
             **rename_keys(raw_user["_medalsBossElite"], event_medal_keys)
         )
-        # self._data["race_medals"] = Medals(
-        #     **rename_keys(raw_user["_medals"], event_medal_keys)
-        # )
+        self._data["race_medals"] = EventMedals(
+            **rename_keys(raw_user["_medalsRace"], event_medal_keys)
+        )
 
         ct_local_medal_keys = [
             ("BlackDiamond", "first"), ("RedDiamond", "second"), ("Diamond", "third"), ("GoldDiamond", "top_10"),
@@ -132,7 +137,9 @@ class User(Loadable):
             ("gameplay.totalOdysseysCompleted", "total_odysseys_completed"),
             ("gameplay.totalOdysseyStars", "total_odyssey_stars"),
             ("gameplay.totalTrophiesEarned", "total_trophies_earned"),
+            ("gameplay.damageDoneToBosses", "damage_done_to_bosses"),
             ("bloonsPopped.necroBloonsReanimated", "necro_bloons_reanimated"),
+            ("bloonsPopped.transformingTonicsUsed", "transforming_tonics_used"),
             ("bloonsPopped.bloonsLeaked", "bloons_leaked"),
         ]
         bloons_popped_keys = [
@@ -186,6 +193,12 @@ class User(Loadable):
         """Number of achievements this user unlocked."""
         return self._data["achievements"]
 
+    # @property
+    # @fetch_property(Loadable.load_resource)
+    # def hidden_achievements(self) -> int:
+    #     """Number of hidden achievements this user unlocked."""
+    #     return self._data["hiddenAchievements"]
+
     @property
     @fetch_property(Loadable.load_resource)
     def followers(self) -> int:
@@ -228,11 +241,11 @@ class User(Loadable):
         """Ranked elite boss medals."""
         return self._data["boss_elite_medals"]
 
-    # @property
-    # @fetch_property(Loadable.load_resource)
-    # def race_medals(self) -> EventMedals:
-    #     """Race event medals."""
-    #     return self._data["race_medals"]
+    @property
+    @fetch_property(Loadable.load_resource)
+    def race_medals(self) -> EventMedals:
+        """Race event medals."""
+        return self._data["race_medals"]
 
     @property
     @fetch_property(Loadable.load_resource)
