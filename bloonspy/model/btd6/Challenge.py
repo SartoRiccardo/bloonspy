@@ -59,6 +59,7 @@ class Challenge(Loadable):
         error_msg = str(exception)
         if error_msg == "No challenge with that ID exists":
             raise NotFound(error_msg)
+        print(error_msg)
 
     def _parse_json(self, raw_challenge: Dict[str, Any]) -> None:
         self._loaded = False

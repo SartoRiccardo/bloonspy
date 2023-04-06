@@ -16,7 +16,7 @@ class RacePlayer(User):
     def __init__(self, user_id: str, name: str, score: int, submission_time: int, **kwargs):
         super().__init__(user_id, **kwargs)
         self._name = name
-        self._score = timedelta(seconds=int(score/1000))
+        self._score = timedelta(microseconds=score*1000)
         self._submission_time = datetime.fromtimestamp(int(submission_time/1000))
 
     @property

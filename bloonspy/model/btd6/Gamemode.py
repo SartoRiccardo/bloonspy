@@ -6,7 +6,6 @@ class Difficulty(Enum):
     EASY = "Easy"
     MEDIUM = "Medium"
     HARD = "Hard"
-    IMPOPPABLE = "Impoppable"
 
 
 class Mode(Enum):
@@ -23,8 +22,9 @@ class Mode(Enum):
     DOUBLE_HP_MOABS = "Double HP MOABs"
     HALF_CASH = "Half Cash"
     ALTERNATE_BLOONS_ROUNDS = "Alternate Bloons Rounds"
+    IMPOPPABLE = "Impoppable"
 
-    CHIMPS = "CHIMPs"
+    CHIMPS = "CHIMPS"
 
 
 @dataclass
@@ -39,9 +39,7 @@ class Gamemode:
             "Easy": Difficulty.EASY,
             "Medium": Difficulty.MEDIUM,
             "Hard": Difficulty.HARD,
-            "Impoppable": Difficulty.IMPOPPABLE,
         }
-        # TODO get the actual strings
         mode_switch = {
             "Standard": Mode.STANDARD,
             "PrimaryOnly": Mode.PRIMARY_ONLY,
@@ -50,9 +48,11 @@ class Gamemode:
             "Reverse": Mode.REVERSE,
             "Apopalypse": Mode.APOPALYPSE,
             "MagicOnly": Mode.MAGIC_ONLY,
-            "DoubleHPMoabs": Mode.DOUBLE_HP_MOABS,
-            "ABR": Mode.ALTERNATE_BLOONS_ROUNDS,
-            "Chimps": Mode.CHIMPS,
+            "DoubleMoabHealth": Mode.DOUBLE_HP_MOABS,
+            "HalfCash": Mode.HALF_CASH,
+            "AlternateBloonsRounds": Mode.ALTERNATE_BLOONS_ROUNDS,
+            "Impoppable": Mode.IMPOPPABLE,
+            "Clicks": Mode.CHIMPS,
         }
 
         found_difficulty = difficulty_switch[difficulty] if difficulty in difficulty_switch else None

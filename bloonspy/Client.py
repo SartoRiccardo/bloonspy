@@ -103,8 +103,8 @@ class Client:
         .. note::
            The returned :class:`~bloonspy.model.btd6.Race` objects will only
            have the properties :attr:`~bloonspy.model.Loadable.id`, :attr:`~bloonspy.model.btd6.Race.name`,
-           :attr:`~bloonspy.model.Race.start`, :attr:`~bloonspy.model.Race.end`, and
-           :attr:`~bloonspy.model.Race.total_scores` loaded.
+           :attr:`~bloonspy.model.btd6.Race.start`, :attr:`~bloonspy.model.btd6.Race.end`, and
+           :attr:`~bloonspy.model.btd6.Race.total_scores` loaded.
         """
         races_data = get("/btd6/races")
         race_list = []

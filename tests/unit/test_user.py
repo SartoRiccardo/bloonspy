@@ -1,6 +1,4 @@
 import unittest
-from datetime import datetime
-import bloonspy
 from bloonspy import btd6
 
 
@@ -19,7 +17,7 @@ class TestUser(unittest.TestCase):
         ]
         for attr_name, attr_expected_value in expected_results:
             self.assertEqual(getattr(user, attr_name), attr_expected_value,
-                msg=f"Asserting User.{attr_name}")
+                             msg=f"Asserting User.{attr_name}")
 
         # Greater or Equal cause these can increase in the future.
         expected_results_ge = [
@@ -28,7 +26,7 @@ class TestUser(unittest.TestCase):
         ]
         for attr_name, attr_expected_min in expected_results_ge:
             self.assertGreaterEqual(getattr(user, attr_name), attr_expected_min,
-                msg=f"Asserting User.{attr_name}")
+                                    msg=f"Asserting User.{attr_name}")
 
         check_instance = [
             ("followers", int),
@@ -38,14 +36,14 @@ class TestUser(unittest.TestCase):
             ("coop_medals", btd6.MapMedals),
             ("boss_normal_medals", btd6.EventMedals),
             ("boss_elite_medals", btd6.EventMedals),
-            # ("race_medals", btd6.Medals),
+            ("race_medals", btd6.EventMedals),
             ("ct_local_medals", btd6.CTLocalMedals),
             ("ct_global_medals", btd6.CTGlobalMedals),
             ("stats", btd6.GameplayStats),
         ]
         for attr_name, attr_type in check_instance:
             self.assertIsInstance(getattr(user, attr_name), attr_type,
-                msg=f"Assert if challenge.{attr_name} is {attr_type}")
+                                  msg=f"Assert if challenge.{attr_name} is {attr_type}")
 
         # Check medals
 
@@ -71,10 +69,10 @@ class TestUser(unittest.TestCase):
                                   msg=f"Asserting User.boss_normal_medals.{attr_name}")
             self.assertIsInstance(getattr(user.boss_elite_medals, attr_name), attr_type,
                                   msg=f"Asserting User.boss_elite_medals.{attr_name}")
-            # self.assertIsInstance(
-            #     getattr(user.race_medals, attr_name), attr_type,
-            #     msg=f"Asserting User.race_medals.{attr_name}"
-            # )
+            self.assertIsInstance(getattr(user.race_medals, attr_name), attr_type,
+                                  msg=f"Asserting User.race_medals.{attr_name}")
+        self.assertGreaterEqual(user.race_medals.top_50, 1,
+                                msg=f"Asserting User has at least 1 Top 50 race finish.")
 
         check_instance = [
             ("first", int), ("second", int), ("third", int), ("top_10", int), ("top_20", int),
@@ -115,7 +113,8 @@ class TestUser(unittest.TestCase):
             ("highest_round", 276), ("highest_round_chimps", 127), ("highest_round_deflation", 100),
             ("insta_monkey_collection", 796), ("monkey_teams_wins", 11), ("powers_used", 3811),
             ("total_odysseys_completed", 26), ("total_odyssey_stars", 100), ("total_trophies_earned", 3288),
-            ("necro_bloons_reanimated", 476791), ("bloons_leaked", 557788),
+            ("necro_bloons_reanimated", 476791), ("bloons_leaked", 557788), ("transforming_tonics_used", 196),
+            ("damage_done_to_bosses", 713924)
         ]
         for attr_name, attr_expected_min in expected_results_ge:
             self.assertGreaterEqual(getattr(user.stats, attr_name), attr_expected_min,

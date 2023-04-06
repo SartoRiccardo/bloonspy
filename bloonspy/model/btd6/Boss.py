@@ -1,7 +1,7 @@
 from enum import Enum
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Tuple, Union
 from ...utils.decorators import fetch_property, exception_handler
 from ...utils.api import get, get_lb_page
 from ..Loadable import Loadable
@@ -36,7 +36,7 @@ class BossPlayer(User):
     def __init__(self, user_id: str, name: str, score: int, submission_time: int, **kwargs):
         super().__init__(user_id, **kwargs)
         self._name = name
-        self._score = timedelta(seconds=int(score/1000))
+        self._score = timedelta(microseconds=score*1000)
         self._submission_time = datetime.fromtimestamp(int(submission_time/1000))
 
     @property
@@ -53,6 +53,39 @@ class BossPlayer(User):
     def submission_time(self) -> datetime:
         """The time the user’s score was submitted at."""
         return self._submission_time
+
+
+class BossPlayerTeam:
+    """A team of players who played a Ranked Co-op Boss Event."""
+    def __init__(self, users: List[BossPlayer], score: timedelta, submission_time: datetime, is_complete: bool = True):
+        self._users = users
+        self._score = score
+        self._submission_time = submission_time
+        self._is_complete = is_complete
+
+    @property
+    def players(self) -> Tuple[BossPlayer]:
+        """The users in the team."""
+        return tuple(self._users)
+
+    @property
+    def score(self) -> timedelta:
+        """The time the team got."""
+        return self._score
+
+    @property
+    def submission_time(self) -> datetime:
+        """The time the team’s score was submitted at."""
+        return self._submission_time
+
+    @property
+    def is_fully_loaded(self) -> bool:
+        """Whether the team is fully loaded.
+
+        Due to API restrictions, when calling :func:`~bloonspy.model.btd6.Boss.leaderboard()` to get coop
+        leaderboards, the team at the end of the List could not have all of its members loaded.
+        """
+        return self._is_complete
 
 
 class Boss(Challenge):
@@ -94,13 +127,18 @@ class Boss(Challenge):
             raise exc
 
     @exception_handler(Loadable.handle_exceptions)
-    def leaderboard(self, pages: int = 1, start_from_page: int = 1, team_size: int = 1) -> List[BossPlayer]:
+    def leaderboard(self,
+                    pages: int = 1,
+                    start_from_page: int = 1,
+                    team_size: int = 1
+                    ) -> Union[List[BossPlayer], List[BossPlayerTeam]]:
         """Get a page of the leaderboard for this boss.
 
         .. note::
            The returned :class:`~bloonspy.model.btd6.BossPlayer` objects will only
            have the properties :attr:`~bloonspy.model.Loadable.id`, :attr:`~bloonspy.model.btd6.BossPlayer.name`,
-           :attr:`~bloonspy.model.BossPlayer.score`, and :attr:`~bloonspy.model.BossPlayer.submission_time` loaded.
+           :attr:`~bloonspy.model.btd6.BossPlayer.score`, and :attr:`~bloonspy.model.btd6.BossPlayer.submission_time`
+           loaded.
 
         :param pages: Number of pages to fetch.
         :type pages: int
@@ -110,7 +148,7 @@ class Boss(Challenge):
         :type team_size: int
 
         :return: A list of players in the leaderboard.
-        :rtype: List[:class:`~bloonspy.model.btd6.RacePlayer`]
+        :rtype: Union[List[:class:`~bloonspy.model.btd6.BossPlayer`], List[:class:`~bloonspy.model.btd6.BossPlayerTeam`]]
 
         :raise ~bloonspy.exceptions.NotFound: If the boss doesn't exist or is expired.
         :raise ValueError: If `team_size` is less than 1 or more than 4.
@@ -129,6 +167,30 @@ class Boss(Challenge):
                 boss_players.append(BossPlayer(
                     player["profile"].split("/")[-1], player["displayName"], player["score"], player["submissionTime"]
                 ))
+
+        if team_size > 1:
+            boss_teams = []
+            current_score = None
+            current_sub_time = None
+            current_team_players = []
+            for player in boss_players:
+                if player.score != current_score:
+                    if current_score is not None:
+                        boss_teams.append(
+                            BossPlayerTeam(current_team_players, current_score, current_sub_time)
+                        )
+                    current_score = player.score
+                    current_sub_time = player.submission_time
+                    current_team_players = []
+
+                current_team_players.append(player)
+
+            if len(current_team_players) > 0:
+                boss_teams.append(
+                    BossPlayerTeam(current_team_players, current_score, current_sub_time,
+                                   len(current_team_players) == team_size)
+                )
+            return boss_teams
 
         return boss_players
 

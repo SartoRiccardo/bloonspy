@@ -41,7 +41,7 @@ Now you can use all methods in :class:`~bloonspy.Client`! You can find all of th
    for i in range(3):
        player = leaderboard[i]
        # player.score is a timedelta object in this case.
-       minutes = int(player.score/60)
-       seconds = int(player.score % 60)
-       milliseconds = int((player.score*100) % 100)
+       minutes = int(player.score.seconds/60)
+       seconds = int(player.score.seconds % 60)
+       milliseconds = int((player.score.seconds*100) % 100)
        print(f"#{i+1}: {player.name} - {minutes}:{seconds}.{milliseconds}")
