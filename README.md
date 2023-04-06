@@ -17,9 +17,8 @@ from bloonspy import Client
 
 boss_event = Client.bosses()[0].standard()
 boss_standard_top_3 = boss_event.leaderboard()[:3]
-for player in boss_standard_top_3:
-    minutes, seconds = int(player.score.seconds/60), int(player.score.seconds%60) 
-    print(f"{player.name} - {minutes}:{seconds}")
+for player in boss_standard_top_3: 
+    print(f"{player.name} - {player.score}")
 ```
 
 ## Resources
