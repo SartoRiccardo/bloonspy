@@ -82,9 +82,8 @@ class BossPlayerTeam:
     def is_fully_loaded(self) -> bool:
         """Whether the team is fully loaded.
 
-        Due to API restrictions, when calling :method:~bloonspy.model.btd6.Boss.leaderboard` to get coop
-        leaderboards, the team at the end of the List could only have a few members in it, despite it actually
-        having more.
+        Due to API restrictions, when calling :func:`~bloonspy.model.btd6.Boss.leaderboard()` to get coop
+        leaderboards, the team at the end of the List could not have all of its members loaded.
         """
         return self._is_complete
 
@@ -138,7 +137,8 @@ class Boss(Challenge):
         .. note::
            The returned :class:`~bloonspy.model.btd6.BossPlayer` objects will only
            have the properties :attr:`~bloonspy.model.Loadable.id`, :attr:`~bloonspy.model.btd6.BossPlayer.name`,
-           :attr:`~bloonspy.model.BossPlayer.score`, and :attr:`~bloonspy.model.BossPlayer.submission_time` loaded.
+           :attr:`~bloonspy.model.btd6.BossPlayer.score`, and :attr:`~bloonspy.model.btd6.BossPlayer.submission_time`
+           loaded.
 
         :param pages: Number of pages to fetch.
         :type pages: int

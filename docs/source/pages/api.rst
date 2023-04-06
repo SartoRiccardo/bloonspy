@@ -79,6 +79,12 @@ BossPlayer
 .. autoclass:: bloonspy.model.btd6.BossPlayer()
    :members:
 
+BossPlayerTeam
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.model.btd6.BossPlayerTeam()
+   :members:
+
 OdysseyEvent
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
