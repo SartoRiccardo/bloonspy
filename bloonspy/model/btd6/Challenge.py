@@ -172,7 +172,7 @@ class Challenge(Loadable):
         """The ID of the challenge's creator. `None` if there isn't one (e.g. Odyssey challenges)."""
         return self._data["creatorId"]
 
-    @fetch_property(Loadable.load_resource)
+    @fetch_property(Loadable.load_resource, should_load=Loadable._should_load_property("creatorId"))
     def creator(self) -> User or None:
         """Fetch the creator of the challenge.
 
