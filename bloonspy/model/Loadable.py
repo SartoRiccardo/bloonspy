@@ -4,7 +4,14 @@ from ..utils.decorators import exception_handler
 
 
 class Loadable:
-    """Represents a resource that can be loaded."""
+    """Represents a resource that can be loaded.
+
+    .. container:: operations
+
+       .. describe:: x == y
+
+          Checks if the Event is equal to another Event.
+    """
     endpoint = "{}"
 
     def __init__(self, resource_id: str, eager: bool = False):
@@ -54,3 +61,6 @@ class Loadable:
     def loaded(self) -> bool:
         """`True` if the resource is loaded."""
         return self._loaded
+
+    def __eq__(self, other):
+        return isinstance(other, type(self)) and other.id == self.id

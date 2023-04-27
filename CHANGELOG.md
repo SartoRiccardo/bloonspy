@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.3.0](https://pypi.org/project/bloonspy/0.3.0) - 2023-04-27
+
+### Added
++ Package now handles rate limiting
++ `Challenge.restarts`
++ `Odyssey.description`, `OdysseyEvent.description`
++ `Event` and `Loadable` support the `==` operator
+
+### Changed
++ `Rewards.type` is now `Literal`
+
+### Fixed
++ Fixed issue where the package would request the same user twice
++ `Odyssey.hard` and `Odyssey.medium` now return the correct `OdysseyEvent`
+
 ## [0.2.0](https://pypi.org/project/bloonspy/0.2.0) - 2023-04-06
 
 ### Added

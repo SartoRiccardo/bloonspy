@@ -1,4 +1,16 @@
-.sig.sig-object.py {
+.sig.sig-object.py, .describe .sig.sig-object:first-child {
     padding: .5rem;
     background-color: #eceff1;
+}
+
+.operations {
+    padding: .5rem;
+    border: 1px solid #ccc;
+    margin-bottom: 1rem;
+}
+
+.operations::before {
+    content: 'Supported Operations';
+    margin-bottom: 1rem;
+    display: block
 }

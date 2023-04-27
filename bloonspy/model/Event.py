@@ -7,7 +7,14 @@ from ..exceptions import NotFound
 
 
 class Event:
-    """A game event."""
+    """A game event.
+
+    .. container:: operations
+
+       .. describe:: x == y
+
+          Checks if the Event is equal to another Event.
+    """
 
     event_endpoint: str = "/..."
     event_dict_keys: List[str] = ["name", "start", "end"]
@@ -89,3 +96,6 @@ class Event:
     def end(self) -> datetime:
         """When the event ends."""
         return self._data["end"]
+
+    def __eq__(self, other):
+        return isinstance(other, type(self)) and other.id == self.id

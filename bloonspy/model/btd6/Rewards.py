@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from .Tower import Tower
+from typing import Literal
 
 
 @dataclass
@@ -14,5 +15,5 @@ class InstaMonkey:
 @dataclass
 class Reward:
     """A generic reward."""
-    type: str  #: Name of the reward, e.g. `MonkeyMoney`.
+    type: Literal["MonkeyMoney", "CollectionEvent"]  #: Name of the reward.
     amount: int  #: Amount of the reward.

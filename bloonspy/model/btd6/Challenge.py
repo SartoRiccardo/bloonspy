@@ -68,7 +68,7 @@ class Challenge(Loadable):
             "name", "disableDoubleCash", "disableInstas", "disableMK", "disablePowers", "disableSelling",
             "startingCash", "noContinues", "seed", "roundSets", "lives", "maxLives",
             "startRound", "endRound", "maxTowers", "maxParagons", "plays", "wins", "losses", "upvotes", "playsUnique",
-            "winsUnique", "lossesUnique"
+            "winsUnique", "lossesUnique", "restarts"
         ]
         for key in copy_keys:
             self._data[key] = raw_challenge[key]
@@ -172,7 +172,7 @@ class Challenge(Loadable):
         """The ID of the challenge's creator. `None` if there isn't one (e.g. Odyssey challenges)."""
         return self._data["creatorId"]
 
-    @fetch_property(Loadable.load_resource)
+    @fetch_property(Loadable.load_resource, should_load=Loadable._should_load_property("creatorId"))
     def creator(self) -> User or None:
         """Fetch the creator of the challenge.
 
@@ -312,6 +312,14 @@ class Challenge(Loadable):
     def losses_unique(self) -> int:
         """Amount of unique people that have lost the challenge."""
         return self._data["lossesUnique"]
+
+    @property
+    @fetch_property(Loadable.load_resource)
+    def restarts(self) -> int:
+        """*New in 0.3.0*
+
+        The number of times users have restarted the challenge."""
+        return self._data["restarts"]
 
     @property
     @fetch_property(Loadable.load_resource)
