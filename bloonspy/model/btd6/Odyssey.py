@@ -23,11 +23,13 @@ class Odyssey(Loadable):
     endpoint = "/btd6/odyssey/{}/:difficulty:"
     map_endpoint = "/btd6/odyssey/{}/:difficulty:/maps"
 
-    def __init__(self, resource_id: str, name: str, difficulty: OdysseyDifficulty, eager: bool = False):
+    def __init__(self, resource_id: str, name: str, description: str,
+                 difficulty: OdysseyDifficulty, eager: bool = False):
         self.endpoint = self.endpoint.replace(":difficulty:", difficulty.value)
         self.map_endpoint = self.map_endpoint.replace(":difficulty:", difficulty.value)
         super().__init__(resource_id, eager)
         self._name = name
+        self._description = description
         self._difficulty = difficulty
 
     def _parse_json(self, raw_odyssey: Dict[str, Any]) -> None:
@@ -87,6 +89,13 @@ class Odyssey(Loadable):
     def name(self) -> str:
         """The Odyssey's name"""
         return self._name
+
+    @property
+    def description(self) -> str:
+        """*New in 0.3.0*
+
+        The Odyssey's description"""
+        return self._description
 
     @property
     def difficulty(self) -> OdysseyDifficulty:
@@ -164,6 +173,18 @@ class OdysseyEvent(Event):
     event_endpoint = "/btd6/odyssey"
     event_name = "Odyssey"
 
+    def _parse_event(self, data: Dict[str, Any]) -> None:
+        self._data["description"] = data["description"]
+        super()._parse_event(data)
+
+    @property
+    @fetch_property(Event.load_event, should_load=Event._should_load_property("description"))
+    def description(self) -> str:
+        """*New in 0.3.0*
+
+        The Odyssey's description."""
+        return self._data["description"]
+
     def easy(self, eager: bool = False) -> Odyssey:
         """Get the easy mode version of the Odyssey.
 
@@ -179,7 +200,7 @@ class OdysseyEvent(Event):
         :return: The easy mode of the odyssey.
         :rtype: ~bloonspy.model.btd6.Odyssey
         """
-        return Odyssey(self.id, self.name, OdysseyDifficulty.EASY, eager=eager)
+        return Odyssey(self.id, self.name, self.description, OdysseyDifficulty.EASY, eager=eager)
 
     def medium(self, eager: bool = False) -> Odyssey:
         """Get the medium mode version of the Odyssey.
@@ -196,7 +217,7 @@ class OdysseyEvent(Event):
         :return: The medium mode of the odyssey.
         :rtype: ~bloonspy.model.btd6.Odyssey
         """
-        return Odyssey(self.id, self.name, OdysseyDifficulty.EASY, eager=eager)
+        return Odyssey(self.id, self.name, self.description, OdysseyDifficulty.MEDIUM, eager=eager)
 
     def hard(self, eager: bool = False) -> Odyssey:
         """Get the hard mode version of the Odyssey.
@@ -213,4 +234,4 @@ class OdysseyEvent(Event):
         :return: The hard mode of the odyssey.
         :rtype: ~bloonspy.model.btd6.Odyssey
         """
-        return Odyssey(self.id, self.name, OdysseyDifficulty.EASY, eager=eager)
+        return Odyssey(self.id, self.name, self.description, OdysseyDifficulty.HARD, eager=eager)

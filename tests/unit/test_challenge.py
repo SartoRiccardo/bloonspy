@@ -35,6 +35,7 @@ class TestChallenge(unittest.TestCase):
             ("max_towers", 9999),
             ("max_paragons", 10),
             ("round_sets", ["default"]),
+            ("restarts", 0),
             # All values are defaults on this challenge anyway
             ("modifiers", btd6.ChallengeModifier()),
         ]

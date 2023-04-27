@@ -15,7 +15,7 @@ class TestOdyssey(unittest.TestCase):
         odyssey = btd6.OdysseyEvent(odyssey_id)
 
         check_instance = [
-            ("name", str), ("start", datetime), ("end", datetime), ("id", str)
+            ("name", str), ("start", datetime), ("end", datetime), ("id", str), ("description", str),
         ]
         for attr_name, attr_type in check_instance:
             self.assertIsInstance(getattr(odyssey, attr_name), attr_type,
@@ -27,7 +27,7 @@ class TestOdyssey(unittest.TestCase):
 
         check_instance = [
             ("name", str), ("difficulty", btd6.OdysseyDifficulty), ("is_extreme", bool), ("max_monkey_seats", int),
-            ("max_boat_seats", int), ("max_power_slots", int), ("starting_lives", int)
+            ("max_boat_seats", int), ("max_power_slots", int), ("starting_lives", int), ("description", str),
         ]
         for attr_name, attr_type in check_instance:
             self.assertIsInstance(getattr(hard_mode, attr_name), attr_type,
