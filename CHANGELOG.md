@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.3.0](https://pypi.org/project/bloonspy/0.2.0) - 2023-04-27
+## [0.3.0](https://pypi.org/project/bloonspy/0.3.0) - 2023-04-27
 
 ### Added
 + Package now handles rate limiting
