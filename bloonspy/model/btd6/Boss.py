@@ -2,6 +2,7 @@ from enum import Enum
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 from typing import List, Dict, Any, Tuple, Union
+from ...exceptions import BadTeamSize
 from ...utils.decorators import fetch_property, exception_handler
 from ...utils.api import get, get_lb_page
 from ..Loadable import Loadable
@@ -151,10 +152,10 @@ class Boss(Challenge):
         :rtype: Union[List[:class:`~bloonspy.model.btd6.BossPlayer`], List[:class:`~bloonspy.model.btd6.BossPlayerTeam`]]
 
         :raise ~bloonspy.exceptions.NotFound: If the boss doesn't exist or is expired.
-        :raise ValueError: If `team_size` is less than 1 or more than 4.
+        :raise BadTeamSize: If `team_size` is less than 1 or more than 4.
         """
         if team_size not in range(1, 5):
-            raise ValueError("team_size must be between 1 and 4")
+            raise BadTeamSize("team_size must be between 1 and 4")
 
         futures = []
         with ThreadPoolExecutor(max_workers=10) as executor:
