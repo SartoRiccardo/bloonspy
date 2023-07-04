@@ -39,6 +39,14 @@ class Team(Loadable):
         copy_keys = ["name", "numMembers"]
         for key in copy_keys:
             self._data[key] = raw_resource[key]
+
+        self._data["full_name"] = self._data["name"]
+        if " (disbanded)" in self._data["name"]:
+            self._data["name"] = self._data["name"].replace(" (disbanded)", "")
+        if "-" in self._data["name"]:
+            self._data["name"] = self._data["name"].split("-")[0]
+        self._data["name"] = self._data["name"].upper()
+
         assets = [
             ("banner", "bannerURL"), ("icon", "iconURL"), ("frame", "frameURL"),
         ]
@@ -51,8 +59,18 @@ class Team(Loadable):
 
     @property
     @fetch_property(Loadable.load_resource)
+    def full_name(self) -> str:
+        """
+        The complete name of the team.
+        It may not be exactly what you see in game, in some cases it has
+        the team code appended at the end, among other things.
+        """
+        return self._data["full_name"]
+
+    @property
+    @fetch_property(Loadable.load_resource)
     def name(self) -> str:
-        """The name of the team."""
+        """The name of the team, as seen in-game."""
         return self._data["name"]
 
     @property
