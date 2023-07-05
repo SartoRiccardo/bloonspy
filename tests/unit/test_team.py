@@ -1,6 +1,4 @@
 import unittest
-from datetime import datetime
-import bloonspy
 from bloonspy import btd6
 
 
@@ -44,6 +42,16 @@ class TestTeam(unittest.TestCase):
         except btd6.NotFound:
             correct_exception = True
         self.assertTrue(correct_exception, msg="Wrong team IDs should raise bloonspy.exceptions.NotFound")
+
+    def test_team_disbanded(self) -> None:
+        """
+        Test that disbanded teams have their name properly formatted and their status set to TeamStatus.DISBANDED.
+        """
+        team_id = "9fbd42d9db90aaf34a168e4c0e73b4249d0d1cb99b46db3f"
+        team = btd6.Team(team_id)
+        self.assertEqual(team.name, "HIDDEN AGENDA")
+        self.assertEqual(team.full_name, "HIDDEN AGENDA (disbanded)")
+        self.assertEqual(team.status, btd6.TeamStatus.DISBANDED)
 
 
 if __name__ == '__main__':

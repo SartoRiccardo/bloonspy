@@ -10,3 +10,4 @@ from .Restriction import *
 from .Team import *
 from .Tower import *
 from .User import *
+from .Score import *

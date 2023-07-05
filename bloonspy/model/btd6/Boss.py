@@ -9,6 +9,7 @@ from ..Loadable import Loadable
 from ..Event import Event
 from .Challenge import Challenge
 from .User import User
+from .Score import Score
 
 
 class BossBloon(Enum):
@@ -34,10 +35,17 @@ class BossPlayer(User):
     """An user who played the boss event and submitted a ranked score.
     Inherits from :class:`~bloonspy.model.btd6.User`.
     """
-    def __init__(self, user_id: str, name: str, score: int, submission_time: int, **kwargs):
+    def __init__(self,
+                 user_id: str,
+                 name: str,
+                 score: int,
+                 score_parts: List[Dict[str, Any]],
+                 submission_time: int,
+                 **kwargs):
         super().__init__(user_id, **kwargs)
         self._name = name
         self._score = timedelta(microseconds=score*1000)
+        self._score_parts = [Score.from_json(sp) for sp in score_parts]
         self._submission_time = datetime.fromtimestamp(int(submission_time/1000))
 
     @property
@@ -46,9 +54,14 @@ class BossPlayer(User):
         return self._name
 
     @property
-    def score(self) -> timedelta:
+    def score(self) -> Score:
         """The time the user got."""
-        return self._score
+        return self._score_parts[0] if len(self._score_parts) > 0 else self._score
+
+    @property
+    def score_parts(self) -> List[Score]:
+        """The score parts."""
+        return self._score_parts
 
     @property
     def submission_time(self) -> datetime:
@@ -58,9 +71,15 @@ class BossPlayer(User):
 
 class BossPlayerTeam:
     """A team of players who played a Ranked Co-op Boss Event."""
-    def __init__(self, users: List[BossPlayer], score: timedelta, submission_time: datetime, is_complete: bool = True):
+    def __init__(self,
+                 users: List[BossPlayer],
+                 score: Score,
+                 score_parts: List[Score],
+                 submission_time: datetime,
+                 is_complete: bool = True):
         self._users = users
         self._score = score
+        self._score_parts = score_parts
         self._submission_time = submission_time
         self._is_complete = is_complete
 
@@ -70,9 +89,14 @@ class BossPlayerTeam:
         return tuple(self._users)
 
     @property
-    def score(self) -> timedelta:
+    def score(self) -> Score:
         """The time the team got."""
-        return self._score
+        return self._score_parts[0] if len(self._score_parts) > 0 else self._score
+
+    @property
+    def score_parts(self) -> List[Score]:
+        """The score parts."""
+        return self._score_parts
 
     @property
     def submission_time(self) -> datetime:
@@ -166,21 +190,31 @@ class Boss(Challenge):
         for page in futures:
             for player in page.result():
                 boss_players.append(BossPlayer(
-                    player["profile"].split("/")[-1], player["displayName"], player["score"], player["submissionTime"]
+                    player["profile"].split("/")[-1],
+                    player["displayName"],
+                    player["score"],
+                    player["scoreParts"],
+                    player["submissionTime"]
                 ))
 
         if team_size > 1:
             boss_teams = []
             current_score = None
+            current_score_parts = []
             current_sub_time = None
             current_team_players = []
             for player in boss_players:
-                if player.score != current_score:
+                if player.score != current_score or \
+                        not self._score_parts_eq(player.score_parts, current_score_parts):
                     if current_score is not None:
                         boss_teams.append(
-                            BossPlayerTeam(current_team_players, current_score, current_sub_time)
+                            BossPlayerTeam(current_team_players,
+                                           current_score,
+                                           current_score_parts,
+                                           current_sub_time)
                         )
                     current_score = player.score
+                    current_score_parts = player.score_parts
                     current_sub_time = player.submission_time
                     current_team_players = []
 
@@ -188,12 +222,24 @@ class Boss(Challenge):
 
             if len(current_team_players) > 0:
                 boss_teams.append(
-                    BossPlayerTeam(current_team_players, current_score, current_sub_time,
+                    BossPlayerTeam(current_team_players,
+                                   current_score,
+                                   current_score_parts,
+                                   current_sub_time,
                                    len(current_team_players) == team_size)
                 )
             return boss_teams
 
         return boss_players
+
+    @staticmethod
+    def _score_parts_eq(sp1: List[Score], sp2: List[Score]) -> bool:
+        if len(sp1) != len(sp2):
+            return False
+        for i in range(len(sp1)):
+            if sp1[i] != sp2[i]:
+                return False
+        return True
 
 
 class BossEvent(Event):

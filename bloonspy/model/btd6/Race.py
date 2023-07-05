@@ -6,6 +6,7 @@ from ...utils.dictionaries import has_all_keys
 from ...utils.api import get, get_lb_page
 from ...exceptions import NotFound
 from .Challenge import Challenge
+from .Score import Score
 from .User import User
 
 
@@ -13,10 +14,17 @@ class RacePlayer(User):
     """An user who played a race and is now on the leaderboard.
     Inherits from :class:`~bloonspy.model.btd6.User`.
     """
-    def __init__(self, user_id: str, name: str, score: int, submission_time: int, **kwargs):
+    def __init__(self,
+                 user_id: str,
+                 name: str,
+                 score: int,
+                 score_parts: List[Dict[str, Any]],
+                 submission_time: int,
+                 **kwargs):
         super().__init__(user_id, **kwargs)
         self._name = name
         self._score = timedelta(microseconds=score*1000)
+        self._score_parts = [Score.from_json(sp) for sp in score_parts]
         self._submission_time = datetime.fromtimestamp(int(submission_time/1000))
 
     @property
@@ -25,9 +33,14 @@ class RacePlayer(User):
         return self._name
 
     @property
-    def score(self) -> timedelta:
+    def score(self) -> Score:
         """The time the user got."""
-        return self._score
+        return self._score_parts[0] if len(self._score_parts) > 0 else self._score
+
+    @property
+    def score_parts(self) -> List[Score]:
+        """The score parts."""
+        return self._score_parts
 
     @property
     def submission_time(self) -> datetime:
@@ -132,7 +145,11 @@ class Race(Challenge):
         for page in futures:
             for player in page.result():
                 race_players.append(RacePlayer(
-                    player["profile"].split("/")[-1], player["displayName"], player["score"], player["submissionTime"]
+                    player["profile"].split("/")[-1],
+                    player["displayName"],
+                    player["score"],
+                    player["scoreParts"],
+                    player["submissionTime"]
                 ))
 
         return race_players

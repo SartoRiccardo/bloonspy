@@ -1,6 +1,5 @@
 import unittest
 from datetime import datetime, timedelta
-import requests
 import random
 from bloonspy import btd6, Client
 
@@ -21,7 +20,7 @@ class TestBossLeaderboard(unittest.TestCase):
                               msg=f"Assert if result is BossPlayer")
 
         check_instance = [
-            ("name", str), ("score", timedelta), ("submission_time", datetime),
+            ("name", str), ("score", btd6.Score), ("submission_time", datetime),
             ("achievements", int), ("boss_normal_medals", btd6.EventMedals)
         ]
         for attr_name, attr_type in check_instance:
@@ -37,10 +36,10 @@ class TestBossLeaderboard(unittest.TestCase):
         boss_leaderboard_coop = boss.standard().leaderboard(pages=3, team_size=3)
 
         check_instance = [
-            ("score", timedelta), ("submission_time", datetime), ("is_fully_loaded", bool)
+            ("score", btd6.Score), ("submission_time", datetime), ("is_fully_loaded", bool)
         ]
         for i in range(len(boss_leaderboard_coop)):
-            team = boss_leaderboard_coop[i]
+            team: btd6.BossPlayerTeam = boss_leaderboard_coop[i]
             self.assertLessEqual(len(team.players), 3,
                                  msg="Assert if BossPlayerTeam has the correct number of players.")
             for attr_name, attr_type in check_instance:
