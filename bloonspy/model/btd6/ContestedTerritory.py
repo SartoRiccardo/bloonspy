@@ -29,7 +29,8 @@ class CtPlayer(User):
 
 
 class CtTeam(Team):
-    """A team who participated in Contested Territory and is on the leaderboards."""
+    """A team who participated in Contested Territory and is on the leaderboards.
+    Inherits from :class:`~bloonspy.model.btd6.Team`."""
     def __init__(self, team_id: str, name: str, score: int, **kwargs):
         super().__init__(team_id, **kwargs)
         self._name = name
