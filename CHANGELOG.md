@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.4.0](https://pypi.org/project/bloonspy/0.4.0) - 2023-07-XX
+## [0.4.0](https://pypi.org/project/bloonspy/0.4.0) - 2023-08-15
 
 ### Added
 + Custom exception for when the server is under maintenance
