@@ -31,7 +31,6 @@ class Mode(Enum):
 class Gamemode:
     """
     Difficulty and mode for a game.
-
     Can be created manually by passing a ~bloonspy.model.btd6.Difficulty and ~bloonspy.model.btd6.Mode enum as parameters.
 
     ::
