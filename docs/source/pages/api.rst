@@ -208,6 +208,12 @@ Infinity
 .. autoclass:: bloonspy.Infinity()
    :members:
 
+Infinity
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.model.btd6.Score()
+   :members:
+
 Enums
 ------------
 
@@ -259,6 +265,12 @@ Tower
 .. autoenum:: bloonspy.model.btd6.Tower
    :members:
 
+Tower
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoenum:: bloonspy.model.btd6.ScoreParts
+   :members:
+
 Exceptions
 ---------------------------------
 
@@ -272,4 +284,16 @@ NotFound
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: bloonspy.exceptions.NotFound
+   :members:
+
+UnderMaintenance
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.exceptions.UnderMaintenance
+   :members:
+
+BadTeamSize
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.exceptions.BadTeamSize
    :members:

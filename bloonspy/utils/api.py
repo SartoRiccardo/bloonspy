@@ -3,6 +3,7 @@ import threading
 import time
 import random
 from typing import Dict, Any, List, Union
+from ..exceptions import BloonsException, UnderMaintenance
 import sys
 
 
@@ -35,7 +36,11 @@ def get(endpoint: str, params: Dict[str, Any] = None) -> Union[List[Dict[str, An
             if "unittest" in sys.modules.keys():
                 print(resp.content)
                 print(resp.headers)
-            raise Exception("Server error occurred")
+
+            if resp.status_code == 525:
+                raise UnderMaintenance("Server is under maintenance")
+
+            raise BloonsException("Server error occurred")
         if resp.status_code >= 400:
             if resp.status_code == 403 and "Retry-After" in resp.headers:
                 retry_after = int(resp.headers["Retry-After"]) + random.random()*3
@@ -45,13 +50,13 @@ def get(endpoint: str, params: Dict[str, Any] = None) -> Union[List[Dict[str, An
                 request_lock.start()
                 continue
 
-            raise Exception("Bad request")
+            raise BloonsException("Bad request")
         if "application/json" not in resp.headers.get("content-type").lower():
-            raise Exception("Content is not JSON")
+            raise BloonsException("Response is not JSON")
 
         data = resp.json()
         if not data["success"]:
-            raise Exception(data["error"])
+            raise BloonsException(data["error"])
 
         return data["body"]
 
@@ -59,7 +64,7 @@ def get(endpoint: str, params: Dict[str, Any] = None) -> Union[List[Dict[str, An
 def get_lb_page(endpoint: str, page_num: int):
     try:
         return get(endpoint, params={"page": page_num})
-    except Exception as exc:
+    except BloonsException as exc:
         if str(exc) == "No Scores Available":
             return []
         raise exc

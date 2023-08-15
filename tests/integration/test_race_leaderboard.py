@@ -1,6 +1,5 @@
 import unittest
-from datetime import datetime, timedelta
-import requests
+from datetime import datetime
 import random
 from bloonspy import btd6, Client
 
@@ -21,7 +20,7 @@ class TestRaceLeaderboard(unittest.TestCase):
                               msg=f"Assert if result is RacePlayer")
 
         check_instance = [
-            ("name", str), ("score", timedelta), ("submission_time", datetime),
+            ("name", str), ("score", btd6.Score), ("submission_time", datetime),
             ("achievements", int), ("boss_normal_medals", btd6.EventMedals)
         ]
         for attr_name, attr_type in check_instance:
