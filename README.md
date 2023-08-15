@@ -1,5 +1,8 @@
 # BloonsPy
 
+[![Documentation Status](https://readthedocs.org/projects/bloonspy/badge/?version=latest)](https://bloonspy.readthedocs.io/en/latest/?badge=latest)
+[![PyPI](https://img.shields.io/pypi/v/bloonspy)](https://pypi.org/project/bloonspy/)
+
 BloonsPy is a Python wrapper for the [Ninja Kiwi Open Data API](https://data.ninjakiwi.com/),
 that makes you write more readable code and handles rate limiting automatically.
 
