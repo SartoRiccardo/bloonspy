@@ -2,13 +2,16 @@ from dataclasses import dataclass
 from ..GameVersion import GameVersion
 from .Tower import Tower, HeroSkin
 from .Power import Power
-from .Gamemode import Gamemode
+from .Gamemode import Gamemode, Mode
 from ...utils.dictionaries import enum_any_dict
 from .Rewards import InstaMonkey
 from .Progress import MonkeyKnowledge, Upgrade, Achievement
 from .Map import MapProgress, Map, GamemodeCompletionData
 from .Cosmetics import TrophyStoreItemStatus
 from typing import Any
+from ...utils.api import get
+from ...exceptions import NotFound
+from ...utils.decorators import exception_handler
 
 
 @dataclass
@@ -57,8 +60,29 @@ class UserSave:
     trophy_store_items: dict[TrophyStoreItemStatus, bool]  #: Trophy Store items purchased.
     map_progress: dict[Map, MapProgress]  #: The player's map completions.
 
+    def _handle_exception(self, exception: Exception) -> None:
+        error_msg = str(exception)
+        if error_msg == "Invalid user ID / Player Does not play this game":
+            raise NotFound(error_msg)
+
     @staticmethod
-    def from_json(data: dict[str, Any]) -> "UserSave":
+    @exception_handler(_handle_exception)
+    def fetch(oak: str) -> "UserSave":
+        """
+        Get an UserSave object through an OAK.
+
+        :param oak: The OAK used to get the save of.
+        :type oak: str
+        :return: The UserSave belonging to the User who owns the OAK.
+        :rtype: ~bloonspy.model.btd6.UserSave
+
+        :raises bloonspy.exceptions.NotFound: If the player is not found.
+        """
+        data = get("/btd6/save/{}".format(oak))
+        return UserSave._parse_json(data)
+
+    @staticmethod
+    def _parse_json(data: dict[str, Any]) -> "UserSave":
         insta_monkeys = {}
         for twr_name in data["instaTowers"]:
             tower = Tower.from_string(twr_name)
@@ -68,21 +92,28 @@ class UserSave:
                 path = path_key.replace("NaN", "0")
                 tp, mp, bp = int(path[0]), int(path[1]), int(path[2])
                 insta_monkey = InstaMonkey(tower, tp, mp, bp)
-                insta_monkeys[tower][insta_monkey] = data["instaTowers"][path_key]
+                insta_monkeys[tower][insta_monkey] = collection[path_key]
 
         def parse_map_completion(map_completion) -> MapProgress:
             single_player = {}
             coop = {}
             for diff in map_completion["difficulty"]:
                 for mode in map_completion["difficulty"][diff]["single"]:
-                    single_player[Gamemode.from_strings(diff, mode)] = GamemodeCompletionData(
+                    gamemode = Gamemode.from_strings(diff, mode)
+                    if gamemode is None:
+                        continue
+                    single_player[gamemode] = GamemodeCompletionData(
                         map_completion["difficulty"][diff]["single"][mode]["completed"],
                         map_completion["difficulty"][diff]["single"][mode]["completedWithoutLoadingSave"],
                         map_completion["difficulty"][diff]["single"][mode]["bestRound"],
                         map_completion["difficulty"][diff]["single"][mode]["timesCompleted"],
                     )
+
                 for mode in map_completion["difficulty"][diff]["coop"]:
-                    coop[Gamemode.from_strings(diff, mode)] = GamemodeCompletionData(
+                    gamemode = Gamemode.from_strings(diff, mode)
+                    if gamemode is None:
+                        continue
+                    coop[gamemode] = GamemodeCompletionData(
                         map_completion["difficulty"][diff]["coop"][mode]["completed"],
                         map_completion["difficulty"][diff]["coop"][mode]["completedWithoutLoadingSave"],
                         map_completion["difficulty"][diff]["coop"][mode]["bestRound"],
@@ -97,7 +128,7 @@ class UserSave:
             enum_any_dict(MonkeyKnowledge, data["acquiredKnowledge"]),
             enum_any_dict(Tower, data["unlockedTowers"]),
             enum_any_dict(Tower, data["unlockedHeros"]),
-            enum_any_dict(HeroSkin, data["unlockedSkins"]),
+            {},  #enum_any_dict(HeroSkin, data["unlockedSkins"]),
             data["gamesPlayed"],
             # enum_any_dict(Power, data["powers"]),
             insta_monkeys,
@@ -107,12 +138,12 @@ class UserSave:
             data["veteranXp"],
             data["veteranRank"],
             data["trophies"],
-            data["totalTrophiesEarned"],
-            data["totalTeamTrophiesEarned"],
+            data["lifetimeTrophies"],
+            data["lifetimeTeamTrophies"],
             data["knowledgePoints"],
             Tower.from_string(data["primaryHero"]),
             [Achievement.from_string(a) for a in data["achievementsClaimed"]],
-            data["highestRound"],
+            data["highestSeenRound"],
             data["dailyRewardCount"],
             data["totalDailyChallengesCompleted"],
             data["consecutiveDailyChallengesCompleted"],

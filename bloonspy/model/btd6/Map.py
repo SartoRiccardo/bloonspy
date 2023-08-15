@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from .Gamemode import Gamemode, Difficulty, Mode
 from enum import Enum
+import re
 
 
 @dataclass
@@ -139,9 +140,9 @@ class Map(Enum):
         if value in quirky_names.keys():
             return quirky_names[value]
 
-        return map_switch[value.replace(" ", "")] if value in map_switch else None
+        return map_switch[value] if value in map_switch else None
 
 
 map_switch = {}
 for game_map in Map:
-    map_switch[game_map.value] = game_map
+    map_switch[re.sub(r"[' ]", "", game_map.value)] = game_map

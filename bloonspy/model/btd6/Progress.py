@@ -28,7 +28,7 @@ class MonkeyKnowledge(Enum):
     BUDGET_CLUSTERS = "Budget Clusters"
     ICY_CHILL = "Icy Chill"
     CROSSBOW_REACH = "Crossbow Reach"
-    _AND4 = " And4"
+    FOUR_AND_FOuR = "4 And 4"
     MASTER_DOUBLE_CROSS = "Master Double Cross"
     BONUS_MONKEY = "Bonus Monkey"
     MORE_SPLATTY_GLUE = "More Splatty Glue"
@@ -141,7 +141,7 @@ class MonkeyKnowledge(Enum):
 
 mk_switch = {}
 for mk in MonkeyKnowledge:
-    mk_switch[mk.value] = mk
+    mk_switch[mk.value.replace(" ", "")] = mk
 
 
 class Upgrade(Enum):
@@ -701,19 +701,12 @@ class Achievement(Enum):
 
     @staticmethod
     def from_string(value: str) -> "Achievement":
-        quirky_names = {
-        }
-        if value in quirky_names.keys():
-            return quirky_names[value]
-
+        value = value.replace(" ", "")
         if value in achievement_switch:
             return achievement_switch[value]
-        if value.replace(" ", "") in achievement_switch:
-            return achievement_switch[value]
-        raise ValueError(f"UAAAAARGGGHHHH {value}")
         return None
 
 
 achievement_switch = {}
 for achievement in Achievement:
-    achievement_switch[achievement.value] = achievement
+    achievement_switch[achievement.value.replace(" ", "")] = achievement
