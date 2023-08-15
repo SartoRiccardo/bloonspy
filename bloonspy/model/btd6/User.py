@@ -270,3 +270,6 @@ class User(Loadable):
     def heroes_placed(self) -> Dict[Tower, int]:
         """Number of times each hero has been placed."""
         return self._data["heroes_placed"]
+
+    def get_progress(self):
+        pass

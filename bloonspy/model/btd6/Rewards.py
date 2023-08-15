@@ -11,6 +11,11 @@ class InstaMonkey:
     middle_path: int  #: Middle path upgrades.
     bottom_path: int  #: Bottom path upgrades.
 
+    @property
+    def tier(self) -> int:
+        """The tier of the Insta Monkey."""
+        return max(self.top_path, self.middle_path, self.bottom_path)
+
 
 @dataclass
 class Reward:

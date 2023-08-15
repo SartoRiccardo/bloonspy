@@ -93,3 +93,7 @@ class Tower(Enum):
             Tower.EZILI, Tower.PAT_FUSTY, Tower.SAUDA, Tower.PSI, Tower.GERALDO, Tower.BRICKELL, Tower.ETIENNE,
             Tower.ADORA
         ]
+
+
+class HeroSkin:
+    pass

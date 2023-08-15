@@ -29,7 +29,20 @@ class Mode(Enum):
 
 @dataclass
 class Gamemode:
-    """Difficulty and mode for a game."""
+    """
+    Difficulty and mode for a game.
+
+    Can be created manually by passing a Difficulty and Mode enum as parameters.
+
+    ::
+
+        from bloonspy.btd6 import Gamemode, Difficulty, Mode
+
+        chimps = Gamemode(Difficulty.HARD, Mode.CHIMPS)
+        military_only = Gamemode(Difficulty.MEDIUM, Mode.MILITARY_ONLY)
+        some_custom_mode = Gamemode(Difficulty.EASY, Mode.DOUBLE_HP_MOABS)
+
+    """
     difficulty: Difficulty  #: The game's difficulty.
     mode: Mode  #: The game's mode.
 
@@ -58,3 +71,41 @@ class Gamemode:
         found_difficulty = difficulty_switch[difficulty] if difficulty in difficulty_switch else None
         found_mode = mode_switch[mode] if mode in mode_switch else None
         return Gamemode(found_difficulty, found_mode)
+
+    def __str__(self) -> str:
+        return f"{self.difficulty.value} - {self.mode.value}"
+
+    def __repr__(self) -> str:
+        return str(self)
+
+    @staticmethod
+    def easy_modes() -> list["Gamemode"]:
+        """Shortcut for getting all Easy mode gamemodes."""
+        return [
+            Gamemode(Difficulty.EASY, Mode.STANDARD),
+            Gamemode(Difficulty.EASY, Mode.PRIMARY_ONLY),
+            Gamemode(Difficulty.EASY, Mode.DEFLATION),
+        ]
+
+    @staticmethod
+    def medium_modes() -> list["Gamemode"]:
+        """Shortcut for getting all Medium mode gamemodes."""
+        return [
+            Gamemode(Difficulty.MEDIUM, Mode.STANDARD),
+            Gamemode(Difficulty.MEDIUM, Mode.MILITARY_ONLY),
+            Gamemode(Difficulty.MEDIUM, Mode.REVERSE),
+            Gamemode(Difficulty.MEDIUM, Mode.APOPALYPSE),
+        ]
+
+    @staticmethod
+    def hard_modes() -> list["Gamemode"]:
+        """Shortcut for getting all Hard mode gamemodes."""
+        return [
+            Gamemode(Difficulty.HARD, Mode.STANDARD),
+            Gamemode(Difficulty.HARD, Mode.MAGIC_ONLY),
+            Gamemode(Difficulty.HARD, Mode.DOUBLE_HP_MOABS),
+            Gamemode(Difficulty.HARD, Mode.HALF_CASH),
+            Gamemode(Difficulty.HARD, Mode.ALTERNATE_BLOONS_ROUNDS),
+            Gamemode(Difficulty.HARD, Mode.IMPOPPABLE),
+            Gamemode(Difficulty.HARD, Mode.CHIMPS),
+        ]
