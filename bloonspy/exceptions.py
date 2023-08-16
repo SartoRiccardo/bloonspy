@@ -21,7 +21,20 @@ class BadTeamSize(BloonsException):
 
 
 class InvalidTowerPath(BloonsException):
-    """You specified a bad path (for example: 522)."""
+    """
+    *New in 0.5.0*
+
+    You specified a bad path (for example: 522).
+    """
     def __init__(self, tp: int, mp: int, bp: int):
         super().__init__(f"Invalid Tower Path: {tp}{mp}{bp}")
+
+
+class Forbidden(BloonsException):
+    """
+    *New in 0.5.0*
+
+    You are not allowed to use this method.
+    """
+    pass
 
