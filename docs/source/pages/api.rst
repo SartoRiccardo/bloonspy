@@ -423,3 +423,9 @@ InvalidTowerPath
 
 .. autoclass:: bloonspy.exceptions.InvalidTowerPath
    :members:
+
+Forbidden
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.exceptions.Forbidden
+   :members:

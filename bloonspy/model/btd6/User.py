@@ -277,10 +277,10 @@ class User(Loadable):
         *New in 0.5.0*
 
         Get an user's save state.
+
         .. warning::
            The field :attr:`~bloonspy.model.btd6.User.id` must be an OAK. Currently, the only way to guarantee this is
-           if the :class:`~bloonspy.model.btd6.User` object has been generated through
-           :class:`bloonspy.Client.get_user()` with an OAK passed as `identifier`.
+           if the object has been generated through :func:`bloonspy.Client.get_user` with an OAK passed as `identifier`.
 
         :return: The User's progress.
         :rtype: ~bloons.model.btd6.UserSave
@@ -297,7 +297,8 @@ class User(Loadable):
         *New in 0.5.0*
 
         Checks whether the user is identified through an OAK instead of an ID. If `True`, it means it
-        will have access to many methods such as :attr:`~bloonspy.model.btd6.User.get_progress()`.
+        will have access to many methods such as :func:`~bloonspy.model.btd6.User.get_progress`.
+
         :return: Whether the User is identified through its OAK.
         :rtype: bool
         """
