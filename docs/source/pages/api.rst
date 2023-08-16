@@ -118,6 +118,12 @@ CtTeam
 Data Classes
 ------------
 
+UserSave
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.model.btd6.UserSave()
+   :members:
+
 GameVersion
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -208,10 +214,94 @@ Infinity
 .. autoclass:: bloonspy.Infinity()
    :members:
 
-Infinity
+Score
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: bloonspy.model.btd6.Score()
+   :members:
+
+MapProgress
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.model.btd6.MapProgress()
+   :members:
+
+GamemodeCompletionData
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.model.btd6.GamemodeCompletionData()
+   :members:
+
+TrophyStoreItemStatus
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.model.btd6.TrophyStoreItemStatus()
+   :members:
+
+HeroPlacementFx
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.model.btd6.HeroPlacementFx()
+   :members:
+
+PowerSkins
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.model.btd6.PowerSkins()
+   :members:
+
+TowerPets
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.model.btd6.TowerPets()
+   :members:
+
+TowerProjectiles
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.model.btd6.TowerProjectiles()
+   :members:
+
+VillageFlagCosmetics
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.model.btd6.VillageFlagCosmetics()
+   :members:
+
+MusicTracks
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.model.btd6.MusicTracks()
+   :members:
+
+AllMonkeyFx
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.model.btd6.AllMonkeyFx()
+   :members:
+
+CoopEmotes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.model.btd6.CoopEmotes()
+   :members:
+
+BloonsPopFx
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.model.btd6.BloonsPopFx()
+   :members:
+
+BloonDecals
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.model.btd6.BloonDecals()
+   :members:
+
+MoabSkins
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.model.btd6.MoabSkins()
    :members:
 
 Enums
@@ -265,10 +355,40 @@ Tower
 .. autoenum:: bloonspy.model.btd6.Tower
    :members:
 
-Tower
+ScoreType
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. autoenum:: bloonspy.model.btd6.ScoreParts
+.. autoenum:: bloonspy.model.btd6.ScoreType
+   :members:
+
+MonkeyKnowledge
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoenum:: bloonspy.model.btd6.MonkeyKnowledge
+   :members:
+
+Upgrade
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoenum:: bloonspy.model.btd6.Upgrade
+   :members:
+
+Achievement
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoenum:: bloonspy.model.btd6.Achievement
+   :members:
+
+MapBorder
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoenum:: bloonspy.model.btd6.MapBorder
+   :members:
+
+Map
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoenum:: bloonspy.model.btd6.Map
    :members:
 
 Exceptions
@@ -296,4 +416,10 @@ BadTeamSize
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: bloonspy.exceptions.BadTeamSize
+   :members:
+
+InvalidTowerPath
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.exceptions.InvalidTowerPath
    :members:

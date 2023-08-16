@@ -6,7 +6,11 @@ import re
 
 @dataclass
 class GamemodeCompletionData:
-    """Statistics of a gamemode in a map."""
+    """
+    *New in 0.5.0*
+
+    Statistics of a gamemode in a map.
+    """
     completed: bool  #: Whether this gamemode was beaten.
     completed_without_loading_save: bool  #: Whether this gamemode was beaten without loading from saves.
     highest_round: int  #: Highest round on this gamemode.
@@ -14,7 +18,11 @@ class GamemodeCompletionData:
 
 
 class MapBorder(Enum):
-    """Colors of the border of a map, to symbolize progression."""
+    """
+    *New in 0.5.0*
+
+    Colors of the border of a map, to symbolize progression.
+    """
     NONE = "None"
     BRONZE = "Bronze"
     SILVER = "Silver"
@@ -24,7 +32,11 @@ class MapBorder(Enum):
 
 @dataclass
 class MapProgress:
-    """The User's progress in a map."""
+    """
+    *New in 0.5.0*
+
+    The User's progress in a map.
+    """
     beaten: bool  #: Whether the map was beaten at least once, in any gamemode.
     single_player: dict[Gamemode, GamemodeCompletionData]  #: Single player map progress.
     coop: dict[Gamemode, GamemodeCompletionData]  #: Coop map progress.
@@ -63,7 +75,11 @@ class MapProgress:
 
 
 class Map(Enum):
-    """All maps present in the game."""
+    """
+    *New in 0.5.0*
+
+    All maps present in the game.
+    """
     MONKEY_MEADOW = "Monkey Meadow"
     TREE_STUMP = "Tree Stump"
     TOWN_CENTRE = "Town Centre"

@@ -4,7 +4,11 @@ from dataclasses import dataclass
 
 @dataclass
 class BloonsPopFx:
-    """Purchase status of Bloons Pop FX."""
+    """
+    *New in 0.5.0*
+
+    Purchase status of Bloons Pop FX.
+    """
     mo_monkeys: bool  #: The Mo' Monkeys pop FX.
     confetti: bool  #: The Confetti pop FX.
     flowers: bool  #: The Flowers pop FX.
@@ -17,7 +21,11 @@ class BloonsPopFx:
 
 @dataclass
 class MoabSkins:
-    """Purchase status of MOAB skins."""
+    """
+    *New in 0.5.0*
+
+    Purchase status of MOAB skins.
+    """
     all_old_timey: bool  #: The Old Timey skin.
     bad_skeleton: bool  #: The BAD Skeleton skin.
     bad_pinata: bool  #: The BAD Pinata skin.
@@ -46,7 +54,11 @@ class MoabSkins:
 
 @dataclass
 class BloonDecals:
-    """Purchase status of bloon decals."""
+    """
+    *New in 0.5.0*
+
+    Purchase status of bloon decals.
+    """
     bloons_beards: bool  #: The Beard cosmetic.
     all_bucket_hat: bool  #: The Bucket Hat cosmetic.
     bloons_bunny_ears: bool  #: The Bunny Ears cosmetic.
@@ -67,7 +79,11 @@ class BloonDecals:
 
 @dataclass
 class CoopEmotes:
-    """Purchase status of Coop emotes."""
+    """
+    *New in 0.5.0*
+
+    Purchase status of Coop emotes.
+    """
     animation_begging_monkey: bool  #: The Pleeeease Monkey emote.
     animation_ben_cool: bool  #: The Ben Cool emote.
     animation_biker_bones_rage: bool  #: The Biker Bones Rage emote.
@@ -113,7 +129,11 @@ class CoopEmotes:
 
 @dataclass
 class HeroPlacementFx:
-    """Purchase status of Hero placement effects."""
+    """
+    *New in 0.5.0*
+
+    Purchase status of Hero placement effects.
+    """
     adora_sunbeam: bool  #: Adora's Sunbeam placement FX.
     benjamin_matrix: bool  #: Benjamin's Matrix placement FX.
     benjammin_party_lights: bool  #: BenJammin's Party Lights placement FX.
@@ -130,7 +150,11 @@ class HeroPlacementFx:
 
 @dataclass
 class TowerProjectiles:
-    """Purchase status of custom Tower projectiles."""
+    """
+    *New in 0.5.0*
+
+    Purchase status of custom Tower projectiles.
+    """
     alchemist_spring_flowers: bool  #: Alchemist's spring flower projectiles.
     dartling_easter_eggs: bool  #: Dartling Gunner's easter egg projectiles.
     spike_factory_pineapples: bool  #: Spike Factory's pineapple spikes.
@@ -139,7 +163,11 @@ class TowerProjectiles:
 
 @dataclass
 class TowerPets:
-    """Purchase status of Tower and Hero pets."""
+    """
+    *New in 0.5.0*
+
+    Purchase status of Tower and Hero pets.
+    """
     banana_farm_chicken: bool  #: The Banana Farm's Chicken pet.
     glue_gunner_rat: bool  #: The Glue Gunner's Glue Rat pet.
     heli_pilot_hummingbird: bool  #: The Heli Pilot's Hummingbird pet.
@@ -169,7 +197,11 @@ class TowerPets:
 
 @dataclass
 class AllMonkeyFx:
-    """Purchase status of Monkey FX that apply to all monkeys."""
+    """
+    *New in 0.5.0*
+
+    Purchase status of Monkey FX that apply to all monkeys.
+    """
     bats: bool  #: The Bats upgrade FX.
     butterflies: bool  #: The Butterflies upgrade FX.
     ghosts: bool  #: The Ghosts upgrade FX.
@@ -177,7 +209,11 @@ class AllMonkeyFx:
 
 @dataclass
 class PowerSkins:
-    """Purchase status of Power skins."""
+    """
+    *New in 0.5.0*
+
+    Purchase status of Power skins.
+    """
     banana_farmer_banana_costume: bool  #: The Banana Farmer's Banana Costume.
     dart_time_matrix: bool  #: The Time Stop's Dart Matrix.
     glue_trap_honey_trap: bool  #: The Glue Trap's Honey Trap.
@@ -191,7 +227,11 @@ class PowerSkins:
 
 @dataclass
 class MusicTracks:
-    """Purchase status of music tracks."""
+    """
+    *New in 0.5.0*
+
+    Purchase status of music tracks.
+    """
     bmc_street_party: bool  #: The "BMC Street Party" music track.
     fiesta_synthwave_mix: bool  #: The "Fiesta - Synthwave Mix" music track.
     jingle_bloons: bool  #: The "Jingle - Bloons" music track.
@@ -209,7 +249,11 @@ class MusicTracks:
 
 @dataclass
 class VillageFlagCosmetics:
-    """Purchase status of the Village flag cosmetics."""
+    """
+    *New in 0.5.0*
+
+    Purchase status of the Village flag cosmetics.
+    """
     flag_australian: bool  #: The Australian flag
     flag_banana: bool  #: The Banana Republic flag
     flag_brazil: bool  #: The Brazil flag
@@ -225,7 +269,11 @@ class VillageFlagCosmetics:
 
 @dataclass
 class TrophyStoreItemStatus:
-    """Purchase status of all trophy store items."""
+    """
+    *New in 0.5.0*
+
+    Purchase status of all trophy store items.
+    """
     bloon_pop_fx: BloonsPopFx  #: Effects when bloons pop.
     bloon_decals: BloonDecals  #: Decals that apply to Bloons, MOABs, or both.
     moab_skins: MoabSkins  #: Skins that apply to all or specific MOAB-class bloons.

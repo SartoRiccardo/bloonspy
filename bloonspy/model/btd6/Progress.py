@@ -2,7 +2,11 @@ from enum import Enum
 
 
 class MonkeyKnowledge(Enum):
-    """The Monkey Knowledge points present in the game."""
+    """
+    *New in 0.5.0*
+
+    The Monkey Knowledge points present in the game.
+    """
     EXTRA_DART_POPS = "Extra Dart Pops"
     FAST_TACK_ATTACKS = "Fast Tack Attacks"
     INCREASED_LIFESPAN = "Increased Lifespan"
@@ -145,7 +149,11 @@ for mk in MonkeyKnowledge:
 
 
 class Upgrade(Enum):
-    """Every single tower upgrade present in the game."""
+    """
+    *New in 0.5.0*
+
+    Every single tower upgrade present in the game.
+    """
     DART_TOP_1 = "Sharp Shots"
     DART_TOP_2 = "Razor Sharp Shots"
     DART_TOP_3 = "Spike-o-pult"
@@ -571,7 +579,11 @@ for upgrade in Upgrade:
 
 
 class Achievement(Enum):
-    """Every achievement present in the game."""
+    """
+    *New in 0.5.0*
+
+    Every achievement present in the game.
+    """
     FIRST_WIN = "First Win"
     HERO_TIME = "Hero Time"
     HERO_POWERS_ACTIVATE = "Hero Powers Activate"

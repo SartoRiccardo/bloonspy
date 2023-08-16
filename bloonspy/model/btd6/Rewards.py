@@ -8,14 +8,17 @@ from ...exceptions import InvalidTowerPath
 class InstaMonkey:
     """
     An Insta Monkey.
-    Can be created manually by passing a ~bloonspy.model.btd6.Tower and 3 paths as parameters.
+    Can be created manually by passing a :class:`~bloonspy.model.btd6.Tower` and 3 paths as parameters.
 
     ::
 
-        from bloonspy.btd6 import Tower, InstaMonkey
+        from bloonspy import btd6, exceptions
 
-        glaive_dominus = InstaMonkey(Tower.BOOMERANG_MONKEY, 5, 0, 0)
-        invalid_insta = InstaMonkey(Tower.BOOMERANG_MONKEY, 3, 3, 3)
+        glaive_dominus = btd6.InstaMonkey(btd6.Tower.BOOMERANG_MONKEY, 5, 0, 0)
+        try:
+            invalid_insta = btd6.InstaMonkey(btd6.Tower.BOOMERANG_MONKEY, 3, 3, 3)
+        except exceptions.InvalidTowerPath:
+            print("3-3-3 is not a valid path!")
 
     """
     tower: Tower  #: The tower this Insta Monkey is for.

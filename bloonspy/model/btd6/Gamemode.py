@@ -31,15 +31,15 @@ class Mode(Enum):
 class Gamemode:
     """
     Difficulty and mode for a game.
-    Can be created manually by passing a ~bloonspy.model.btd6.Difficulty and ~bloonspy.model.btd6.Mode enum as parameters.
+    Can be created manually by passing a :class:`~bloonspy.model.btd6.Difficulty` and :class:`~bloonspy.model.btd6.Mode` enum as parameters.
 
     ::
 
-        from bloonspy.btd6 import Gamemode, Difficulty, Mode
+        from bloonspy import btd6
 
-        chimps = Gamemode(Difficulty.HARD, Mode.CHIMPS)
-        military_only = Gamemode(Difficulty.MEDIUM, Mode.MILITARY_ONLY)
-        some_custom_mode = Gamemode(Difficulty.EASY, Mode.DOUBLE_HP_MOABS)
+        chimps = btd6.Gamemode(btd6.Difficulty.HARD, btd6.Mode.CHIMPS)
+        military_only = btd6.Gamemode(btd6.Difficulty.MEDIUM, btd6.Mode.MILITARY_ONLY)
+        some_custom_mode = btd6.Gamemode(btd6.Difficulty.EASY, btd6.Mode.DOUBLE_HP_MOABS)
 
     """
     difficulty: Difficulty  #: The game's difficulty.

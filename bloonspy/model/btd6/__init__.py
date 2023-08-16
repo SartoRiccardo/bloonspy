@@ -15,4 +15,4 @@ from .Cosmetics import TrophyStoreItemStatus, HeroPlacementFx, PowerSkins, Tower
     VillageFlagCosmetics, MusicTracks, AllMonkeyFx, CoopEmotes, BloonsPopFx, BloonDecals, MoabSkins
 from .Map import MapProgress, MapBorder, Map, GamemodeCompletionData
 from .Progress import Upgrade, Achievement, MonkeyKnowledge
-from .UserSave import *
+from .UserSave import UserSave

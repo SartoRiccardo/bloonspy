@@ -16,7 +16,11 @@ from ...utils.decorators import exception_handler
 
 @dataclass
 class UserSave:
-    """A dataclass detailing an user's save state."""
+    """
+    *New in 0.5.0*
+
+    A dataclass detailing an user's save state.
+    """
     latest_game_version: GameVersion  #: The latest version of the game that this player has played.
     tower_xp: dict[Tower, int]  #: XP accumulated for each tower.
     unlocked_upgrades: dict[Upgrade, bool]  #: Upgrades unlocked.
