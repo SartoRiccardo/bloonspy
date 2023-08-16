@@ -121,7 +121,12 @@ class TestUserSave(unittest.TestCase):
         self.assertEqual(ravine_progress.coop_border, btd6.MapBorder.NONE,
                          msg="Asserting UserSave.map_progress[Ravine].coop_border == MapBorder.NONE")
 
-        # TODO trophy_store_items
+        self.assertFalse(user_save.trophy_store_items.village_flags.flag_canada,
+                         msg="Asserting UserSave.trophy_store_items.village_flags.flag_canada == False")
+        self.assertTrue(user_save.trophy_store_items.monkey_names,
+                        msg="Asserting UserSave.trophy_store_items.monkey_names == True")
+        self.assertTrue(user_save.trophy_store_items.music_tracks.bmc_street_party,
+                        msg="Asserting UserSave.music_tracks.bmc_street_party == True")
 
     def test_usersave_fail(self) -> None:
         """

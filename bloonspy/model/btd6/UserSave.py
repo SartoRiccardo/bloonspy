@@ -57,7 +57,7 @@ class UserSave:
     named_monkeys: dict[Tower, str]  #: Named monkey names.
     collection_event_crates_opened: int  #: Number of ollect event crates opened.
     continues_used: int  #: Continues used.
-    trophy_store_items: dict[TrophyStoreItemStatus, bool]  #: Trophy Store items purchased.
+    trophy_store_items: TrophyStoreItemStatus  #: Trophy Store items purchased.
     map_progress: dict[Map, MapProgress]  #: The player's map completions.
 
     def _handle_exception(self, exception: Exception) -> None:
@@ -162,6 +162,6 @@ class UserSave:
             enum_any_dict(Tower, data["namedMonkeys"]),
             data["collectionEventCratesOpened"],
             data["continuesUsed"],
-            None,  # trophy_store_items: TrophyStoreItemStatus  #: Trophy Store items purchased.
+            TrophyStoreItemStatus.from_json(data["trophyStoreItems"]),
             enum_any_dict(Map, data["mapProgress"], parse_raw=parse_map_completion),
         )
