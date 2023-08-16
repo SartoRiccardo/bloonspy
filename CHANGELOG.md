@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.5.0](https://pypi.org/project/bloonspy/0.5.0) - 2023-08-16
+
+### Added
++ `GameVersion`, `InstaMonkey` and `Gamemode` are more readable as strings.
++ Added `InstaMonkey.tier`
++ Added `UserSave`
+  + Added `MonkeyKnowledge`, `Upgrade`, and `Achievement`
+  + Added `Map`, `MapProgress`, `MapBorder`, and `GamemodeCompletionData`
+  + Added `HeroSkin`
+  + Added `TrophyStoreItemStatus`
+  + Can be accessed through `User.get_progress`
++ Added `Gamemode.easy_modes`, `Gamemode.medium_modes`, and `Gamemode.hard_modes` as shortcuts.
++ Added `InvalidTowerPath`, `Forbidden` as exceptions.
++ Added `User.has_oak`
++ Added `BossBloon.PHAYZE`
+
+### Changed
++ `InstaMonkey` throws an error when given an invalid tower path
++ `Gamemode.from_strings` returns `None` if given an invalid `difficulty`/`mode` combination
+  + Mostly an internal change
+
 ## [0.4.0](https://pypi.org/project/bloonspy/0.4.0) - 2023-08-15
 
 ### Added

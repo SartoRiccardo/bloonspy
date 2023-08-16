@@ -1,7 +1,9 @@
+import re
 from enum import Enum
 
 
 class Tower(Enum):
+    """Available towers in the game."""
     QUINCY = "Quincy"
     GWENDOLIN = "Gwendolin"
     STRIKER_JONES = "Striker Jones"
@@ -93,3 +95,55 @@ class Tower(Enum):
             Tower.EZILI, Tower.PAT_FUSTY, Tower.SAUDA, Tower.PSI, Tower.GERALDO, Tower.BRICKELL, Tower.ETIENNE,
             Tower.ADORA
         ]
+
+
+class HeroSkin(Enum):
+    """Alternative hero costumes in the game."""
+    # Why are these 3 skins????
+    PSI = "Psi"
+    GERALDO = "Geraldo"
+    SAUDA = "Sauda"
+
+    BENJAMMIN = "BenJammin"
+    SCIENTIST_GWENDOLIN = "Scientist Gwendolin"
+    BIKER_BONES = "Biker Bones"
+    OCEAN_GUARDIAN_OBYN = "Ocean Guardian Obyn"
+    SENTAI_CAPTAIN_CHURCHILL = "Sentai Captain Churchill"
+    CYBER_QUINCY = "Cyber Quincy"  # Yoo it's the Hemi thing!
+    SMUDGE_CATT = "Smudge Catt"
+    JOAN_OF_ARC_ADORA = "Joan Of Arc Adora"
+    HARLEGWEN = "Harlegwen"
+    OCTOJONES = "Octo Jones"
+    ETN = "ETN"
+    VOIDORA = "Voidora"
+    GALAXILI = "Galaxili"
+    DREAD_PIRATE_BRICKELL = "Dread Pirate Brickell"
+    MOUNTAIN_OBYN = "Mountain Obyn"
+    SUSHI_BENTO = "Sushi Bento"
+    VIKING_SAUDA = "Viking Sauda"
+    WOLFPACK_QUINCY = "Wolfpack Quincy"
+    PSIMBALS = "Psimbals"
+    FUSTY_THE_SNOWMAN = "Fusty The Snowman"
+    SLEIGH_CAPTAIN_CHURCHILL = "Sleigh Captain Churchill"
+    KAIJU_PAT = "Kaiju Pat"
+    JIANGSHI_SAUDA = "Jiangshi Sauda"
+    LIFEGUARD_BRICKELL = "Lifeguard Brickell"
+
+    @staticmethod
+    def from_string(value: str) -> "HeroSkin":
+        quirky_names = {
+            "ObynOceanGuardian": HeroSkin.OCEAN_GUARDIAN_OBYN,
+            "CircusGwendolin": HeroSkin.HARLEGWEN,
+            "ETnEtienne": HeroSkin.ETN,
+            "MoltenObyn": HeroSkin.MOUNTAIN_OBYN,
+        }
+        if value in quirky_names.keys():
+            return quirky_names[value]
+
+        value = re.sub(r"\s+", "", value)
+        return hero_skin_switch[value] if value in hero_skin_switch else None
+
+
+hero_skin_switch = {}
+for hero_skin in HeroSkin:
+    hero_skin_switch[re.sub(r"\s+", "", hero_skin.value)] = hero_skin

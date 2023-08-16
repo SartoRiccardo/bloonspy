@@ -43,7 +43,7 @@ class TestUser(unittest.TestCase):
         ]
         for attr_name, attr_type in check_instance:
             self.assertIsInstance(getattr(user, attr_name), attr_type,
-                                  msg=f"Assert if challenge.{attr_name} is {attr_type}")
+                                  msg=f"Assert if User.{attr_name} is {attr_type}")
 
         # Check medals
 

@@ -20,3 +20,9 @@ class GameVersion:
             minor = int(versions[1])
 
         return GameVersion(major, minor)
+
+    def __str__(self) -> str:
+        return f"{self.major}.{self.minor}"
+
+    def __repr__(self) -> str:
+        return str(self)

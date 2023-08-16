@@ -8,6 +8,7 @@ from .User import User
 
 
 class TeamStatus(Enum):
+    """Entrance status of a team."""
     PUBLIC = "Public"
     PRIVATE = "Closed"
     INVITE_ONLY = "Invite Only"

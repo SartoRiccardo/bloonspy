@@ -23,3 +23,10 @@ def has_all_keys(dictionary: Dict[str, Any], key_list: List[str]):
         if key not in dictionary.keys():
             return False
     return True
+
+
+def enum_any_dict(enum_cls, raw_dict, parse_raw: callable = lambda x: x) -> dict:
+    result = {}
+    for key in raw_dict.keys():
+        result[enum_cls.from_string(key)] = parse_raw(raw_dict[key])
+    return result

@@ -5,6 +5,7 @@
 
 BloonsPy is a Python wrapper for the [Ninja Kiwi Open Data API](https://data.ninjakiwi.com/),
 that makes you write more readable code and handles rate limiting automatically.
+It also renames cryptic variable names so you can know what you're doing while coding.
 
 ## Installing
 

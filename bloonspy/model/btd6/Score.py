@@ -5,6 +5,7 @@ from typing import Dict, Any
 
 
 class ScoreType(Enum):
+    """Ways to judge how good a player did in events."""
     GAME_TIME = "Game Time"
     CASH_SPENT = "Cash Spent"
     TIERS = "Tiers"

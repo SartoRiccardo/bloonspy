@@ -44,10 +44,10 @@ class Client:
             please read `Lazy and Eager Loading <async.html#lazy-and-eager-loading>`_.
         :type eager: bool
 
-        :raise ~bloonspy.exceptions.NotFound: If no odyssey with that ID is found.
-
         :return: The found odyssey.
         :rtype: ~bloonspy.model.btd6.OdysseyEvent
+
+        :raise ~bloonspy.exceptions.NotFound: If no odyssey with that ID is found.
         """
         return OdysseyEvent(odyssey_id, eager=eager)
 
@@ -75,10 +75,10 @@ class Client:
             please read `Lazy and Eager Loading <async.html#lazy-and-eager-loading>`_.
         :type eager: bool
 
-        :raise ~bloonspy.exceptions.NotFound: If no CT with that ID is found.
-
         :return: The found Contested Territory event.
         :rtype: ~bloonspy.model.btd6.ContestedTerritoryEvent
+
+        :raise ~bloonspy.exceptions.NotFound: If no CT with that ID is found.
         """
         return ContestedTerritoryEvent(ct_id, eager=eager)
 
@@ -89,10 +89,10 @@ class Client:
         :param team_id: The ID of the team.
         :type team_id: str
 
-        :raise ~bloonspy.exceptions.NotFound: If no team with that ID is found.
-
         :return: The found team.
         :rtype: ~bloonspy.model.btd6.Team
+
+        :raise ~bloonspy.exceptions.NotFound: If no team with that ID is found.
         """
         return Team(team_id, eager=True)
 
@@ -127,10 +127,10 @@ class Client:
             please read `Lazy and Eager Loading <async.html#lazy-and-eager-loading>`_.
         :type eager: bool
 
-        :raise ~bloonspy.exceptions.NotFound: If no race with that ID is found.
-
         :return: The found race.
         :rtype: ~bloonspy.model.btd6.Race
+
+        :raise ~bloonspy.exceptions.NotFound: If no race with that ID is found.
         """
         return Race(race_id, eager=eager)
 
@@ -158,10 +158,10 @@ class Client:
             please read `Lazy and Eager Loading <async.html#lazy-and-eager-loading>`_.
         :type eager: bool
 
-        :raise ~bloonspy.exceptions.NotFound: If no boss event with that ID is found.
-
         :return: The found Boss event.
         :rtype: ~bloonspy.model.btd6.BossEvent
+
+        :raise ~bloonspy.exceptions.NotFound: If no boss event with that ID is found.
         """
         return BossEvent(boss_id, eager=eager)
 
@@ -212,10 +212,10 @@ class Client:
         :param challenge_id: The challenge ID.
         :type challenge_id: str
 
-        :raise ~bloonspy.exceptions.NotFound: If no challenge with the given ID is found.
-
         :return: The found challenge.
         :rtype: ~bloonspy.model.btd6.Challenge
+
+        :raise ~bloonspy.exceptions.NotFound: If no challenge with the given ID is found.
         """
         return Challenge(challenge_id, eager=True)
 
@@ -226,9 +226,9 @@ class Client:
         :param identifier: The user ID, or its OAK.
         :type identifier: str
 
-        :raise ~bloonspy.exceptions.NotFound: If no user with the given ID/OAK is found.
-
         :return: The found user.
         :rtype: ~bloonspy.model.btd6.User
+
+        :raise ~bloonspy.exceptions.NotFound: If no user with the given ID/OAK is found.
         """
         return User(identifier, eager=True)

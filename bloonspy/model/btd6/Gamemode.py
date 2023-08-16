@@ -3,12 +3,14 @@ from enum import Enum
 
 
 class Difficulty(Enum):
+    """The three main game difficulties."""
     EASY = "Easy"
     MEDIUM = "Medium"
     HARD = "Hard"
 
 
 class Mode(Enum):
+    """A game's secondary mode."""
     STANDARD = "Standard"
 
     PRIMARY_ONLY = "Primary Only"
@@ -29,7 +31,19 @@ class Mode(Enum):
 
 @dataclass
 class Gamemode:
-    """Difficulty and mode for a game."""
+    """
+    Difficulty and mode for a game.
+    Can be created manually by passing a :class:`~bloonspy.model.btd6.Difficulty` and :class:`~bloonspy.model.btd6.Mode` enum as parameters.
+
+    ::
+
+        from bloonspy import btd6
+
+        chimps = btd6.Gamemode(btd6.Difficulty.HARD, btd6.Mode.CHIMPS)
+        military_only = btd6.Gamemode(btd6.Difficulty.MEDIUM, btd6.Mode.MILITARY_ONLY)
+        some_custom_mode = btd6.Gamemode(btd6.Difficulty.EASY, btd6.Mode.DOUBLE_HP_MOABS)
+
+    """
     difficulty: Difficulty  #: The game's difficulty.
     mode: Mode  #: The game's mode.
 
@@ -57,4 +71,66 @@ class Gamemode:
 
         found_difficulty = difficulty_switch[difficulty] if difficulty in difficulty_switch else None
         found_mode = mode_switch[mode] if mode in mode_switch else None
-        return Gamemode(found_difficulty, found_mode)
+        return Gamemode(found_difficulty, found_mode) if found_mode and found_difficulty else None
+
+    def __str__(self) -> str:
+        return f"{self.difficulty.value} - {self.mode.value}"
+
+    def __repr__(self) -> str:
+        return str(self)
+
+    def __eq__(self, other: "Gamemode") -> bool:
+        if not isinstance(other, Gamemode):
+            return False
+        return self.mode == other.mode and \
+            self.difficulty == other.difficulty
+
+    def __hash__(self) -> int:
+        return hash(f"{self.mode}{self.difficulty}")
+
+    @staticmethod
+    def easy_modes() -> list["Gamemode"]:
+        """
+        Shortcut for getting all Easy mode gamemodes.
+
+        :return: A list of gamemodes.
+        :rtype: list[~bloonspy.model.btd6.Gamemode]
+        """
+        return [
+            Gamemode(Difficulty.EASY, Mode.STANDARD),
+            Gamemode(Difficulty.EASY, Mode.PRIMARY_ONLY),
+            Gamemode(Difficulty.EASY, Mode.DEFLATION),
+        ]
+
+    @staticmethod
+    def medium_modes() -> list["Gamemode"]:
+        """
+        Shortcut for getting all Medium mode gamemodes.
+
+        :return: A list of gamemodes.
+        :rtype: list[~bloonspy.model.btd6.Gamemode]
+        """
+        return [
+            Gamemode(Difficulty.MEDIUM, Mode.STANDARD),
+            Gamemode(Difficulty.MEDIUM, Mode.MILITARY_ONLY),
+            Gamemode(Difficulty.MEDIUM, Mode.REVERSE),
+            Gamemode(Difficulty.MEDIUM, Mode.APOPALYPSE),
+        ]
+
+    @staticmethod
+    def hard_modes() -> list["Gamemode"]:
+        """
+        Shortcut for getting all Hard mode gamemodes.
+
+        :return: A list of gamemodes.
+        :rtype: list[~bloonspy.model.btd6.Gamemode]
+        """
+        return [
+            Gamemode(Difficulty.HARD, Mode.STANDARD),
+            Gamemode(Difficulty.HARD, Mode.MAGIC_ONLY),
+            Gamemode(Difficulty.HARD, Mode.DOUBLE_HP_MOABS),
+            Gamemode(Difficulty.HARD, Mode.HALF_CASH),
+            Gamemode(Difficulty.HARD, Mode.ALTERNATE_BLOONS_ROUNDS),
+            Gamemode(Difficulty.HARD, Mode.IMPOPPABLE),
+            Gamemode(Difficulty.HARD, Mode.CHIMPS),
+        ]
