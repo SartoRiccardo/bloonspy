@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from ..GameVersion import GameVersion
 from .Tower import Tower, HeroSkin
 from .Power import Power
-from .Gamemode import Gamemode, Mode
+from .Gamemode import Gamemode
 from ...utils.dictionaries import enum_any_dict
 from .Rewards import InstaMonkey
 from .Progress import MonkeyKnowledge, Upgrade, Achievement
@@ -128,7 +128,7 @@ class UserSave:
             enum_any_dict(MonkeyKnowledge, data["acquiredKnowledge"]),
             enum_any_dict(Tower, data["unlockedTowers"]),
             enum_any_dict(Tower, data["unlockedHeros"]),
-            {},  #enum_any_dict(HeroSkin, data["unlockedSkins"]),
+            enum_any_dict(HeroSkin, data["unlockedSkins"]),
             data["gamesPlayed"],
             # enum_any_dict(Power, data["powers"]),
             insta_monkeys,

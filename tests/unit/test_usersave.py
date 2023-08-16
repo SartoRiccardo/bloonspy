@@ -90,7 +90,8 @@ class TestUserSave(unittest.TestCase):
             *[
                 (user_save.insta_monkeys[twr], btd6.InstaMonkey, int, f"map_progress[{twr.value}]")
                 for twr in user_save.insta_monkeys
-            ]
+            ],
+            (user_save.unlocked_hero_skins, btd6.HeroSkin, bool, "unlocked_hero_skins"),
         ]
         for attr, key_cls, value_cls, attr_name in dict_typechecks:
             for key in attr:
