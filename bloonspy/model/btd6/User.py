@@ -1,11 +1,12 @@
 from dataclasses import dataclass, field
 from typing import Dict, Any
-from ...exceptions import NotFound
+from ...exceptions import NotFound, Forbidden
 from ...utils.decorators import fetch_property
 from ...utils.dictionaries import rename_keys
 from ..Loadable import Loadable
 from ..Asset import Asset
 from .Tower import Tower
+from .UserSave import UserSave
 from .Medals import EventMedals, MapMedals, CTGlobalMedals, CTLocalMedals
 
 
@@ -271,5 +272,33 @@ class User(Loadable):
         """Number of times each hero has been placed."""
         return self._data["heroes_placed"]
 
-    def get_progress(self):
-        pass
+    def get_progress(self) -> UserSave:
+        """
+        *New in 0.5.0*
+
+        Get an user's save state.
+        .. warning::
+           The field :attr:`~bloonspy.model.btd6.User.id` must be an OAK. Currently, the only way to guarantee this is
+           if the :class:`~bloonspy.model.btd6.User` object has been generated through
+           :class:`bloonspy.Client.get_user()` with an OAK passed as `identifier`.
+
+        :return: The User's progress.
+        :rtype: ~bloons.model.btd6.UserSave
+
+        :raise ~bloonspy.exceptions.NotFound: If the player is not found.
+        :raise ~bloonspy.exceptions.Forbidden: If the player is not identified through its OAK but rather through its ID.
+        """
+        if not self.has_oak():
+            raise Forbidden()
+        return UserSave.fetch(self.id)
+
+    def has_oak(self) -> bool:
+        """
+        *New in 0.5.0*
+
+        Checks whether the user is identified through an OAK instead of an ID. If `True`, it means it
+        will have access to many methods such as :attr:`~bloonspy.model.btd6.User.get_progress()`.
+        :return: Whether the User is identified through its OAK.
+        :rtype: bool
+        """
+        return self.id.startswith("oak_")
