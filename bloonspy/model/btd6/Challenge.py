@@ -16,6 +16,7 @@ from .User import User
 
 
 class ChallengeFilter(Enum):
+    """Available challenge filters for search functions."""
     NEWEST = "newest"
     TRENDING = "trending"
     DAILY = "daily"

@@ -3,6 +3,7 @@ from enum import Enum
 
 
 class Tower(Enum):
+    """Available towers in the game."""
     QUINCY = "Quincy"
     GWENDOLIN = "Gwendolin"
     STRIKER_JONES = "Striker Jones"
@@ -97,6 +98,7 @@ class Tower(Enum):
 
 
 class HeroSkin(Enum):
+    """Alternative hero costumes in the game."""
     # Why are these 3 skins????
     PSI = "Psi"
     GERALDO = "Geraldo"

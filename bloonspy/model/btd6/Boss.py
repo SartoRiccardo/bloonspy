@@ -13,10 +13,12 @@ from .Score import Score
 
 
 class BossBloon(Enum):
+    """Valid Boss Bloons in the game."""
     BLOONARIUS = "bloonarius"
     LYCH = "lych"
     VORTEX = "vortex"
     DREADBLOON = "dreadbloon"
+    PHAYZE = "phayze"
     # BLASTAPOPOULOS = "blastapopoulos"
 
     @staticmethod
@@ -26,6 +28,8 @@ class BossBloon(Enum):
             "bloonarius": BossBloon.BLOONARIUS,
             "lych": BossBloon.LYCH,
             "dreadbloon": BossBloon.DREADBLOON,
+            "phayze": BossBloon.PHAYZE,
+            # "blastapopoulos": BossBloon.BLASTAPOPOULOS,
         }
         boss = boss_switch[boss] if boss in boss_switch else None
         return boss

@@ -3,12 +3,14 @@ from enum import Enum
 
 
 class Difficulty(Enum):
+    """The three main game difficulties."""
     EASY = "Easy"
     MEDIUM = "Medium"
     HARD = "Hard"
 
 
 class Mode(Enum):
+    """A game's secondary mode."""
     STANDARD = "Standard"
 
     PRIMARY_ONLY = "Primary Only"

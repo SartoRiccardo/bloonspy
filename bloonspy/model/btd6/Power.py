@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class Power(Enum):
+    """Available powers in the game"""
     SMS = "Super Monkey Storm"
     MONKEY_BOOST = "Monkeyboost"
     THRIVE = "Thrive"

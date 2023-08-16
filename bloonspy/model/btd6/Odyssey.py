@@ -13,6 +13,7 @@ from .Tower import Tower
 
 
 class OdysseyDifficulty(Enum):
+    """The three difficulties Odysseys come in."""
     EASY = "easy"
     MEDIUM = "medium"
     HARD = "hard"

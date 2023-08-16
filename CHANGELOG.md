@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.5.0](https://pypi.org/project/bloonspy/0.5.0) - 2023-08-15
+## [0.5.0](https://pypi.org/project/bloonspy/0.5.0) - 2023-08-16
 
 ### Added
 + `GameVersion`, `InstaMonkey` and `Gamemode` are more readable as strings.
@@ -14,6 +14,7 @@
 + Added `Gamemode.easy_modes`, `Gamemode.medium_modes`, and `Gamemode.hard_modes` as shortcuts.
 + Added `InvalidTowerPath`, `Forbidden` as exceptions.
 + Added `User.has_oak`
++ Added `BossBloon.PHAYZE`
 
 ### Changed
 + `InstaMonkey` throws an error when given an invalid tower path
