@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.5.1](https://pypi.org/project/bloonspy/0.5.1) - 2023-08-21
+
+### Added
++ All dataclasses support `__hash__` and `__eq__`
++ Added to `UserSave`: `powers`
++ Added to `MoabSkins`: `ddt_doomsleigh`, `ddt_spider`, `moab_boat` and `zomg_jack_o_lantern`
++ Added to `MusicTracks`: `fiesta_helium_heights_mix` and `haunted_house`
++ Added to `PowerSkins`: `mine_bauble`, `camo_trap_sprinkler`, `cash_drop_coffin`, `energising_totem_christmas_tree`, `banana_farmer_reaper`, `monkey_boost_fireworks` and `retro_techbot`
++ Added to `AllMonkeyFx`: `fireworks` and `presents`
++ Added to `TowerPets`: `bomb_shooter_tortoise`, `ice_monkey_snowman`, `village_elf` and `pat_penguin`
++ Added to `TowerProjectiles`: `farm_candy_corn`, `farm_presents`, `bomb_pumpkin`, `boomerang_candy_cane`, `dart_monkey_snowballs`, `engineer_vampire_hunter`, `monkey_ace_bones`, `mortar_snow`, `ninja_snowflakes`, `sniper_confetti`, `tack_icicles` and `wizard_fireworks`
++ Added to `CoopEmotes`: `fullscreen_happy_holidays`, `fullscreen_snow_and_sleighbells` and `icon_tower_types`
++ Added to `BloonDecals`: `all_hatchet`, `all_elf_hat`, `moab_red_nose`, `bloons_santa_hats`, `all_sunglasses` and `bloons_vampire_cape`
++ Added to `MoabSkins`: `ddt_doomsleigh`, `ddt_spider`, `moab_boat` and `zomg_jack_o_lantern`
++ Added to `BloonsPopFX`: `bones`
+
+### Changed
++ All dataclasses are immutable
+
 ## [0.5.0](https://pypi.org/project/bloonspy/0.5.0) - 2023-08-16
 
 ### Added

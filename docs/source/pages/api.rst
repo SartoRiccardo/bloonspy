@@ -304,6 +304,12 @@ MoabSkins
 .. autoclass:: bloonspy.model.btd6.MoabSkins()
    :members:
 
+PowerAmount
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.model.btd6.PowerAmount()
+   :members:
+
 Enums
 ------------
 
