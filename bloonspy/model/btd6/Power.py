@@ -1,4 +1,12 @@
 from enum import Enum
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True, eq=True)
+class PowerAmount:
+    """Describes how many powers of a single type an User has."""
+    quantity: int  #: How much of this power an user has.
+    is_new: bool  #: Whether the User has just gotten this power (it has the little red exclamation mark in the top-right).
 
 
 class Power(Enum):

@@ -22,7 +22,7 @@ class ChallengeFilter(Enum):
     DAILY = "daily"
 
 
-@dataclass(kw_only=True)
+@dataclass(kw_only=True, frozen=True, eq=True)
 class ChallengeModifier:
     """All the modifiers of a challenge."""
     ability_cooldown_reduction: float = field(default=1.0)  #: Multiplier for ability cooldowns.

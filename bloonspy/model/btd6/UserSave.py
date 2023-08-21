@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from ..GameVersion import GameVersion
 from .Tower import Tower, HeroSkin
-from .Power import Power
+from .Power import Power, PowerAmount
 from .Gamemode import Gamemode
 from ...utils.dictionaries import enum_any_dict
 from .Rewards import InstaMonkey
@@ -14,7 +14,7 @@ from ...exceptions import NotFound
 from ...utils.decorators import exception_handler
 
 
-@dataclass
+@dataclass(frozen=True, eq=True)
 class UserSave:
     """
     *New in 0.5.0*
@@ -29,7 +29,7 @@ class UserSave:
     unlocked_heros: dict[Tower, bool]  #: Heroes unlocked.
     unlocked_hero_skins: dict[HeroSkin, bool]  #: Hero skins unlocked.
     games_played: int  #: Total games played.
-    # powers: dict[Power, int]  #: Amount of powers obtained.
+    powers: dict[Power, PowerAmount]  #: *New in 0.5.1*. Amount of powers obtained.
     insta_monkeys: dict[Tower, dict[InstaMonkey, int]]  #: Insta monkeys collected.
     monkey_money: int  #: Current Monkey Money.
     xp: int  #: Current XP.
@@ -125,6 +125,9 @@ class UserSave:
                     )
             return MapProgress(map_completion["complete"], single_player, coop)
 
+        def parse_power_amount(pow_amt) -> PowerAmount:
+            return PowerAmount(pow_amt["quantity"], pow_amt["isNew"])
+
         return UserSave(
             GameVersion(*[int(ver) for ver in data["latestGameVersion"].split(".")]),
             enum_any_dict(Tower, data["towerXP"]),
@@ -134,7 +137,7 @@ class UserSave:
             enum_any_dict(Tower, data["unlockedHeros"]),
             enum_any_dict(HeroSkin, data["unlockedSkins"]),
             data["gamesPlayed"],
-            # enum_any_dict(Power, data["powers"]),
+            enum_any_dict(Power, data["powers"], parse_raw=parse_power_amount),
             insta_monkeys,
             data["monkeyMoney"],
             data["xp"],
