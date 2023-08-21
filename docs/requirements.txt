@@ -1,3 +1,16 @@
 sphinx-better-theme==0.1.5
+sphinx-jinja2-compat==0.2.0
+sphinx-prompt==1.6.0
+sphinx-rtd-theme==1.2.0
+sphinx-tabs==3.4.1
 sphinx-toolbox==3.4.0
+sphinx_autodoc_typehints==1.22
+sphinxawesome-theme==4.0.2
+sphinxcontrib-applehelp==1.0.4
+sphinxcontrib-devhelp==1.0.2
+sphinxcontrib-htmlhelp==2.0.1
+sphinxcontrib-jquery==4.1
+sphinxcontrib-jsmath==1.0.1
+sphinxcontrib-qthelp==1.0.3
+sphinxcontrib-serializinghtml==1.1.5
 enum-tools==0.9.0.post1
