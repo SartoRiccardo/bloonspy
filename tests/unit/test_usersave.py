@@ -85,7 +85,7 @@ class TestUserSave(unittest.TestCase):
 
         dict_typechecks = [
             (user_save.named_monkeys, btd6.Tower, str, "named_monkeys"),
-            # (user_save.powers, btd6.Power, int, "powers"),
+            (user_save.powers, btd6.Power, btd6.PowerAmount, "powers"),
             (user_save.map_progress, btd6.Map, btd6.MapProgress, "map_progress"),
             *[
                 (user_save.insta_monkeys[twr], btd6.InstaMonkey, int, f"map_progress[{twr.value}]")

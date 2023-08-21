@@ -396,7 +396,7 @@ class TrophyStoreItemStatus:
             # New in 0.5.1
             "GameUIPowerSkinBaubleMine", "GameUIPowerSkinCamoTrapSprinkler", "GameUIPowerSkinCoffinDrop",
             "GameUIPowerSkinEnergisingTotemChristmasTree", "GameUIPowerSkinHalloweenFarmer",
-            "GameUIPowerSkinMonkeyBoostFireworks", "GameUIPowerSkinRetroTechbot", "GameUIUpgradesDisplayNamedMonkeys",
+            "GameUIPowerSkinMonkeyBoostFireworks", "GameUIPowerSkinRetroTechbot",
         ]
         mfx_keys = [
             "TowerEffectAllMonkeysPlacementUpgradesBats", "TowerEffectAllMonkeysPlacementUpgradesButterflies",

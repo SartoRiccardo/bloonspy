@@ -68,6 +68,7 @@ class UserSave:
         error_msg = str(exception)
         if error_msg == "Invalid user ID / Player Does not play this game":
             raise NotFound(error_msg)
+        raise exception
 
     @staticmethod
     @exception_handler(_handle_exception)
