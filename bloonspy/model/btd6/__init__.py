@@ -1,6 +1,6 @@
 from .Boss import *
 from .Challenge import *
-from .ContestedTerritory import *
+from .ContestedTerritory import ContestedTerritoryEvent, CtTile, CtTileType, GameType, CtTeam, CtPlayer, Relic
 from .Gamemode import *
 from .Medals import *
 from .Odyssey import *

@@ -1,7 +1,6 @@
 import unittest
 from datetime import datetime
 import requests
-import bloonspy
 from bloonspy import btd6
 
 
@@ -21,6 +20,19 @@ class TestCt(unittest.TestCase):
         for attr_name, attr_type in check_instance:
             self.assertIsInstance(getattr(ct, attr_name), attr_type,
                                   msg=f"Assert if ContestedTerritoryEvent.{attr_name} is {attr_type}")
+
+    def test_ct_tiles(self) -> None:
+        """
+        Test that a CT event can correctly load its tiles.
+        """
+        ct_list = requests.get("https://data.ninjakiwi.com/btd6/ct")
+        ct_id = ct_list.json()["body"][0]["id"]
+        ct = btd6.ContestedTerritoryEvent(ct_id)
+        tiles = ct.tiles()
+
+        for t in tiles:
+            self.assertIsInstance(t, btd6.CtTile)
+            self.assertEqual(len(t.id), 3)
 
     def test_ct_fail(self) -> None:
         """
