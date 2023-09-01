@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.6.0](https://pypi.org/project/bloonspy/0.5.1) - 2023-09-01
+
+### Added
++ Added `ContestedTerritoryEvent.tiles`
+  + Added `CtTile`, `CtTileType`, `GameType`, `Relic`
+
 ## [0.5.1](https://pypi.org/project/bloonspy/0.5.1) - 2023-08-21
 
 ### Added

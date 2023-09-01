@@ -158,7 +158,11 @@ for rel in Relic:
 
 @dataclass
 class CtTile:
-    """Represents a CT tile."""
+    """
+    *New in 0.6.0.*
+
+    Represents a CT tile.
+    """
     id: str  #: The 3 letter code of the tile.
     tile_type: CtTileType  #: The tile's type.
     game_type: GameType or None  #: The tile challenge's type. For spawn tiles, it's `None`.
