@@ -310,6 +310,12 @@ PowerAmount
 .. autoclass:: bloonspy.model.btd6.PowerAmount()
    :members:
 
+CtTile
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.model.btd6.CtTile()
+   :members:
+
 Enums
 ------------
 
@@ -395,6 +401,24 @@ Map
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoenum:: bloonspy.model.btd6.Map
+   :members:
+
+Relic
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoenum:: bloonspy.model.btd6.Relic
+   :members:
+
+CtTileType
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoenum:: bloonspy.model.btd6.CtTileType
+   :members:
+
+GameType
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoenum:: bloonspy.model.btd6.GameType
    :members:
 
 Exceptions
