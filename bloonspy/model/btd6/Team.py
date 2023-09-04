@@ -59,6 +59,17 @@ class Team(Loadable):
         self._loaded = True
 
     @property
+    def is_disbanded(self) -> bool:
+        """
+        *New in 0.6.1.*
+
+        Shortcut for `status == TeamStatus.DISBANDED`.
+        If you're fetching a team through the leaderboard, it has the advantage of
+        not causing an extra API call to fetch the `status` property.
+        """
+        return "(disbanded)" in self.full_name
+
+    @property
     @fetch_property(Loadable.load_resource)
     def full_name(self) -> str:
         """
