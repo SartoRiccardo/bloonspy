@@ -29,18 +29,21 @@ Challenge
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: bloonspy.model.btd6.Challenge()
+   :show-inheritance:
    :members:
 
 User
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: bloonspy.model.btd6.User()
+   :show-inheritance:
    :members:
 
 Team
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: bloonspy.model.btd6.Team()
+   :show-inheritance:
    :members:
 
 Event
@@ -53,30 +56,35 @@ Race
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: bloonspy.model.btd6.Race()
+   :show-inheritance:
    :members:
 
 RacePlayer
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: bloonspy.model.btd6.RacePlayer()
+   :show-inheritance:
    :members:
 
 BossEvent
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: bloonspy.model.btd6.BossEvent()
+   :show-inheritance:
    :members:
 
 Boss
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: bloonspy.model.btd6.Boss()
+   :show-inheritance:
    :members:
 
 BossPlayer
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: bloonspy.model.btd6.BossPlayer()
+   :show-inheritance:
    :members:
 
 BossPlayerTeam
@@ -89,30 +97,35 @@ OdysseyEvent
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: bloonspy.model.btd6.OdysseyEvent()
+   :show-inheritance:
    :members:
 
 Odyssey
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: bloonspy.model.btd6.Odyssey()
+   :show-inheritance:
    :members:
 
 ContestedTerritoryEvent
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: bloonspy.model.btd6.ContestedTerritoryEvent()
+   :show-inheritance:
    :members:
 
 CtPlayer
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: bloonspy.model.btd6.CtPlayer()
+   :show-inheritance:
    :members:
 
 CtTeam
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: bloonspy.model.btd6.CtTeam()
+   :show-inheritance:
    :members:
 
 Data Classes
