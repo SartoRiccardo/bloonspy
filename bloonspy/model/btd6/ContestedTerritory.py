@@ -35,13 +35,9 @@ class CtTeam(Team):
     Inherits from :class:`~bloonspy.model.btd6.Team`."""
     def __init__(self, team_id: str, name: str, score: int, **kwargs):
         super().__init__(team_id, **kwargs)
-        self._name = name
+        self._data["full_name"] = name
+        self._data["name"] = self.parse_team_name(name)
         self._score = score
-
-    @property
-    def name(self) -> str:
-        """The name of the team."""
-        return self._name
 
     @property
     def score(self) -> int:
