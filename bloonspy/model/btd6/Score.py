@@ -14,12 +14,17 @@ class ScoreType(Enum):
     @staticmethod
     def from_string(value: str) -> "ScoreType":
         score_type_switch = {
-            "Game Time": ScoreType.GAME_TIME,
-            "Cash Spent": ScoreType.CASH_SPENT,
+            "GameTime": ScoreType.GAME_TIME,
+            "CashSpent": ScoreType.CASH_SPENT,
             "Tiers": ScoreType.TIERS,
             "Time after event start": ScoreType.TIME_AFTER_EVENT_START,
         }
-        return score_type_switch[value] if value in score_type_switch else None
+        if value in score_type_switch:
+            return score_type_switch[value]
+        value = value.replace(" ", "")
+        if value in score_type_switch:
+            return score_type_switch[value]
+        return None
 
 
 @dataclass

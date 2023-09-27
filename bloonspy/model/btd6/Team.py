@@ -34,19 +34,23 @@ class Team(Loadable):
         if error_msg == "Invalid guild ID":
             raise NotFound(error_msg)
 
+    @staticmethod
+    def parse_team_name(team_name: str) -> str:
+        if " (disbanded)" in team_name:
+            team_name = team_name.replace(" (disbanded)", "")
+        if "-" in team_name:
+            team_name = team_name.split("-")[0]
+        return team_name.upper()
+
     def _parse_json(self, raw_resource: Dict[str, Any]) -> None:
         self._loaded = False
 
-        copy_keys = ["name", "numMembers"]
+        copy_keys = ["numMembers"]
         for key in copy_keys:
             self._data[key] = raw_resource[key]
 
-        self._data["full_name"] = self._data["name"]
-        if " (disbanded)" in self._data["name"]:
-            self._data["name"] = self._data["name"].replace(" (disbanded)", "")
-        if "-" in self._data["name"]:
-            self._data["name"] = self._data["name"].split("-")[0]
-        self._data["name"] = self._data["name"].upper()
+        self._data["full_name"] = raw_resource["name"]
+        self._data["name"] = self.parse_team_name(raw_resource["name"])
 
         assets = [
             ("banner", "bannerURL"), ("icon", "iconURL"), ("frame", "frameURL"),
@@ -70,7 +74,7 @@ class Team(Loadable):
         return "(disbanded)" in self.full_name
 
     @property
-    @fetch_property(Loadable.load_resource)
+    @fetch_property(Loadable.load_resource, should_load=Loadable._should_load_property("full_name"))
     def full_name(self) -> str:
         """
         The complete name of the team.
@@ -80,7 +84,7 @@ class Team(Loadable):
         return self._data["full_name"]
 
     @property
-    @fetch_property(Loadable.load_resource)
+    @fetch_property(Loadable.load_resource, should_load=Loadable._should_load_property("name"))
     def name(self) -> str:
         """The name of the team, as seen in-game."""
         return self._data["name"]
