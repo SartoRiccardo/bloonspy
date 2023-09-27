@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.2](https://pypi.org/project/bloonspy/0.6.2) - 2023-09-27
+
+### Added
++ Added `BossEvent.scoring_type`
+
+### Fixed
++ `CtTeam.full_name` and `CtTeam.is_disbanded` should no longer take extra API calls.
+
 ## [0.6.1](https://pypi.org/project/bloonspy/0.6.1) - 2023-09-04
 
 ### Added
