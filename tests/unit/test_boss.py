@@ -17,7 +17,8 @@ class TestBoss(unittest.TestCase):
 
         check_instance = [
             ("id", str), ("name", str), ("start", datetime), ("end", datetime), ("total_scores_standard", int),
-            ("total_scores_elite", int), ("boss_banner", str), ("boss_bloon", btd6.BossBloon)
+            ("total_scores_elite", int), ("boss_banner", str), ("boss_bloon", btd6.BossBloon),
+            ("scoring_type", btd6.ScoreType)
         ]
         for attr_name, attr_type in check_instance:
             self.assertIsInstance(getattr(boss_event, attr_name), attr_type,
