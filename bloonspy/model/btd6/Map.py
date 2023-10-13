@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from .Gamemode import Gamemode, Difficulty, Mode
 from enum import Enum
 import re
@@ -147,6 +147,8 @@ class Map(Enum):
     MIDDLE_OF_THE_ROAD = "Middle Of The Road"
     POLYPHEMUS = "Polyphemus"
     WATER_PARK = "Water Park"
+    DARK_PATH = "Dark Path"
+    CUSTOM_MAP = "Custom Map"
 
     @staticmethod
     def from_string(value: str) -> "Map":

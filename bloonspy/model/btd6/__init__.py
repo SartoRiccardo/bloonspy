@@ -16,3 +16,4 @@ from .Cosmetics import TrophyStoreItemStatus, HeroPlacementFx, PowerSkins, Tower
 from .Map import MapProgress, MapBorder, Map, GamemodeCompletionData
 from .Progress import Upgrade, Achievement, MonkeyKnowledge
 from .UserSave import UserSave
+from .CustomMap import CustomMap

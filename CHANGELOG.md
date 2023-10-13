@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.7.0](https://pypi.org/project/bloonspy/0.7.0) - 2023-10-13
+
+### Added
++ Implemented endpoints for custom maps
++ Added `Map.DARK_PATH` and `Map.CUSTOM_MAP`
+
 ## [0.6.1](https://pypi.org/project/bloonspy/0.6.1) - 2023-09-04
 
 ### Added
