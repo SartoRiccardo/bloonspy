@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.0](https://pypi.org/project/bloonspy/0.7.0) - 2023-10-13
+
+### Added
++ Implemented endpoints for custom maps
+  + Added `Client.custom_maps()` and `Client.get_custom_map()`
+  + Added `CustomMap` and `CustomMapFilter`
++ Added `Map.DARK_PATH` and `Map.CUSTOM_MAP`
+
 ## [0.6.2](https://pypi.org/project/bloonspy/0.6.2) - 2023-09-27
 
 ### Added

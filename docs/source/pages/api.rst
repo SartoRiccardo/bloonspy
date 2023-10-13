@@ -128,6 +128,13 @@ CtTeam
    :show-inheritance:
    :members:
 
+CustomMap
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.model.btd6.CustomMap()
+   :show-inheritance:
+   :members:
+
 Data Classes
 ------------
 
@@ -432,6 +439,12 @@ GameType
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoenum:: bloonspy.model.btd6.GameType
+   :members:
+
+GameType
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoenum:: bloonspy.model.btd6.CustomMapFilter
    :members:
 
 Exceptions
