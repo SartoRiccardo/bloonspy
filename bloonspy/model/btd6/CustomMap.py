@@ -1,6 +1,6 @@
 from datetime import datetime
 from ...utils.decorators import fetch_property
-from ..Asset import Asset
+from enum import Enum
 from .User import User
 from ...exceptions import NotFound
 from ..Loadable import Loadable
@@ -143,3 +143,9 @@ class CustomMap(Loadable):
     def thumbnail(self) -> str:
         """URL to an image of the custom map."""
         return self._data["mapURL"]
+
+
+class CustomMapFilter(Enum):
+    NEWEST = "newest"
+    TRENDING = "trending"
+    MOST_LIKED = "mostLiked"

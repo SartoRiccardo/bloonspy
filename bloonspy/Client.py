@@ -8,7 +8,8 @@ from .model.btd6 import \
     Race, \
     ContestedTerritoryEvent, Team, \
     Challenge, ChallengeFilter, \
-    User
+    User, \
+    CustomMap, CustomMapFilter
 
 
 class Client:
@@ -232,3 +233,51 @@ class Client:
         :raise ~bloonspy.exceptions.NotFound: If no user with the given ID/OAK is found.
         """
         return User(identifier, eager=True)
+
+    @staticmethod
+    def get_custom_map(map_id: str) -> CustomMap:
+        """Fetch a specific custom map by its ID.
+
+        :param map_id: The challenge ID.
+        :type map_id: str
+
+        :return: The found map.
+        :rtype: ~bloonspy.model.btd6.CustomMap
+
+        :raise ~bloonspy.exceptions.NotFound: If no custom map with the given ID is found.
+        """
+        return CustomMap(map_id, eager=True)
+
+    @staticmethod
+    def custom_maps(custom_map_fliter: CustomMapFilter, pages: int = 1, start_from_page: int = 1) -> List[CustomMap]:
+        """Get a list of challenges given a specific filter.
+
+        .. note::
+           The returned :class:`~bloonspy.model.btd6.CustomMap` objects will only
+           have the properties :attr:`~bloonspy.model.Loadable.id`, :attr:`~bloonspy.model.btd6.CustomMap.name`,
+           and :attr:`~bloonspy.model.CustomMap.created_at` loaded.
+
+        :param custom_map_fliter: Which type of custom maps you'd like to see.
+        :type custom_map_fliter: ~bloonspy.model.btd6.CustomMapFilter
+        :param pages: The number of pages to fetch.
+        :type pages: int
+        :param start_from_page: The page to start fetching from.
+        :type start_from_page: int
+
+        :return: A list of custom maps (lazy loaded).
+        :rtype: List[:class:`bloonspy.model.btd6.CustomMap`]
+        """
+
+        custom_map_list = []
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            custom_map_pages = []
+            for page_num in range(start_from_page, start_from_page + pages):
+                custom_map_pages.append(executor.submit(
+                    get, f"/btd6/maps/filter/{custom_map_fliter.value}", {"page": page_num}
+                ))
+            for page in custom_map_pages:
+                for map in page.result():
+                    custom_map_list.append(CustomMap(map["id"], name=map["name"], created_at=map["createdAt"],
+                                                     creator_id=map["creator"].split("/")[-1]))
+
+        return custom_map_list
