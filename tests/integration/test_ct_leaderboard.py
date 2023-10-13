@@ -38,6 +38,14 @@ class TestCtLeaderboard(unittest.TestCase):
             self.assertIsInstance(getattr(some_team, attr_name), attr_type,
                                   msg=f"Assert if CtTeam.{attr_name} is {attr_type}")
 
+    def test_ct_team_double_load(self) -> None:
+        cts = Client.contested_territories()
+        ct_event = cts[1]
+        ct_leaderboard_team = ct_event.leaderboard_team()
+        ct_leaderboard_team[0].full_name
+        ct_leaderboard_team[0].full_name
+        ct_leaderboard_team[0].full_name
+
 
 if __name__ == '__main__':
     unittest.main()

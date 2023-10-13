@@ -9,7 +9,7 @@ from ..Loadable import Loadable
 from ..Event import Event
 from .Challenge import Challenge
 from .User import User
-from .Score import Score
+from .Score import Score, ScoreType
 
 
 class BossBloon(Enum):
@@ -258,6 +258,7 @@ class BossEvent(Event):
         self._data["boss_banner"] = data["bossTypeURL"]
         self._data["total_scores_standard"] = data["totalScores_standard"]
         self._data["total_scores_elite"] = data["totalScores_elite"]
+        self._data["scoring_type"] = ScoreType.from_string(data["scoringType"])
         super()._parse_event(data)
 
     @property
@@ -283,6 +284,15 @@ class BossEvent(Event):
     def total_scores_elite(self) -> int:
         """Total scores submitted in the elite boss."""
         return self._data["total_scores_elite"]
+
+    @property
+    def scoring_type(self) -> ScoreType:
+        """
+        *New in 0.6.2*
+
+        The scoring type of the leaderboard.
+        """
+        return self._data["scoring_type"]
 
     def standard(self, eager: bool = False) -> Boss:
         """Get the standard boss challenge.
