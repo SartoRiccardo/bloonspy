@@ -1,7 +1,8 @@
 import unittest
 from datetime import datetime
 import bloonspy
-from bloonspy import btd6
+from bloonspy import btd6, model
+from bloonspy.exceptions import NotFound
 
 
 class TestChallenge(unittest.TestCase):
@@ -16,7 +17,7 @@ class TestChallenge(unittest.TestCase):
             ("id", "ZMDCDTB"),
             ("name", "CT10 Tile CBA"),
             ("created_at", datetime.fromtimestamp(int(1671727285722/1000))),
-            ("game_version", btd6.GameVersion(34, 3)),
+            ("game_version", model.GameVersion(34, 3)),
             ("gamemode", btd6.Gamemode(btd6.Difficulty.MEDIUM, btd6.Mode.STANDARD)),
             ("disable_double_cash", True),
             ("disable_monkey_knowledge", False),
@@ -29,7 +30,7 @@ class TestChallenge(unittest.TestCase):
             ("least_tiers_used", 10),
             ("seed", 771803684),
             ("starting_lives", 150),
-            ("max_lives", 9999),
+            ("max_lives", 5000),
             ("start_round", 1),
             ("end_round", 51),
             ("max_towers", 9999),
@@ -56,7 +57,7 @@ class TestChallenge(unittest.TestCase):
             )
 
         no_restrictions = btd6.TowerRestriction(
-            max_towers=btd6.Infinity(),
+            max_towers=bloonspy.Infinity(),
             top_path_blocked=0,
             middle_path_blocked=0,
             bottom_path_blocked=0,
@@ -87,7 +88,7 @@ class TestChallenge(unittest.TestCase):
                 msg=f"Assert if {power.value} appears in the powers list"
             )
             self.assertEqual(
-                challenge.powers[power], btd6.Infinity(),
+                challenge.powers[power], bloonspy.Infinity(),
                 msg=f"Assert if {power.value} is allowed infinite times"
             )
 
@@ -99,7 +100,7 @@ class TestChallenge(unittest.TestCase):
         correct_exception = False
         try:
             btd6.Challenge(challenge_code, eager=True)
-        except btd6.NotFound:
+        except NotFound:
             correct_exception = True
         self.assertTrue(correct_exception, msg="Wrong challenges IDs should raise bloonspy.exceptions.NotFound")
 

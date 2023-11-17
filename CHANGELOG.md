@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.8.0](https://pypi.org/project/bloonspy/0.8.0) - 2023-11-18
+
+### Changed
+- `CTGlobalMedals` renamed to `CtGlobalMedals`
+- `CTLocalMedals` renamed to `CtLocalMedals`
+- `ScoreType.CASH_SPENT` renamed to `ScoreType.LEAST_CASH`
+- `ScoreType.TIERS` renamed to `ScoreType.LEAST_TIERS`
+- `BossEvent.score_type` should be properly fetched when trying to access it through a non-eager instance.
+- `bloonspy.model.btd6` exports fixed to not import everything
+- Added `Achievement.WORLD_LEAGUE_TRAINING`
+
 ## [0.7.0](https://pypi.org/project/bloonspy/0.7.0) - 2023-10-13
 
 ### Added

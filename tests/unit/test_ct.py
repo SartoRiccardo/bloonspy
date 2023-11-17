@@ -2,6 +2,7 @@ import unittest
 from datetime import datetime
 import requests
 from bloonspy import btd6
+from bloonspy.exceptions import NotFound
 
 
 class TestCt(unittest.TestCase):
@@ -42,7 +43,7 @@ class TestCt(unittest.TestCase):
         correct_exception = False
         try:
             btd6.ContestedTerritoryEvent(ct_id, eager=True)
-        except btd6.NotFound:
+        except NotFound:
             correct_exception = True
         self.assertTrue(correct_exception, msg="Wrong/expired CT IDs should raise bloonspy.exceptions.NotFound")
 

@@ -1,5 +1,6 @@
 import unittest
 from bloonspy import btd6, Client
+from bloonspy.model import Asset
 
 
 class TestFetchTeamOwner(unittest.TestCase):
@@ -13,10 +14,10 @@ class TestFetchTeamOwner(unittest.TestCase):
         check_instance = [
             ("followers", int),
             ("name", str),
-            ("banner", btd6.Asset),
+            ("banner", Asset),
             ("single_player_medals", btd6.MapMedals),
             ("boss_normal_medals", btd6.EventMedals),
-            ("ct_local_medals", btd6.CTLocalMedals),
+            ("ct_local_medals", btd6.CtLocalMedals),
             ("stats", btd6.GameplayStats),
         ]
         for attr_name, attr_type in check_instance:

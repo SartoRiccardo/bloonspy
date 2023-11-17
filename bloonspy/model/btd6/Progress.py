@@ -710,6 +710,7 @@ class Achievement(Enum):
     BLOONTONA_500 = "Bloontona 500"
     SIDE_QUEST = "Side Quest"
     A_YEAR_IN_THE_MAKING = "A year in the making"
+    WORLD_LEAGUE_TRAINING = "World League Training"
 
     @staticmethod
     def from_string(value: str) -> "Achievement":

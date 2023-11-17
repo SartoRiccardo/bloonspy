@@ -1,5 +1,7 @@
 import unittest
 from bloonspy import btd6
+from bloonspy.exceptions import NotFound
+from bloonspy.model import Asset
 
 
 class TestUser(unittest.TestCase):
@@ -30,15 +32,15 @@ class TestUser(unittest.TestCase):
 
         check_instance = [
             ("followers", int),
-            ("avatar", btd6.Asset),
-            ("banner", btd6.Asset),
+            ("avatar", Asset),
+            ("banner", Asset),
             ("single_player_medals", btd6.MapMedals),
             ("coop_medals", btd6.MapMedals),
             ("boss_normal_medals", btd6.EventMedals),
             ("boss_elite_medals", btd6.EventMedals),
             ("race_medals", btd6.EventMedals),
-            ("ct_local_medals", btd6.CTLocalMedals),
-            ("ct_global_medals", btd6.CTGlobalMedals),
+            ("ct_local_medals", btd6.CtLocalMedals),
+            ("ct_global_medals", btd6.CtGlobalMedals),
             ("stats", btd6.GameplayStats),
         ]
         for attr_name, attr_type in check_instance:
@@ -137,7 +139,7 @@ class TestUser(unittest.TestCase):
         correct_exception = False
         try:
             btd6.User(user_id, eager=True)
-        except btd6.NotFound:
+        except NotFound:
             correct_exception = True
         self.assertTrue(correct_exception, msg="Wrong user IDs should raise bloonspy.exceptions.NotFound")
 

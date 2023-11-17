@@ -1,5 +1,7 @@
 import unittest
 from bloonspy import btd6
+from bloonspy.exceptions import NotFound
+from bloonspy.model import Asset
 
 
 class TestTeam(unittest.TestCase):
@@ -24,8 +26,7 @@ class TestTeam(unittest.TestCase):
                              msg=f"Check Team.member_count within higher bound")
 
         check_instance = [
-            ("status", btd6.TeamStatus), ("icon", btd6.Asset), ("banner", btd6.Asset),
-            ("frame", btd6.Asset),
+            ("status", btd6.TeamStatus), ("icon", Asset), ("banner", Asset), ("frame", Asset),
         ]
         for attr_name, attr_type in check_instance:
             self.assertIsInstance(getattr(team, attr_name), attr_type,
@@ -39,7 +40,7 @@ class TestTeam(unittest.TestCase):
         correct_exception = False
         try:
             btd6.Team(team_id, eager=True)
-        except btd6.NotFound:
+        except NotFound:
             correct_exception = True
         self.assertTrue(correct_exception, msg="Wrong team IDs should raise bloonspy.exceptions.NotFound")
 

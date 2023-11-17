@@ -2,6 +2,7 @@ import unittest
 from datetime import datetime
 import requests
 from bloonspy import btd6
+from bloonspy.exceptions import NotFound
 
 
 class TestBoss(unittest.TestCase):
@@ -44,7 +45,7 @@ class TestBoss(unittest.TestCase):
         correct_exception = False
         try:
             btd6.BossEvent(boss_id, eager=True)
-        except btd6.NotFound:
+        except NotFound:
             correct_exception = True
         self.assertTrue(correct_exception, msg="Wrong/expired boss IDs should raise bloonspy.exceptions.NotFound")
 

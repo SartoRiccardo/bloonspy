@@ -7,7 +7,7 @@ from ..Loadable import Loadable
 from ..Asset import Asset
 from .Tower import Tower
 from .UserSave import UserSave
-from .Medals import EventMedals, MapMedals, CTGlobalMedals, CTLocalMedals
+from .Medals import EventMedals, MapMedals, CtGlobalMedals, CtLocalMedals
 
 
 @dataclass(kw_only=True)
@@ -114,10 +114,10 @@ class User(Loadable):
             ("GoldSilver", "top_10_percent"), ("DoubleSilver", "top_25_percent"), ("Silver", "top_50_percent"),
             ("Bronze", "top_75_percent")
         ]
-        self._data["ct_local_medals"] = CTLocalMedals(
+        self._data["ct_local_medals"] = CtLocalMedals(
             **rename_keys(raw_user["_medalsCTLocal"], ct_local_medal_keys)
         )
-        self._data["ct_global_medals"] = CTGlobalMedals(
+        self._data["ct_global_medals"] = CtGlobalMedals(
             **rename_keys(raw_user["_medalsCTLocal"], ct_global_medal_keys)
         )
 
@@ -250,13 +250,13 @@ class User(Loadable):
 
     @property
     @fetch_property(Loadable.load_resource)
-    def ct_local_medals(self) -> CTLocalMedals:
+    def ct_local_medals(self) -> CtLocalMedals:
         """Contested Territory local medals."""
         return self._data["ct_local_medals"]
 
     @property
     @fetch_property(Loadable.load_resource)
-    def ct_global_medals(self) -> CTGlobalMedals:
+    def ct_global_medals(self) -> CtGlobalMedals:
         """Contested Territory global medals."""
         return self._data["ct_global_medals"]
 

@@ -1,8 +1,8 @@
 import unittest
 from datetime import datetime
 import requests
-import bloonspy
 from bloonspy import btd6
+from bloonspy.exceptions import NotFound
 
 
 class TestOdyssey(unittest.TestCase):
@@ -71,7 +71,7 @@ class TestOdyssey(unittest.TestCase):
         correct_exception = False
         try:
             btd6.OdysseyEvent(team_id, eager=True)
-        except btd6.NotFound:
+        except NotFound:
             correct_exception = True
         self.assertTrue(correct_exception, msg="Wrong odyssey IDs should raise bloonspy.exceptions.NotFound")
 
