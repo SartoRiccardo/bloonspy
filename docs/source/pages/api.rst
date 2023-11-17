@@ -189,10 +189,10 @@ EventMedals
 CtLocalMedals
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: bloonspy.model.btd6.CTLocalMedals()
+.. autoclass:: bloonspy.model.btd6.CtLocalMedals()
    :members:
 
-CTGlobalMedals
+CtGlobalMedals
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: bloonspy.model.btd6.CtGlobalMedals()
