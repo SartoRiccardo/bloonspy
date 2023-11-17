@@ -250,7 +250,7 @@ class BossEvent(Event):
     """A boss event. Inherits from :class:`~bloonspy.model.Event`."""
     event_endpoint = "/btd6/bosses"
     event_dict_keys = ["name", "bossType", "bossTypeURL", "start", "end", "totalScores_standard",
-                       "totalScores_elite"]
+                       "totalScores_elite", "scoringType"]
     event_name: str = "Boss"
 
     def _parse_event(self, data: Dict[str, Any]) -> None:
@@ -262,30 +262,31 @@ class BossEvent(Event):
         super()._parse_event(data)
 
     @property
-    @fetch_property(Event.load_event, should_load=Event._should_load_property)
+    @fetch_property(Event.load_event, should_load=Event._should_load_property("boss_bloon"))
     def boss_bloon(self) -> BossBloon:
         """The boss bloon in this event."""
         return self._data["boss_bloon"]
 
     @property
-    @fetch_property(Event.load_event, should_load=Event._should_load_property)
+    @fetch_property(Event.load_event, should_load=Event._should_load_property("boss_banner"))
     def boss_banner(self) -> str:
         """The URL to the banner used to advertise the event."""
         return self._data["boss_banner"]
 
     @property
-    @fetch_property(Event.load_event, should_load=Event._should_load_property)
+    @fetch_property(Event.load_event, should_load=Event._should_load_property("total_scores_standard"))
     def total_scores_standard(self) -> int:
         """Total scores submitted in the standard boss."""
         return self._data["total_scores_standard"]
 
     @property
-    @fetch_property(Event.load_event, should_load=Event._should_load_property)
+    @fetch_property(Event.load_event, should_load=Event._should_load_property("total_scores_elite"))
     def total_scores_elite(self) -> int:
         """Total scores submitted in the elite boss."""
         return self._data["total_scores_elite"]
 
     @property
+    @fetch_property(Event.load_event, should_load=Event._should_load_property("scoring_type"))
     def scoring_type(self) -> ScoreType:
         """
         *New in 0.6.2*

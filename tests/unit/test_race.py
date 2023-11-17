@@ -2,6 +2,7 @@ import unittest
 from datetime import datetime
 import requests
 from bloonspy import btd6
+from bloonspy.exceptions import NotFound
 
 
 class TestRace(unittest.TestCase):
@@ -29,7 +30,7 @@ class TestRace(unittest.TestCase):
         correct_exception = False
         try:
             btd6.Race(race_id, eager=True)
-        except btd6.NotFound:
+        except NotFound:
             correct_exception = True
         self.assertTrue(correct_exception, msg="Wrong/expired race IDs should raise bloonspy.exceptions.NotFound")
 

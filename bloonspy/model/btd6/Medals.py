@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+import warnings
 
 
 @dataclass(kw_only=True)
@@ -16,7 +17,7 @@ class EventMedals:
 
 
 @dataclass(kw_only=True)
-class CTLocalMedals:
+class CtLocalMedals:
     """Medal set for Contested Territory (local leaderboard)."""
     first: int = field(default=0)  #: Number of first place finishes.
     second: int = field(default=0)  #: Number of second place finishes.
@@ -28,7 +29,7 @@ class CTLocalMedals:
 
 
 @dataclass(kw_only=True)
-class CTGlobalMedals:
+class CtGlobalMedals:
     """Medal set for Contested Territory (global leaderboard)."""
     top_25: int = field(default=0)  #: Number of Top 25 finishes.
     top_100: int = field(default=0)  #: Number of Top 100 finishes.
@@ -57,3 +58,14 @@ class MapMedals:
     impoppable: int = field(default=0)  #: Number of medals for Hard - Impoppable.
     chimps_red: int = field(default=0)  #: Number of medals for Hard - CHIMPS (red).
     chimps_black: int = field(default=0)  #: Number of medals for Hard - CHIMPS (black).
+
+
+def CTGlobalMedals(*args, **kwargs) -> CtGlobalMedals:
+    warnings.warn("CTGlobalMedals is deprecated, please use CtGlobalMedals instead.")
+    return CtGlobalMedals(*args, **kwargs)
+
+
+def CTLocalMedals(*args, **kwargs) -> CtLocalMedals:
+    warnings.warn("CTLocalMedals is deprecated, please use CtLocalMedals instead.")
+    return CtLocalMedals(*args, **kwargs)
+

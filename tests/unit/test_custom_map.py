@@ -1,6 +1,8 @@
 import unittest
 from datetime import datetime
 from bloonspy import btd6
+from bloonspy.model import GameVersion
+from bloonspy.exceptions import NotFound
 
 
 class TestCustomMap(unittest.TestCase):
@@ -15,7 +17,7 @@ class TestCustomMap(unittest.TestCase):
             ("id", map_code),
             ("name", "Mapa de PowerDino3423"),
             ("created_at", datetime.fromtimestamp(int(1697220116593/1000))),
-            ("game_version", btd6.GameVersion(39, 0)),
+            ("game_version", GameVersion(39, 0)),
         ]
         for attr_name, attr_expected_value in expected_results:
             self.assertEqual(
@@ -45,7 +47,7 @@ class TestCustomMap(unittest.TestCase):
         correct_exception = False
         try:
             btd6.CustomMap(map_code, eager=True)
-        except btd6.NotFound:
+        except NotFound:
             correct_exception = True
         self.assertTrue(correct_exception, msg="Wrong map IDs should raise bloonspy.exceptions.NotFound")
 

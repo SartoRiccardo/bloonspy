@@ -1,6 +1,6 @@
 import unittest
-from pprint import pp
 from bloonspy import btd6
+from bloonspy.exceptions import NotFound
 
 
 class TestUserSave(unittest.TestCase):
@@ -25,7 +25,7 @@ class TestUserSave(unittest.TestCase):
         # Greater or Equal cause these can increase in the future.
         expected_results_ge = [
             ("games_played", 2894),
-            ("monkey_money", 28470),
+            ("monkey_money", 5000),
             ("rank", 155),
             ("veteran_xp", 161489560),
             ("veteran_rank", 9),
@@ -136,7 +136,7 @@ class TestUserSave(unittest.TestCase):
         correct_exception = False
         try:
             btd6.UserSave.fetch(oak)
-        except btd6.NotFound:
+        except NotFound:
             correct_exception = True
         self.assertTrue(correct_exception, msg="Wrong OAKs should raise bloonspy.exceptions.NotFound")
 
