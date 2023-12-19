@@ -150,6 +150,8 @@ class Relic(Enum):
 rel_switch = {}
 for rel in Relic:
     rel_switch[rel.value.replace(" ", "")] = rel
+rel_switch["MoabMine"] = Relic.MOAB_MINE
+rel_switch["MoabClash"] = Relic.MOAB_CLASH
 
 
 @dataclass
