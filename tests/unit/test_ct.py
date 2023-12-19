@@ -34,6 +34,8 @@ class TestCt(unittest.TestCase):
         for t in tiles:
             self.assertIsInstance(t, btd6.CtTile)
             self.assertEqual(len(t.id), 3)
+            if t.tile_type == btd6.CtTileType.RELIC:
+                self.assertIsInstance(t.relic, btd6.Relic, msg=f"Tile {t} is not btd6.Relic but is {t.relic}")
 
     def test_ct_fail(self) -> None:
         """

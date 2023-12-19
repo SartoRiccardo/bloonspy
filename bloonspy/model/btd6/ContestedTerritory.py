@@ -147,7 +147,7 @@ class Relic(Enum):
         return rel_switch[value] if value in rel_switch else None
 
 
-rel_switch = {}
+rel_switch = {"MoabMine": Relic.MOAB_MINE, "MoabClash": Relic.MOAB_CLASH}
 for rel in Relic:
     rel_switch[rel.value.replace(" ", "")] = rel
 
