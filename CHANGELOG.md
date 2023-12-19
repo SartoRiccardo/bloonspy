@@ -1,5 +1,11 @@
 # Changelog
 
+# [0.8.1](https://pypi.org/project/bloonspy/0.8.1) - 2023-12-19
+
+### Fixed
+- `CtTiles` with relics `Relic.MOAB_MINE` and `Relic.MOAB_CLASH` should correctly have the `relic` 
+property assigned instead of it being `None`
+
 ## [0.8.0](https://pypi.org/project/bloonspy/0.8.0) - 2023-11-18
 
 ### Changed
