@@ -141,8 +141,7 @@ class AsyncClient:
             ))
         return race_list
 
-    @staticmethod
-    def get_race(race_id: str, eager: bool = False) -> Race:
+    async def get_race(self, race_id: str, eager: bool = False) -> Race:
         """Fetch a specific Race by its ID.
 
         .. note::
@@ -161,7 +160,10 @@ class AsyncClient:
 
         :raise ~bloonspy.exceptions.NotFound: If no race with that ID is found.
         """
-        return Race(race_id, eager=eager)
+        race = Race(race_id, async_client=self.__aclient)
+        if eager:
+            await race.load_resource()
+        return race
 
     async def bosses(self) -> list[BossEvent]:
         """Get a list of Boss events."""
