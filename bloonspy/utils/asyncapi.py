@@ -1,4 +1,5 @@
 import asyncio
+import aiohttp
 import http
 import random
 from typing import Dict, Any
@@ -30,9 +31,10 @@ async def aget(client: aiohttp.ClientSession, endpoint: str, params: Dict[str, A
         while requests_locked:
             await asyncio.sleep(random.random()*3+1)
 
-        with client.get(API_URL + endpoint, params=params, headers={"User-Agent": "bloonspy Python Library"}) as resp:
-            check_response(resp)
-            if resp.status_code == http.HTTPStatus.FORBIDDEN and "Retry-After" in resp.headers:
+        print(str(client) + "\n\n\n\n\n")
+        async with client.get(API_URL + endpoint, params=params, headers={"User-Agent": "bloonspy Python Library"}) as resp:
+            check_response(resp.status, resp.headers.get("content-type").lower())
+            if resp.status == http.HTTPStatus.FORBIDDEN and "Retry-After" in resp.headers:
                 retry_after = int(resp.headers["Retry-After"]) + random.random()*3
                 if "unittest" in sys.modules.keys():
                     print(f"Hit rate limit. Retry after {retry_after}s.")

@@ -28,7 +28,7 @@ class AsyncClient:
             asyncio.create_task(self.__create_aclient())
 
     async def __create_aclient(self):
-        with aiohttp.ClientSession() as aclient:
+        async with aiohttp.ClientSession() as aclient:
             self.__aclient = aclient
             await asyncio.Future()
 

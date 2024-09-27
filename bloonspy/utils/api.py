@@ -33,7 +33,7 @@ def get(endpoint: str, params: Dict[str, Any] = None) -> Union[List[Dict[str, An
             request_lock.join()
 
         resp = requests.get(API_URL + endpoint, params=params, headers={"User-Agent": "bloonspy Python Library"})
-        check_response(resp)
+        check_response(resp.status_code, resp.headers.get("content-type").lower())
 
         if resp.status_code == 403 and "Retry-After" in resp.headers:
             retry_after = int(resp.headers["Retry-After"]) + random.random() * 3
@@ -59,17 +59,13 @@ def get_lb_page(endpoint: str, page_num: int):
         raise exc
 
 
-def check_response(resp) -> None:
-    if resp.status_code >= 500:
-        if "unittest" in sys.modules.keys():
-            print(resp.content)
-            print(resp.headers)
-
-        if resp.status_code == 525:
+def check_response(status: int, content_type: str) -> None:
+    if status >= 500:
+        if status == 525:
             raise UnderMaintenance("Server is under maintenance")
 
         raise BloonsException("Server error occurred")
-    if resp.status_code >= 400 and not resp.status_code == http.HTTPStatus.FORBIDDEN:
+    if status >= 400 and not status == http.HTTPStatus.FORBIDDEN:
         raise BloonsException("Bad request")
-    if "application/json" not in resp.headers.get("content-type").lower():
+    if "application/json" not in content_type:
         raise BloonsException("Response is not JSON")
