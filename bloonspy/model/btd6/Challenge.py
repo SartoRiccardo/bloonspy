@@ -43,10 +43,16 @@ class Challenge(Loadable):
 
     endpoint = "/btd6/challenges/challenge/{}"
 
-    def __init__(self, challenge_id: str, eager: bool = False, name: str = None, created_at: int = None,
-                 creator_id: str = None, raw_challenge: Dict[str, Any] = None):
+    def __init__(
+            self,
+            challenge_id: str,
+            name: str = None, created_at: int = None,
+            creator_id: str = None,
+            raw_challenge: Dict[str, Any] = None,
+            **kwargs,
+    ):
         """Constructor method."""
-        super().__init__(challenge_id, eager=eager)
+        super().__init__(challenge_id, **kwargs)
         if raw_challenge:
             self._parse_json(raw_challenge)
         if name:

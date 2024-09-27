@@ -21,7 +21,7 @@ async def lock_requests(lock_time: float) -> None:
 async def aget(client: aiohttp.ClientSession, endpoint: str, params: Dict[str, Any] = None) -> list[dict[str, Any]] | dict[str, Any]:
     global requests_locked
 
-    if "unittest" in sys.modules.keys():
+    if "pytest" in sys.modules.keys():
         print(f"GET {endpoint}, {params=}")
 
     if params is None:
@@ -31,7 +31,6 @@ async def aget(client: aiohttp.ClientSession, endpoint: str, params: Dict[str, A
         while requests_locked:
             await asyncio.sleep(random.random()*3+1)
 
-        print(str(client) + "\n\n\n\n\n")
         async with client.get(API_URL + endpoint, params=params, headers={"User-Agent": "bloonspy Python Library"}) as resp:
             check_response(resp.status, resp.headers.get("content-type").lower())
             if resp.status == http.HTTPStatus.FORBIDDEN and "Retry-After" in resp.headers:

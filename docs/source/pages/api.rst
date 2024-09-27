@@ -485,3 +485,9 @@ Forbidden
 
 .. autoclass:: bloonspy.exceptions.Forbidden
    :members:
+
+Forbidden
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.exceptions.NotLoaded
+   :members:

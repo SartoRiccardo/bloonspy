@@ -15,6 +15,11 @@ from .model.btd6 import \
 class AsyncClient:
     """Client for all **asynchronous** API calls.
 
+    .. note::
+       When accessing an unloaded property of a lazy-loaded resource, **it will**
+       **raise ~bloonspy.exceptions.NotLoaded instead of loading it.** Either eager
+       load it or call the load methods beforehand.
+
     :param open_access_key: Your OAK for the Ninja Kiwi Open Data API.
     :type open_access_key: str
     :param aiohttp_client: An aiohttp Client. Will create one if not provided.
@@ -37,7 +42,11 @@ class AsyncClient:
         odysseys_data = await aget(self.__aclient, "/btd6/odyssey")
         odyssey_list = []
         for odyssey in odysseys_data:
-            odyssey_list.append(OdysseyEvent(odyssey["id"], event_json=odyssey))
+            odyssey_list.append(OdysseyEvent(
+                odyssey["id"],
+                event_json=odyssey,
+                async_client=self.__aclient,
+            ))
         return odyssey_list
 
     async def get_odyssey(self, odyssey_id: str, eager: bool = False) -> OdysseyEvent:
@@ -59,7 +68,10 @@ class AsyncClient:
 
         :raise ~bloonspy.exceptions.NotFound: If no odyssey with that ID is found.
         """
-        return OdysseyEvent(odyssey_id, eager=eager)
+        odyssey = OdysseyEvent(odyssey_id, async_client=self.__aclient)
+        if eager:
+            await odyssey.load_event()
+        return odyssey
 
     async def contested_territories(self) -> List[ContestedTerritoryEvent]:
         """Get a list of Contested Territory events."""
