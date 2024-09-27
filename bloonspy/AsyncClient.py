@@ -203,8 +203,7 @@ class AsyncClient:
 
     async def challenges(
             self,
-            challenge_filter:
-            ChallengeFilter,
+            challenge_filter: ChallengeFilter,
             pages: int = 1,
             start_from_page: int = 1
     ) -> list[Challenge]:
@@ -258,8 +257,7 @@ class AsyncClient:
 
         return challenge_list
 
-    @staticmethod
-    def get_challenge(challenge_id: str) -> Challenge:
+    async def get_challenge(self, challenge_id: str) -> Challenge:
         """Fetch a specific challenge by its ID.
 
         :param challenge_id: The challenge ID.
@@ -270,7 +268,9 @@ class AsyncClient:
 
         :raise ~bloonspy.exceptions.NotFound: If no challenge with the given ID is found.
         """
-        return Challenge(challenge_id, eager=True)
+        chal = Challenge(challenge_id, async_client=self.__aclient)
+        await chal.load_resource()
+        return chal
 
     @staticmethod
     def get_user(identifier: str) -> User:
