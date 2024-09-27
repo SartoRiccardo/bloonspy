@@ -163,7 +163,7 @@ class Race(Challenge):
         def on_pages_fetched(responses) -> list[RacePlayer]:
             race_players = []
             for page in responses:
-                for player in page.result():
+                for player in page:
                     race_players.append(RacePlayer(
                         player["profile"].split("/")[-1],
                         player["displayName"],
