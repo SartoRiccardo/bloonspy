@@ -177,8 +177,7 @@ class AsyncClient:
             ))
         return boss_list
 
-    @staticmethod
-    def get_boss(boss_id: str, eager: bool = False) -> BossEvent:
+    async def get_boss(self, boss_id: str, eager: bool = False) -> BossEvent:
         """Fetch a specific Boss event by its ID.
 
         .. note::
@@ -197,7 +196,10 @@ class AsyncClient:
 
         :raise ~bloonspy.exceptions.NotFound: If no boss event with that ID is found.
         """
-        return BossEvent(boss_id, eager=eager)
+        boss = BossEvent(boss_id, async_client=self.__aclient)
+        if eager:
+            await boss.load_event()
+        return boss
 
     async def challenges(
             self,
