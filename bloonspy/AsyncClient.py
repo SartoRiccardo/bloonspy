@@ -1,5 +1,4 @@
 import asyncio
-from typing import List
 import aiohttp
 from .utils.asyncapi import aget
 from .model.btd6 import \
@@ -37,7 +36,7 @@ class AsyncClient:
             self.__aclient = aclient
             await asyncio.Future()
 
-    async def odysseys(self) -> List[OdysseyEvent]:
+    async def odysseys(self) -> list[OdysseyEvent]:
         """Get a list of Odyssey events."""
         odysseys_data = await aget(self.__aclient, "/btd6/odyssey")
         odyssey_list = []
@@ -73,16 +72,19 @@ class AsyncClient:
             await odyssey.load_event()
         return odyssey
 
-    async def contested_territories(self) -> List[ContestedTerritoryEvent]:
+    async def contested_territories(self) -> list[ContestedTerritoryEvent]:
         """Get a list of Contested Territory events."""
         ct_data = await aget(self.__aclient, "/btd6/ct")
         ct_list = []
         for ct in ct_data:
-            ct_list.append(ContestedTerritoryEvent(ct["id"], event_json=ct))
+            ct_list.append(ContestedTerritoryEvent(
+                ct["id"],
+                event_json=ct,
+                async_client=self.__aclient,
+            ))
         return ct_list
 
-    @staticmethod
-    def get_contested_territory(ct_id: str, eager: bool = False) -> ContestedTerritoryEvent:
+    async def get_contested_territory(self, ct_id: str, eager: bool = False) -> ContestedTerritoryEvent:
         """Fetch a specific Contested Territory event by its ID.
 
         .. note::
@@ -101,7 +103,10 @@ class AsyncClient:
 
         :raise ~bloonspy.exceptions.NotFound: If no CT with that ID is found.
         """
-        return ContestedTerritoryEvent(ct_id, eager=eager)
+        ct = ContestedTerritoryEvent(ct_id, async_client=self.__aclient)
+        if eager:
+            await ct.load_event()
+        return ct
 
     @staticmethod
     def get_team(team_id: str) -> Team:
@@ -117,7 +122,7 @@ class AsyncClient:
         """
         return Team(team_id, eager=True)
 
-    async def races(self) -> List[Race]:
+    async def races(self) -> list[Race]:
         """Get a list of Race events.
 
         .. note::
@@ -129,7 +134,11 @@ class AsyncClient:
         races_data = await aget(self.__aclient, "/btd6/races")
         race_list = []
         for race in races_data:
-            race_list.append(Race(race["id"], race_json=race))
+            race_list.append(Race(
+                race["id"],
+                race_json=race,
+                async_client=self.__aclient,
+            ))
         return race_list
 
     @staticmethod
@@ -154,12 +163,16 @@ class AsyncClient:
         """
         return Race(race_id, eager=eager)
 
-    async def bosses(self) -> List[BossEvent]:
+    async def bosses(self) -> list[BossEvent]:
         """Get a list of Boss events."""
         bosses_data = await aget(self.__aclient, "/btd6/bosses")
         boss_list = []
         for boss in bosses_data:
-            boss_list.append(BossEvent(boss["id"], event_json=boss))
+            boss_list.append(BossEvent(
+                boss["id"],
+                event_json=boss,
+                async_client=self.__aclient,
+            ))
         return boss_list
 
     @staticmethod
@@ -184,7 +197,13 @@ class AsyncClient:
         """
         return BossEvent(boss_id, eager=eager)
 
-    async def challenges(self, challenge_filter: ChallengeFilter, pages: int = 1, start_from_page: int = 1) -> List[Challenge]:
+    async def challenges(
+            self,
+            challenge_filter:
+            ChallengeFilter,
+            pages: int = 1,
+            start_from_page: int = 1
+    ) -> list[Challenge]:
         """Get a list of challenges given a specific filter.
 
         .. note::
@@ -200,7 +219,7 @@ class AsyncClient:
         :type start_from_page: int
 
         :return: A list of challenges (lazy loaded).
-        :rtype: List[:class:`bloonspy.model.btd6.Challenge`]
+        :rtype: list[:class:`bloonspy.model.btd6.Challenge`]
         """
 
         challenge_list = []
@@ -277,7 +296,12 @@ class AsyncClient:
         """
         return CustomMap(map_id, eager=True)
 
-    async def custom_maps(self, custom_map_fliter: CustomMapFilter, pages: int = 1, start_from_page: int = 1) -> List[CustomMap]:
+    async def custom_maps(
+            self,
+            custom_map_fliter: CustomMapFilter,
+            pages: int = 1,
+            start_from_page: int = 1
+    ) -> list[CustomMap]:
         """Get a list of challenges given a specific filter.
 
         .. note::
@@ -293,7 +317,7 @@ class AsyncClient:
         :type start_from_page: int
 
         :return: A list of custom maps (lazy loaded).
-        :rtype: List[:class:`bloonspy.model.btd6.CustomMap`]
+        :rtype: list[:class:`bloonspy.model.btd6.CustomMap`]
         """
 
         custom_map_list = []
@@ -315,7 +339,12 @@ class AsyncClient:
 
         for page in custom_map_pages:
             for cmap in page:
-                custom_map_list.append(CustomMap(cmap["id"], name=cmap["name"], created_at=cmap["createdAt"],
-                                                 creator_id=cmap["creator"].split("/")[-1]))
+                custom_map_list.append(CustomMap(
+                    cmap["id"],
+                    name=cmap["name"],
+                    created_at=cmap["createdAt"],
+                    creator_id=cmap["creator"].split("/")[-1],
+                    async_client=self.__aclient,
+                ))
 
         return custom_map_list

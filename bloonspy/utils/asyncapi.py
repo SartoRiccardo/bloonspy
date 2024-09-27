@@ -46,9 +46,9 @@ async def aget(client: aiohttp.ClientSession, endpoint: str, params: Dict[str, A
             return data["body"]
 
 
-async def get_lb_page(endpoint: str, page_num: int):
+async def aget_lb_page(client: aiohttp.ClientSession, endpoint: str, page_num: int):
     try:
-        return get(endpoint, params={"page": page_num})
+        return await aget(client, endpoint, params={"page": page_num})
     except BloonsException as exc:
         if str(exc) == "No Scores Available":
             return []

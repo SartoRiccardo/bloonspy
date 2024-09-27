@@ -16,10 +16,17 @@ class CustomMap(Loadable):
 
     endpoint = "/btd6/maps/map/{}"
 
-    def __init__(self, map_id: str, eager: bool = False, created_at: int = None, name: str = None,
-                 creator_id: str = None, raw_map: dict = None):
+    def __init__(
+            self,
+            map_id: str,
+            created_at: int = None,
+            name: str = None,
+            creator_id: str = None,
+            raw_map: dict = None,
+            **kwargs,
+    ):
         """Constructor method."""
-        super().__init__(map_id, eager=eager)
+        super().__init__(map_id, **kwargs)
         if raw_map:
             self._parse_json(raw_map)
         if name:

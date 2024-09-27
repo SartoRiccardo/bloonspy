@@ -6,9 +6,9 @@ def fetch_property(loading_func: callable, should_load: callable = None):
     def _decorator(wrapped: callable):
         @wraps(wrapped)
         def wrapper(self, *args, **kwargs):
-            if not self.loaded and self._async_client:
-                raise NotLoaded()
             if should_load is None or should_load(self):
+                if not self.loaded and self._async_client:
+                    raise NotLoaded()
                 loading_func(self)
             return wrapped(self, *args, **kwargs)
         return wrapper
