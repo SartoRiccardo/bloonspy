@@ -1,6 +1,5 @@
 import asyncio
 from typing import List
-from concurrent.futures import ThreadPoolExecutor
 import aiohttp
 from .utils.asyncapi import aget
 from .model.btd6 import \
@@ -13,8 +12,8 @@ from .model.btd6 import \
     CustomMap, CustomMapFilter
 
 
-class Client:
-    """Client for all API calls.
+class AsyncClient:
+    """Client for all **asynchronous** API calls.
 
     :param open_access_key: Your OAK for the Ninja Kiwi Open Data API.
     :type open_access_key: str
@@ -22,7 +21,7 @@ class Client:
     :type aiohttp_client: aiohttp.ClientSession
     """
 
-    def __init__(self, open_access_key: str, aiohttp_client: aiohttp.ClientSession = None):
+    def __init__(self, open_access_key: str = None, aiohttp_client: aiohttp.ClientSession = None):
         self.__oak = open_access_key
         self.__aclient = aiohttp_client
         if self.__aclient is None:
@@ -62,7 +61,7 @@ class Client:
         """
         return OdysseyEvent(odyssey_id, eager=eager)
 
-    def contested_territories(self) -> List[ContestedTerritoryEvent]:
+    async def contested_territories(self) -> List[ContestedTerritoryEvent]:
         """Get a list of Contested Territory events."""
         ct_data = await aget(self.__aclient, "/btd6/ct")
         ct_list = []
@@ -106,7 +105,7 @@ class Client:
         """
         return Team(team_id, eager=True)
 
-    def races(self) -> List[Race]:
+    async def races(self) -> List[Race]:
         """Get a list of Race events.
 
         .. note::
@@ -143,7 +142,7 @@ class Client:
         """
         return Race(race_id, eager=eager)
 
-    def bosses(self) -> List[BossEvent]:
+    async def bosses(self) -> List[BossEvent]:
         """Get a list of Boss events."""
         bosses_data = await aget(self.__aclient, "/btd6/bosses")
         boss_list = []
@@ -173,7 +172,7 @@ class Client:
         """
         return BossEvent(boss_id, eager=eager)
 
-    def challenges(self, challenge_filter: ChallengeFilter, pages: int = 1, start_from_page: int = 1) -> List[Challenge]:
+    async def challenges(self, challenge_filter: ChallengeFilter, pages: int = 1, start_from_page: int = 1) -> List[Challenge]:
         """Get a list of challenges given a specific filter.
 
         .. note::
@@ -266,7 +265,7 @@ class Client:
         """
         return CustomMap(map_id, eager=True)
 
-    def custom_maps(self, custom_map_fliter: CustomMapFilter, pages: int = 1, start_from_page: int = 1) -> List[CustomMap]:
+    async def custom_maps(self, custom_map_fliter: CustomMapFilter, pages: int = 1, start_from_page: int = 1) -> List[CustomMap]:
         """Get a list of challenges given a specific filter.
 
         .. note::
