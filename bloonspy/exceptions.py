@@ -38,3 +38,11 @@ class Forbidden(BloonsException):
     """
     pass
 
+
+class NotLoaded(BloonsException):
+    """
+    *New in 0.9.0*
+
+    You attempted to access an unloaded property in a lazy-loaded resource in an
+    asynchronous environment.
+    """

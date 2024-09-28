@@ -1,4 +1,5 @@
 from functools import wraps
+from ..exceptions import NotLoaded
 
 
 def fetch_property(loading_func: callable, should_load: callable = None):
@@ -6,6 +7,8 @@ def fetch_property(loading_func: callable, should_load: callable = None):
         @wraps(wrapped)
         def wrapper(self, *args, **kwargs):
             if should_load is None or should_load(self):
+                if not self.loaded and self._async_client:
+                    raise NotLoaded()
                 loading_func(self)
             return wrapped(self, *args, **kwargs)
         return wrapper

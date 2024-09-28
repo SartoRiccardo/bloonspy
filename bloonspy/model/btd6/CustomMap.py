@@ -16,10 +16,17 @@ class CustomMap(Loadable):
 
     endpoint = "/btd6/maps/map/{}"
 
-    def __init__(self, map_id: str, eager: bool = False, created_at: int = None, name: str = None,
-                 creator_id: str = None, raw_map: dict = None):
+    def __init__(
+            self,
+            map_id: str,
+            created_at: int = None,
+            name: str = None,
+            creator_id: str = None,
+            raw_map: dict = None,
+            **kwargs,
+    ):
         """Constructor method."""
-        super().__init__(map_id, eager=eager)
+        super().__init__(map_id, **kwargs)
         if raw_map:
             self._parse_json(raw_map)
         if name:
@@ -31,7 +38,8 @@ class CustomMap(Loadable):
 
     def _handle_exceptions(self, exception: Exception) -> None:
         error_msg = str(exception)
-        if error_msg.lower() == "no map with that id exists":
+        if error_msg.lower() == "no map with that id exists" or \
+                error_msg.lower() == "invalid map id":
             raise NotFound(error_msg)
 
     def _parse_json(self, raw_map: dict) -> None:

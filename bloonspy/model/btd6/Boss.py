@@ -1,10 +1,12 @@
+import asyncio
 from enum import Enum
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
-from typing import List, Dict, Any, Tuple, Union
+from typing import Any, Awaitable
 from ...exceptions import BadTeamSize
 from ...utils.decorators import fetch_property, exception_handler
-from ...utils.api import get, get_lb_page
+from ...utils.api import get_lb_page
+from ...utils.asyncapi import aget_lb_page
 from ..Loadable import Loadable
 from ..Event import Event
 from .Challenge import Challenge
@@ -19,7 +21,7 @@ class BossBloon(Enum):
     VORTEX = "vortex"
     DREADBLOON = "dreadbloon"
     PHAYZE = "phayze"
-    # BLASTAPOPOULOS = "blastapopoulos"
+    BLASTAPOPOULOS = "blastapopoulos"
 
     @staticmethod
     def from_string(boss: str) -> "BossBloon":
@@ -29,10 +31,9 @@ class BossBloon(Enum):
             "lych": BossBloon.LYCH,
             "dreadbloon": BossBloon.DREADBLOON,
             "phayze": BossBloon.PHAYZE,
-            # "blastapopoulos": BossBloon.BLASTAPOPOULOS,
+            "blastapopoulos": BossBloon.BLASTAPOPOULOS,
         }
-        boss = boss_switch[boss] if boss in boss_switch else None
-        return boss
+        return boss_switch.get(boss, None)
 
 
 class BossPlayer(User):
@@ -43,7 +44,7 @@ class BossPlayer(User):
                  user_id: str,
                  name: str,
                  score: int,
-                 score_parts: List[Dict[str, Any]],
+                 score_parts: list[dict[str, Any]],
                  submission_time: int,
                  **kwargs):
         super().__init__(user_id, **kwargs)
@@ -63,7 +64,7 @@ class BossPlayer(User):
         return self._score_parts[0] if len(self._score_parts) > 0 else self._score
 
     @property
-    def score_parts(self) -> List[Score]:
+    def score_parts(self) -> list[Score]:
         """The score parts."""
         return self._score_parts
 
@@ -76,9 +77,9 @@ class BossPlayer(User):
 class BossPlayerTeam:
     """A team of players who played a Ranked Co-op Boss Event."""
     def __init__(self,
-                 users: List[BossPlayer],
+                 users: list[BossPlayer],
                  score: Score,
-                 score_parts: List[Score],
+                 score_parts: list[Score],
                  submission_time: datetime,
                  is_complete: bool = True):
         self._users = users
@@ -88,7 +89,7 @@ class BossPlayerTeam:
         self._is_complete = is_complete
 
     @property
-    def players(self) -> Tuple[BossPlayer]:
+    def players(self) -> tuple[BossPlayer]:
         """The users in the team."""
         return tuple(self._users)
 
@@ -98,7 +99,7 @@ class BossPlayerTeam:
         return self._score_parts[0] if len(self._score_parts) > 0 else self._score
 
     @property
-    def score_parts(self) -> List[Score]:
+    def score_parts(self) -> list[Score]:
         """The score parts."""
         return self._score_parts
 
@@ -112,7 +113,7 @@ class BossPlayerTeam:
         """Whether the team is fully loaded.
 
         Due to API restrictions, when calling :func:`~bloonspy.model.btd6.Boss.leaderboard()` to get coop
-        leaderboards, the team at the end of the List could not have all of its members loaded.
+        leaderboards, the team at the end of the list could not have all of its members loaded.
         """
         return self._is_complete
 
@@ -122,12 +123,18 @@ class Boss(Challenge):
     endpoint = "/btd6/bosses/{}/metadata/:difficulty:"
     lb_endpoint = "/btd6/bosses/{}/leaderboard/:difficulty:/{}"
 
-    def __init__(self, boss_id: str, name: str, boss_bloon: BossBloon, total_scores: int, elite: bool,
-                 eager: bool = False):
+    def __init__(
+            self,
+            boss_id: str,
+            name: str,
+            boss_bloon: BossBloon,
+            total_scores: int,
+            elite: bool,
+            **kwargs):
         self._is_elite = elite
         self.endpoint = self.endpoint.replace(":difficulty:", "elite" if self._is_elite else "standard")
         self.lb_endpoint = self.lb_endpoint.replace(":difficulty:", "elite" if self._is_elite else "standard")
-        super().__init__(boss_id, eager=eager)
+        super().__init__(boss_id, **kwargs)
         self._data["name"] = name
         self._boss_bloon = boss_bloon
         self._total_scores = total_scores
@@ -147,20 +154,13 @@ class Boss(Challenge):
         """`True` if the boss is Elite."""
         return self._is_elite
 
-    def _get_lb_page(self, page_num: int, team_size: int):
-        try:
-            return get(self.lb_endpoint.format(self._id, team_size), params={"page": page_num})
-        except Exception as exc:
-            if str(exc) == "No Scores Available":
-                return []
-            raise exc
-
     @exception_handler(Loadable.handle_exceptions)
-    def leaderboard(self,
-                    pages: int = 1,
-                    start_from_page: int = 1,
-                    team_size: int = 1
-                    ) -> Union[List[BossPlayer], List[BossPlayerTeam]]:
+    def leaderboard(
+            self,
+            pages: int = 1,
+            start_from_page: int = 1,
+            team_size: int = 1,
+    ) -> Awaitable[list[BossPlayer] | list[BossPlayerTeam]] | list[BossPlayer] | list[BossPlayerTeam]:
         """Get a page of the leaderboard for this boss.
 
         .. note::
@@ -177,7 +177,7 @@ class Boss(Challenge):
         :type team_size: int
 
         :return: A list of players in the leaderboard.
-        :rtype: Union[List[:class:`~bloonspy.model.btd6.BossPlayer`], List[:class:`~bloonspy.model.btd6.BossPlayerTeam`]]
+        :rtype: list[:class:`~bloonspy.model.btd6.BossPlayer`] | list[:class:`~bloonspy.model.btd6.BossPlayerTeam`]
 
         :raise ~bloonspy.exceptions.NotFound: If the boss doesn't exist or is expired.
         :raise BadTeamSize: If `team_size` is less than 1 or more than 4.
@@ -185,23 +185,22 @@ class Boss(Challenge):
         if team_size not in range(1, 5):
             raise BadTeamSize("team_size must be between 1 and 4")
 
-        futures = []
-        with ThreadPoolExecutor(max_workers=10) as executor:
-            for page_num in range(start_from_page, start_from_page + pages):
-                futures.append(executor.submit(get_lb_page, self.lb_endpoint.format(self._id, team_size), page_num))
+        def on_data_fetched(results) -> list[BossPlayer] | list[BossPlayerTeam]:
+            boss_players = []
+            for page in results:
+                for player in page:
+                    boss_players.append(BossPlayer(
+                        player["profile"].split("/")[-1],
+                        player["displayName"],
+                        player["score"],
+                        player["scoreParts"],
+                        player["submissionTime"],
+                        async_client=self._async_client,
+                    ))
 
-        boss_players = []
-        for page in futures:
-            for player in page.result():
-                boss_players.append(BossPlayer(
-                    player["profile"].split("/")[-1],
-                    player["displayName"],
-                    player["score"],
-                    player["scoreParts"],
-                    player["submissionTime"]
-                ))
+            if team_size == 1:
+                return boss_players
 
-        if team_size > 1:
             boss_teams = []
             current_score = None
             current_score_parts = []
@@ -212,10 +211,12 @@ class Boss(Challenge):
                         not self._score_parts_eq(player.score_parts, current_score_parts):
                     if current_score is not None:
                         boss_teams.append(
-                            BossPlayerTeam(current_team_players,
-                                           current_score,
-                                           current_score_parts,
-                                           current_sub_time)
+                            BossPlayerTeam(
+                                current_team_players,
+                                current_score,
+                                current_score_parts,
+                                current_sub_time,
+                            )
                         )
                     current_score = player.score
                     current_score_parts = player.score_parts
@@ -234,10 +235,24 @@ class Boss(Challenge):
                 )
             return boss_teams
 
-        return boss_players
+        async def async_leaderboard():
+            results = await asyncio.gather(*[
+                aget_lb_page(self._async_client, self.lb_endpoint.format(self._id, team_size), page_num)
+                for page_num in range(start_from_page, start_from_page + pages)
+            ])
+            return on_data_fetched(results)
+
+        if self._async_client:
+            return async_leaderboard()
+
+        futures = []
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            for page_num in range(start_from_page, start_from_page + pages):
+                futures.append(executor.submit(get_lb_page, self.lb_endpoint.format(self._id, team_size), page_num))
+        return on_data_fetched([page.result() for page in futures])
 
     @staticmethod
-    def _score_parts_eq(sp1: List[Score], sp2: List[Score]) -> bool:
+    def _score_parts_eq(sp1: list[Score], sp2: list[Score]) -> bool:
         if len(sp1) != len(sp2):
             return False
         for i in range(len(sp1)):
@@ -253,7 +268,7 @@ class BossEvent(Event):
                        "totalScores_elite", "scoringType"]
     event_name: str = "Boss"
 
-    def _parse_event(self, data: Dict[str, Any]) -> None:
+    def _parse_event(self, data: dict[str, Any]) -> None:
         self._data["boss_bloon"] = BossBloon.from_string(data["bossType"])
         self._data["boss_banner"] = data["bossTypeURL"]
         self._data["total_scores_standard"] = data["totalScores_standard"]
@@ -295,7 +310,7 @@ class BossEvent(Event):
         """
         return self._data["scoring_type"]
 
-    def standard(self, eager: bool = False) -> Boss:
+    def standard(self, eager: bool = False) -> Awaitable[Boss] | Boss:
         """Get the standard boss challenge.
 
         .. note::
@@ -310,10 +325,9 @@ class BossEvent(Event):
         :type eager: bool
         :return: The standard boss event.
         :rtype: ~bloonspy.model.btd6.Boss"""
-        return Boss(self.id, self.name, self.boss_bloon,
-                    self.total_scores_standard, False, eager=eager)
+        return self._get_boss_variant(eager, False)
 
-    def elite(self, eager: bool = False) -> Boss:
+    def elite(self, eager: bool = False) -> Awaitable[Boss] | Boss:
         """Get the elite boss challenge.
 
         .. note::
@@ -328,5 +342,23 @@ class BossEvent(Event):
         :type eager: bool
         :return: The elite boss event.
         :rtype: ~bloonspy.model.btd6.Boss"""
-        return Boss(self.id, self.name, self.boss_bloon,
-                    self.total_scores_elite, True, eager=eager)
+        return self._get_boss_variant(eager, True)
+
+    def _get_boss_variant(self, eager: bool, is_elite: bool) -> Awaitable[Boss] | Boss:
+        async def load(b: Boss):
+            if eager:
+                await b.load_resource()
+            return b
+
+        boss = Boss(
+            self.id,
+            self.name,
+            self.boss_bloon,
+            self.total_scores_elite,
+            is_elite,
+            eager=eager,
+            async_client=self._async_client,
+        )
+        if self._async_client:
+            return load(boss)
+        return boss

@@ -1,7 +1,6 @@
-import concurrent.futures
-from typing import List
-from concurrent.futures import ThreadPoolExecutor
-from .utils.api import get
+import asyncio
+import aiohttp
+from .utils.asyncapi import aget
 from .model.btd6 import \
     OdysseyEvent, \
     BossEvent, \
@@ -12,26 +11,49 @@ from .model.btd6 import \
     CustomMap, CustomMapFilter
 
 
-class Client:
-    """Client for all API calls.
+class AsyncClient:
+    """Client for all **asynchronous** API calls.
+
+    .. note::
+       When accessing an unloaded property of a lazy-loaded resource, **it will**
+       **raise ~bloonspy.exceptions.NotLoaded instead of loading it.** Either eager
+       load it or call the load methods beforehand.
+
+    .. note::
+       When accessing objects through `AsyncClient`, the API is exactly the same. However,
+       properties do not have to be awaited. Only methods do.
+       **If you have to use parenthesis, you should await.**
 
     :param open_access_key: Your OAK for the Ninja Kiwi Open Data API.
     :type open_access_key: str
+    :param aiohttp_client: An aiohttp Client. Will create one if not provided.
+    :type aiohttp_client: aiohttp.ClientSession
     """
-    def __init__(self, open_access_key: str):
-        self.__oak = open_access_key
 
-    @staticmethod
-    def odysseys() -> List[OdysseyEvent]:
+    def __init__(self, open_access_key: str = None, aiohttp_client: aiohttp.ClientSession = None):
+        self.__oak = open_access_key
+        self.__aclient = aiohttp_client
+        if self.__aclient is None:
+            asyncio.create_task(self.__create_aclient())
+
+    async def __create_aclient(self):
+        async with aiohttp.ClientSession() as aclient:
+            self.__aclient = aclient
+            await asyncio.Future()
+
+    async def odysseys(self) -> list[OdysseyEvent]:
         """Get a list of Odyssey events."""
-        odysseys_data = get("/btd6/odyssey")
+        odysseys_data = await aget(self.__aclient, "/btd6/odyssey")
         odyssey_list = []
         for odyssey in odysseys_data:
-            odyssey_list.append(OdysseyEvent(odyssey["id"], event_json=odyssey))
+            odyssey_list.append(OdysseyEvent(
+                odyssey["id"],
+                event_json=odyssey,
+                async_client=self.__aclient,
+            ))
         return odyssey_list
 
-    @staticmethod
-    def get_odyssey(odyssey_id: str, eager: bool = False) -> OdysseyEvent:
+    async def get_odyssey(self, odyssey_id: str, eager: bool = False) -> OdysseyEvent:
         """Fetch a specific Odyssey by its ID.
 
         .. note::
@@ -50,19 +72,24 @@ class Client:
 
         :raise ~bloonspy.exceptions.NotFound: If no odyssey with that ID is found.
         """
-        return OdysseyEvent(odyssey_id, eager=eager)
+        odyssey = OdysseyEvent(odyssey_id, async_client=self.__aclient)
+        if eager:
+            await odyssey.load_event()
+        return odyssey
 
-    @staticmethod
-    def contested_territories() -> List[ContestedTerritoryEvent]:
+    async def contested_territories(self) -> list[ContestedTerritoryEvent]:
         """Get a list of Contested Territory events."""
-        ct_data = get("/btd6/ct")
+        ct_data = await aget(self.__aclient, "/btd6/ct")
         ct_list = []
         for ct in ct_data:
-            ct_list.append(ContestedTerritoryEvent(ct["id"], event_json=ct))
+            ct_list.append(ContestedTerritoryEvent(
+                ct["id"],
+                event_json=ct,
+                async_client=self.__aclient,
+            ))
         return ct_list
 
-    @staticmethod
-    def get_contested_territory(ct_id: str, eager: bool = False) -> ContestedTerritoryEvent:
+    async def get_contested_territory(self, ct_id: str, eager: bool = False) -> ContestedTerritoryEvent:
         """Fetch a specific Contested Territory event by its ID.
 
         .. note::
@@ -81,10 +108,12 @@ class Client:
 
         :raise ~bloonspy.exceptions.NotFound: If no CT with that ID is found.
         """
-        return ContestedTerritoryEvent(ct_id, eager=eager)
+        ct = ContestedTerritoryEvent(ct_id, async_client=self.__aclient)
+        if eager:
+            await ct.load_event()
+        return ct
 
-    @staticmethod
-    def get_team(team_id: str) -> Team:
+    async def get_team(self, team_id: str) -> Team:
         """Fetch a specific team by its ID.
 
         :param team_id: The ID of the team.
@@ -95,10 +124,11 @@ class Client:
 
         :raise ~bloonspy.exceptions.NotFound: If no team with that ID is found.
         """
-        return Team(team_id, eager=True)
+        tm = Team(team_id, async_client=self.__aclient)
+        await tm.load_resource()
+        return tm
 
-    @staticmethod
-    def races() -> List[Race]:
+    async def races(self) -> list[Race]:
         """Get a list of Race events.
 
         .. note::
@@ -107,14 +137,17 @@ class Client:
            :attr:`~bloonspy.model.btd6.Race.start`, :attr:`~bloonspy.model.btd6.Race.end`, and
            :attr:`~bloonspy.model.btd6.Race.total_scores` loaded.
         """
-        races_data = get("/btd6/races")
+        races_data = await aget(self.__aclient, "/btd6/races")
         race_list = []
         for race in races_data:
-            race_list.append(Race(race["id"], race_json=race))
+            race_list.append(Race(
+                race["id"],
+                race_json=race,
+                async_client=self.__aclient,
+            ))
         return race_list
 
-    @staticmethod
-    def get_race(race_id: str, eager: bool = False) -> Race:
+    async def get_race(self, race_id: str, eager: bool = False) -> Race:
         """Fetch a specific Race by its ID.
 
         .. note::
@@ -133,19 +166,24 @@ class Client:
 
         :raise ~bloonspy.exceptions.NotFound: If no race with that ID is found.
         """
-        return Race(race_id, eager=eager)
+        race = Race(race_id, async_client=self.__aclient)
+        if eager:
+            await race.load_resource()
+        return race
 
-    @staticmethod
-    def bosses() -> List[BossEvent]:
+    async def bosses(self) -> list[BossEvent]:
         """Get a list of Boss events."""
-        bosses_data = get("/btd6/bosses")
+        bosses_data = await aget(self.__aclient, "/btd6/bosses")
         boss_list = []
         for boss in bosses_data:
-            boss_list.append(BossEvent(boss["id"], event_json=boss))
+            boss_list.append(BossEvent(
+                boss["id"],
+                event_json=boss,
+                async_client=self.__aclient,
+            ))
         return boss_list
 
-    @staticmethod
-    def get_boss(boss_id: str, eager: bool = False) -> BossEvent:
+    async def get_boss(self, boss_id: str, eager: bool = False) -> BossEvent:
         """Fetch a specific Boss event by its ID.
 
         .. note::
@@ -164,12 +202,19 @@ class Client:
 
         :raise ~bloonspy.exceptions.NotFound: If no boss event with that ID is found.
         """
-        return BossEvent(boss_id, eager=eager)
+        boss = BossEvent(boss_id, async_client=self.__aclient)
+        if eager:
+            await boss.load_event()
+        return boss
 
-    @staticmethod
-    def challenges(challenge_filter: ChallengeFilter, pages: int = 1, start_from_page: int = 1) -> List[Challenge]:
+    async def challenges(
+            self,
+            challenge_filter: ChallengeFilter,
+            pages: int = 1,
+            start_from_page: int = 1
+    ) -> list[Challenge]:
         """Get a list of challenges given a specific filter.
-        
+
         .. note::
            The returned :class:`~bloonspy.model.btd6.Challenge` objects will only
            have the properties :attr:`~bloonspy.model.Loadable.id`, :attr:`~bloonspy.model.btd6.Challenge.name`,
@@ -183,20 +228,32 @@ class Client:
         :type start_from_page: int
 
         :return: A list of challenges (lazy loaded).
-        :rtype: List[:class:`bloonspy.model.btd6.Challenge`]
+        :rtype: list[:class:`bloonspy.model.btd6.Challenge`]
         """
 
         challenge_list = []
-        with ThreadPoolExecutor(max_workers=5) as executor:
-            challenge_pages = []
-            for page_num in range(start_from_page, start_from_page+pages):
-                challenge_pages.append(executor.submit(
-                    get, f"/btd6/challenges/filter/{challenge_filter.value}", {"page": page_num}
-                ))
-            for page in challenge_pages:
-                for chlg in page.result():
-                    challenge_list.append(Challenge(chlg["id"], name=chlg["name"], created_at=chlg["createdAt"],
-                                                    creator_id=chlg["creator"].split("/")[-1]))
+        challenge_pages = []
+
+        async def get_page(page_num: int) -> None:
+            nonlocal challenge_pages
+            challenge_pages.append(
+                await aget(
+                    self.__aclient,
+                    f"/btd6/challenges/filter/{challenge_filter.value}",
+                    {"page": page_num}
+                )
+            )
+
+        await asyncio.gather(*[
+            get_page(page_num) for page_num in range(start_from_page, start_from_page + pages)
+        ])
+
+        for page in challenge_pages:
+            for chlg in page:
+                challenge_list.append(Challenge(chlg["id"], name=chlg["name"], created_at=chlg["createdAt"],
+                                                creator_id=chlg["creator"].split("/")[-1]))
+
+        # Make async
         # if eager:
         #     with ThreadPoolExecutor(max_workers=10) as executor:
         #         futures = []
@@ -206,8 +263,7 @@ class Client:
 
         return challenge_list
 
-    @staticmethod
-    def get_challenge(challenge_id: str) -> Challenge:
+    async def get_challenge(self, challenge_id: str) -> Challenge:
         """Fetch a specific challenge by its ID.
 
         :param challenge_id: The challenge ID.
@@ -218,10 +274,11 @@ class Client:
 
         :raise ~bloonspy.exceptions.NotFound: If no challenge with the given ID is found.
         """
-        return Challenge(challenge_id, eager=True)
+        chal = Challenge(challenge_id, async_client=self.__aclient)
+        await chal.load_resource()
+        return chal
 
-    @staticmethod
-    def get_user(identifier: str) -> User:
+    async def get_user(self, identifier: str) -> User:
         """Fetch a specific user by an identifier.
 
         :param identifier: The user ID, or its OAK.
@@ -232,10 +289,11 @@ class Client:
 
         :raise ~bloonspy.exceptions.NotFound: If no user with the given ID/OAK is found.
         """
-        return User(identifier, eager=True)
+        usr = User(identifier, async_client=self.__aclient)
+        await usr.load_resource()
+        return usr
 
-    @staticmethod
-    def get_custom_map(map_id: str) -> CustomMap:
+    async def get_custom_map(self, map_id: str) -> CustomMap:
         """Fetch a specific custom map by its ID.
 
         :param map_id: The map code.
@@ -246,10 +304,16 @@ class Client:
 
         :raise ~bloonspy.exceptions.NotFound: If no custom map with the given ID is found.
         """
-        return CustomMap(map_id, eager=True)
+        cmap = CustomMap(map_id, async_client=self.__aclient)
+        await cmap.load_resource()
+        return cmap
 
-    @staticmethod
-    def custom_maps(custom_map_fliter: CustomMapFilter, pages: int = 1, start_from_page: int = 1) -> List[CustomMap]:
+    async def custom_maps(
+            self,
+            custom_map_fliter: CustomMapFilter,
+            pages: int = 1,
+            start_from_page: int = 1
+    ) -> list[CustomMap]:
         """Get a list of challenges given a specific filter.
 
         .. note::
@@ -265,19 +329,34 @@ class Client:
         :type start_from_page: int
 
         :return: A list of custom maps (lazy loaded).
-        :rtype: List[:class:`bloonspy.model.btd6.CustomMap`]
+        :rtype: list[:class:`bloonspy.model.btd6.CustomMap`]
         """
 
         custom_map_list = []
-        with ThreadPoolExecutor(max_workers=5) as executor:
-            custom_map_pages = []
-            for page_num in range(start_from_page, start_from_page + pages):
-                custom_map_pages.append(executor.submit(
-                    get, f"/btd6/maps/filter/{custom_map_fliter.value}", {"page": page_num}
+        custom_map_pages = []
+
+        async def get_page(page_num: int) -> None:
+            nonlocal custom_map_pages
+            custom_map_pages.append(
+                await aget(
+                    self.__aclient,
+                    f"/btd6/maps/filter/{custom_map_fliter.value}",
+                    {"page": page_num}
+                )
+            )
+
+        await asyncio.gather(*[
+            get_page(page_num) for page_num in range(start_from_page, start_from_page + pages)
+        ])
+
+        for page in custom_map_pages:
+            for cmap in page:
+                custom_map_list.append(CustomMap(
+                    cmap["id"],
+                    name=cmap["name"],
+                    created_at=cmap["createdAt"],
+                    creator_id=cmap["creator"].split("/")[-1],
+                    async_client=self.__aclient,
                 ))
-            for page in custom_map_pages:
-                for map in page.result():
-                    custom_map_list.append(CustomMap(map["id"], name=map["name"], created_at=map["createdAt"],
-                                                     creator_id=map["creator"].split("/")[-1]))
 
         return custom_map_list

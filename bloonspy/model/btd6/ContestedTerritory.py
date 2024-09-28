@@ -1,10 +1,12 @@
+import asyncio
 from datetime import datetime
 from dataclasses import dataclass
 from enum import Enum
-from typing import List, Dict, Any
+from typing import Any, Awaitable
 from concurrent.futures import ThreadPoolExecutor
 from ...utils.decorators import fetch_property, exception_handler
 from ...utils.api import get, get_lb_page
+from ...utils.asyncapi import aget, aget_lb_page
 from ..Event import Event
 from .User import User
 from .Team import Team
@@ -184,7 +186,7 @@ class ContestedTerritoryEvent(Event):
     event_dict_keys = ["name", "start", "end", "totalScores_player", "totalScores_team"]
     event_name = "CT"
 
-    def _parse_event(self, data: Dict[str, Any]) -> None:
+    def _parse_event(self, data: dict[str, Any]) -> None:
         self._data["totalScores_player"] = data["totalScores_player"]
         self._data["totalScores_team"] = data["totalScores_team"]
         self._data["start"] = datetime.fromtimestamp(data["start"]/1000)
@@ -215,7 +217,7 @@ class ContestedTerritoryEvent(Event):
         return self._data["totalScores_team"]
 
     @exception_handler(Event.handle_exceptions)
-    def leaderboard_player(self, pages: int = 1, start_from_page: int = 1) -> list[CtPlayer]:
+    def leaderboard_player(self, pages: int = 1, start_from_page: int = 1) -> list[CtPlayer] | Awaitable[list[CtPlayer]]:
         """Get a page of the player leaderboard.
 
         .. note::
@@ -229,26 +231,40 @@ class ContestedTerritoryEvent(Event):
         :type start_from_page: int
 
         :return: A list of players in the leaderboard.
-        :rtype: List[:class:`~bloonspy.model.btd6.CtPlayer`]
+        :rtype: list[:class:`~bloonspy.model.btd6.CtPlayer`]
 
         :raise ~bloonspy.exceptions.NotFound: If the boss doesn't exist or is expired.
         """
+        def on_pages_fetched(responses) -> list[CtPlayer]:
+            players = []
+            for page in responses:
+                for player in page:
+                    players.append(CtPlayer(
+                        player["profile"].split("/")[-1],
+                        player["displayName"],
+                        player["score"],
+                        async_client=self._async_client,
+                    ))
+            return players
+
+        async def async_get_leaderboard() -> list[CtPlayer]:
+            results = await asyncio.gather(*[
+                aget_lb_page(self._async_client, self.lb_endpoint_player.format(self._id), page_num)
+                for page_num in range(start_from_page, start_from_page + pages)
+            ])
+            return on_pages_fetched(results)
+
+        if self._async_client:
+            return async_get_leaderboard()
+
         futures = []
         with ThreadPoolExecutor(max_workers=10) as executor:
             for page_num in range(start_from_page, start_from_page + pages):
                 futures.append(executor.submit(get_lb_page, self.lb_endpoint_player.format(self._id), page_num))
-
-        players = []
-        for page in futures:
-            for player in page.result():
-                players.append(CtPlayer(
-                    player["profile"].split("/")[-1], player["displayName"], player["score"]
-                ))
-
-        return players
+        return on_pages_fetched([page.result() for page in futures])
 
     @exception_handler(Event.handle_exceptions)
-    def leaderboard_team(self, pages: int = 1, start_from_page: int = 1) -> list[CtTeam]:
+    def leaderboard_team(self, pages: int = 1, start_from_page: int = 1) -> list[CtTeam] | Awaitable[list[CtTeam]]:
         """Get a page of the team leaderboard.
 
         .. note::
@@ -262,37 +278,59 @@ class ContestedTerritoryEvent(Event):
         :type start_from_page: int
 
         :return: A list of teams in the leaderboard.
-        :rtype: List[:class:`~bloonspy.model.btd6.CtTeam`]
+        :rtype: list[:class:`~bloonspy.model.btd6.CtTeam`]
 
         :raise ~bloonspy.exceptions.NotFound: If the boss doesn't exist or is expired.
         """
+        def on_pages_fetched(responses) -> list[CtTeam]:
+            teams = []
+            for page in responses:
+                for team in page:
+                    teams.append(CtTeam(
+                        team["profile"].split("/")[-1],
+                        team["displayName"],
+                        team["score"],
+                        async_client=self._async_client,
+                    ))
+            return teams
+
+        async def async_get_leaderboard() -> list[CtTeam]:
+            results = await asyncio.gather(*[
+                aget_lb_page(self._async_client, self.lb_endpoint_team.format(self._id), page_num)
+                for page_num in range(start_from_page, start_from_page + pages)
+            ])
+            return on_pages_fetched(results)
+
+        if self._async_client:
+            return async_get_leaderboard()
+
         futures = []
         with ThreadPoolExecutor(max_workers=10) as executor:
             for page_num in range(start_from_page, start_from_page + pages):
                 futures.append(executor.submit(get_lb_page, self.lb_endpoint_team.format(self._id), page_num))
-
-        teams = []
-        for page in futures:
-            for team in page.result():
-                teams.append(CtTeam(
-                    team["profile"].split("/")[-1], team["displayName"], team["score"]
-                ))
-
-        return teams
+        return on_pages_fetched([page.result() for page in futures])
 
     @exception_handler(Event.handle_exceptions)
-    def tiles(self) -> list[CtTile]:
-        tiles = []
-        tiles_raw = get(f"/btd6/ct/{self.id}/tiles")["tiles"]
-        for tile_data in tiles_raw:
-            tile_type = tile_data["type"]
-            relic = None
-            if "-" in tile_type:
-                tile_type, relic = tile_type.split(" - ")
-            tiles.append(CtTile(
-                tile_data["id"],
-                CtTileType.from_string(tile_type),
-                GameType.from_string(tile_data["gameType"]),
-                Relic.from_string(relic) if relic else None
-            ))
-        return tiles
+    def tiles(self) -> list[CtTile] | Awaitable[list[CtTile]]:
+        def on_data_fetched(tiles_raw) -> list[CtTile]:
+            tiles = []
+            for tile_data in tiles_raw:
+                tile_type = tile_data["type"]
+                relic = None
+                if "-" in tile_type:
+                    tile_type, relic = tile_type.split(" - ")
+                tiles.append(CtTile(
+                    tile_data["id"],
+                    CtTileType.from_string(tile_type),
+                    GameType.from_string(tile_data["gameType"]),
+                    Relic.from_string(relic) if relic else None
+                ))
+            return tiles
+
+        async def async_tiles():
+            resp = await aget(self._async_client, f"/btd6/ct/{self.id}/tiles")
+            return on_data_fetched(resp["tiles"])
+
+        if self._async_client:
+            return async_tiles()
+        return on_data_fetched(get(f"/btd6/ct/{self.id}/tiles")["tiles"])

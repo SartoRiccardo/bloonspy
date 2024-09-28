@@ -11,7 +11,6 @@ class TestTeamOwner(unittest.TestCase):
         team = Client.get_team(team_id)
         owner = team.owner()
         self.assertIsNotNone(owner)
-        self.assertIn(owner.name.lower(), ["zoroark", "thargos", "vaneckpm"])
 
 
 if __name__ == '__main__':

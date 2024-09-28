@@ -1,5 +1,10 @@
 # Changelog
 
+# [0.9.0](https://pypi.org/project/bloonspy/0.9.0) - 2024-09-27
+
+### Added
+- Native `async` support
+
 # [0.8.1](https://pypi.org/project/bloonspy/0.8.1) - 2023-12-19
 
 ### Fixed

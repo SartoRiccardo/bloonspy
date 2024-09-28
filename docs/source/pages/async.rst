@@ -1,23 +1,32 @@
 Usage in an asynchronous environment
 ------------------------------------
 
-``bloonspy`` is a synchronous library, but it can be used asynchronously thanks to ``asyncio.to_thread``.
+``bloonspy`` offers the asynchronous :class:`bloonspy.AsyncClient` API which you can use in asynchronous environments.
+Returned objects and models are exactly the same as its synchronous counterpart, with a few important differences:
+
+- :class:`bloonspy.AsyncClient` has to be instanced, none of its methods are static.
+- Function calls have to be awaited
+- Trying to access a property that hasn't been loaded of any model will raise :class:`bloonspy.exceptions.NotLoaded`
 
 ::
 
-    from bloonspy import Client
+    from bloonspy import AsyncClient
     import asyncio
 
 
-    async def get_race_summary():
+    async def main():
+        async with aiohttp.ClientSession() as session:
+            client = AsyncClient(aiohttp_client=session)
+            await get_race_summary(client)
+            await get_race_summary_wrong(client)
+
+
+    async def get_race_summary(client: AsyncClient):
         """Print general information about the latest race events."""
-        races = await asyncio.to_thread(Client.races)
+        races = await client.races()
 
         # Load all Race objects concurrently
-        futures = []
-        for race in races:
-            futures.append(asyncio.to_thread(race.load_resource))
-        await asyncio.gather(*futures)
+        await asyncio.gather(*[race.load_resource() for race in races])
 
         for race in races:
             print(f"Race {race.name} went from {race.start} to {race.end}. "
@@ -25,19 +34,16 @@ Usage in an asynchronous environment
                   f"ended at round {race.end_round}.")
 
 
-    async def other_task_not_getting_blocked():
-        """Some other task doing whatever."""
-        for _ in range(10):
-            print("Task not getting blocked reporting for duty.")
-            await asyncio.sleep(1)
+    async def get_race_summary(client: AsyncClient):
+        """This is how you DON'T do it."""
+        races = await client.races()
 
-
-    async def main():
-        """Launches the two tasks above concurrently."""
-        await asyncio.gather(
-            get_race_summary(),
-            other_task_not_getting_blocked()
-        )
+        for race in races:
+            # Raises bloonspy.exceptions.NotLoaded, because you tried to access
+            # Race.start on a Race object which wasn't loaded. The synchronous client
+            # would have fetched it for you under the hood, but the async one doesnt.
+            # You should load the resource first and then access what you need.
+            print(f"Race {race.name} started at round {race.start}.")
 
 
     if __name__ == "__main__":
@@ -46,8 +52,7 @@ Usage in an asynchronous environment
 
 Since all objects are lazy loaded by default, it's important to call the :func:`bloonspy.model.Loadable.load_resource`
 or :func:`bloonspy.model.Event.load_event` explicitely at times, or set the ``eager`` parameter to ``True`` on methods
-that support it, and then turn those functions into an asyncio thread. If you don't, and call a property that's lazily
-loaded, the module will make an API call to fetch it, which will result in a blocking function.
+that support it.
 
 Note that not all properties are lazily loaded. Some can be loaded right away, in the example below, ``Race.name`` is
 already loaded when a result of :func:`bloonspy.Client.races`, so no need to load the whole resource.
@@ -55,29 +60,29 @@ This is lined out in the documentation for the function.
 
 ::
 
-    async def print_race_difficulty_bad():
-        race = await asyncio.to_thread(Client.races)[0]
+    async def print_race_difficulty_bad(client: AsyncClient):
+        race = await client.races()[0]
 
         # Bad! Since Race.gamemode is not currently loaded,
-        # a blocking API call will be made to fetch it.
+        # bloonspy.exceptions.NotLoaded will be raised.
         print(race.gamemode.difficulty.value)
 
 
-    async def print_race_difficulty_good():
-        race = await asyncio.to_thread(Client.races)[0]
+    async def print_race_difficulty_good(client: AsyncClient):
+        race = await client.races()[0]
 
         # Good! Load the resource and await it before accessing lazy loaded properties.
-        await asyncio.to_thread(race.load_resource)
+        await race.load_resource()
         print(race.gamemode.difficulty.value)
 
-        race = await asyncio.to_thread(Client.races, eager=True)[1]
+        race = await client.races(eager=True)[1]
 
         # Also good! The races were loaded thanks to eager=True.
         print(race.gamemode.difficulty.value)
 
 
-    async def print_race_name():
-        race = await asyncio.to_thread(Client.races)[0]
+    async def print_race_name(client: AsyncClient):
+        race = await client.races()[0]
 
         # As pointed out in the API reference page, Race.name already gets
         # loaded when calling Client.races, so there's no need to load the whole

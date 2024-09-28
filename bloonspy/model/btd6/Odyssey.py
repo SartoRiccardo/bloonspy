@@ -1,8 +1,9 @@
 from enum import Enum
-from typing import List, Dict, Any, Union
+from typing import Any, Awaitable
 from ...utils.decorators import fetch_property, exception_handler
 from ...utils.Infinity import Infinity
 from ...utils.api import get
+from ...utils.asyncapi import aget
 from ..Event import Event
 from ..Loadable import Loadable
 from .Restriction import Restriction, TowerRestriction
@@ -24,16 +25,22 @@ class Odyssey(Loadable):
     endpoint = "/btd6/odyssey/{}/:difficulty:"
     map_endpoint = "/btd6/odyssey/{}/:difficulty:/maps"
 
-    def __init__(self, resource_id: str, name: str, description: str,
-                 difficulty: OdysseyDifficulty, eager: bool = False):
+    def __init__(
+            self,
+            resource_id: str,
+            name: str,
+            description: str,
+            difficulty: OdysseyDifficulty,
+            **kwargs
+    ):
         self.endpoint = self.endpoint.replace(":difficulty:", difficulty.value)
         self.map_endpoint = self.map_endpoint.replace(":difficulty:", difficulty.value)
-        super().__init__(resource_id, eager)
+        super().__init__(resource_id, **kwargs)
         self._name = name
         self._description = description
         self._difficulty = difficulty
 
-    def _parse_json(self, raw_odyssey: Dict[str, Any]) -> None:
+    def _parse_json(self, raw_odyssey: dict[str, Any]) -> None:
         self._loaded = False
 
         copy_keys = [
@@ -135,38 +142,51 @@ class Odyssey(Loadable):
 
     @property
     @fetch_property(Loadable.load_resource)
-    def rewards(self) -> List[Union[Power, InstaMonkey, Reward]]:
+    def rewards(self) -> list[Power | InstaMonkey | Reward]:
         """Rewards for completing the odyssey."""
         return self._data["rewards"]
 
     @property
-    def available_powers(self) -> Dict[Power, int]:
+    def available_powers(self) -> dict[Power, int]:
         """Available powers to choose from for the odyssey."""
         return self._data["availablePowers"]
 
     @property
-    def default_powers(self) -> Dict[Power, int]:
+    def default_powers(self) -> dict[Power, int]:
         """Default powers for the odyssey."""
         return self._data["defaultPowers"]
 
     @property
-    def available_towers(self) -> Dict[Tower, Restriction]:
+    def available_towers(self) -> dict[Tower, Restriction]:
         """Available towers to choose from for the odyssey."""
         return self._data["availableTowers"]
 
     @property
-    def default_towers(self) -> Dict[Tower, int]:
+    def default_towers(self) -> dict[Tower, int]:
         """Default towers for the odyssey."""
         return self._data["defaultTowers"]
 
     @exception_handler(Loadable.handle_exceptions)
-    def maps(self) -> List[Challenge]:
+    def maps(self) -> list[Challenge] | Awaitable[list[Challenge]]:
         """Get all of the odyssey's challenges."""
-        odyssey_map = get(self.map_endpoint.format(self._id))
-        islands = []
-        for island in odyssey_map:
-            islands.append(Challenge(island["id"], raw_challenge=island))
-        return islands
+        def on_data_load(data) -> list[Challenge]:
+            islands = []
+            for island in data:
+                islands.append(Challenge(
+                    island["id"],
+                    raw_challenge=island,
+                    async_client=self._async_client,
+                ))
+            return islands
+
+        async def async_maps() -> list[Challenge]:
+            return on_data_load(
+                await aget(self._async_client, self.map_endpoint.format(self._id))
+            )
+
+        if self._async_client:
+            return async_maps()
+        return on_data_load(get(self.map_endpoint.format(self._id)))
 
 
 class OdysseyEvent(Event):
@@ -174,7 +194,7 @@ class OdysseyEvent(Event):
     event_endpoint = "/btd6/odyssey"
     event_name = "Odyssey"
 
-    def _parse_event(self, data: Dict[str, Any]) -> None:
+    def _parse_event(self, data: dict[str, Any]) -> None:
         self._data["description"] = data["description"]
         super()._parse_event(data)
 
@@ -186,7 +206,7 @@ class OdysseyEvent(Event):
         The Odyssey's description."""
         return self._data["description"]
 
-    def easy(self, eager: bool = False) -> Odyssey:
+    def easy(self, eager: bool = False) -> Odyssey | Awaitable[Odyssey]:
         """Get the easy mode version of the Odyssey.
 
         .. note::
@@ -201,9 +221,9 @@ class OdysseyEvent(Event):
         :return: The easy mode of the odyssey.
         :rtype: ~bloonspy.model.btd6.Odyssey
         """
-        return Odyssey(self.id, self.name, self.description, OdysseyDifficulty.EASY, eager=eager)
+        return self._fetch_odyssey(eager, OdysseyDifficulty.EASY)
 
-    def medium(self, eager: bool = False) -> Odyssey:
+    def medium(self, eager: bool = False) -> Odyssey | Awaitable[Odyssey]:
         """Get the medium mode version of the Odyssey.
 
         .. note::
@@ -218,9 +238,9 @@ class OdysseyEvent(Event):
         :return: The medium mode of the odyssey.
         :rtype: ~bloonspy.model.btd6.Odyssey
         """
-        return Odyssey(self.id, self.name, self.description, OdysseyDifficulty.MEDIUM, eager=eager)
+        return self._fetch_odyssey(eager, OdysseyDifficulty.MEDIUM)
 
-    def hard(self, eager: bool = False) -> Odyssey:
+    def hard(self, eager: bool = False) -> Odyssey | Awaitable[Odyssey]:
         """Get the hard mode version of the Odyssey.
 
         .. note::
@@ -235,4 +255,22 @@ class OdysseyEvent(Event):
         :return: The hard mode of the odyssey.
         :rtype: ~bloonspy.model.btd6.Odyssey
         """
-        return Odyssey(self.id, self.name, self.description, OdysseyDifficulty.HARD, eager=eager)
+        return self._fetch_odyssey(eager, OdysseyDifficulty.HARD)
+
+    def _fetch_odyssey(self, eager: bool, difficulty: OdysseyDifficulty) -> Odyssey | Awaitable[Odyssey]:
+        async def async_load(o: Odyssey) -> Odyssey:
+            if eager:
+                await o.load_resource()
+            return o
+
+        ody = Odyssey(
+            self.id,
+            self.name,
+            self.description,
+            difficulty,
+            eager=eager,
+            async_client=self._async_client,
+        )
+        if self._async_client:
+            return async_load(ody)
+        return ody

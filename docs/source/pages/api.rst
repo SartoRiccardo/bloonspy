@@ -11,9 +11,18 @@ Client
 
 This is the class you'll be interfacing with to get data about the games. Most methods are
 static, however you can create an instance with a Ninja Kiwi Open Access Key to gain access
-to more functions.
+to more functions. If you are in an asynchronous envirnoment, you should check out :class:`bloonspy.AsyncClient`.
 
 .. autoclass:: bloonspy.Client
+   :members:
+
+
+AsyncClient
+-----------
+
+Client for asynchronous environments.
+
+.. autoclass:: bloonspy.AsyncClient
    :members:
 
 Model
@@ -484,4 +493,10 @@ Forbidden
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: bloonspy.exceptions.Forbidden
+   :members:
+
+Forbidden
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: bloonspy.exceptions.NotLoaded
    :members:

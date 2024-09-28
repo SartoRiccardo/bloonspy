@@ -5,6 +5,7 @@ import random
 from typing import Dict, Any, List, Union
 from ..exceptions import BloonsException, UnderMaintenance
 import sys
+import http
 
 
 API_URL = "https://data.ninjakiwi.com"
@@ -32,27 +33,15 @@ def get(endpoint: str, params: Dict[str, Any] = None) -> Union[List[Dict[str, An
             request_lock.join()
 
         resp = requests.get(API_URL + endpoint, params=params, headers={"User-Agent": "bloonspy Python Library"})
-        if resp.status_code >= 500:
+        check_response(resp.status_code, resp.headers.get("content-type").lower())
+
+        if resp.status_code == 403 and "Retry-After" in resp.headers:
+            retry_after = int(resp.headers["Retry-After"]) + random.random() * 3
             if "unittest" in sys.modules.keys():
-                print(resp.content)
-                print(resp.headers)
-
-            if resp.status_code == 525:
-                raise UnderMaintenance("Server is under maintenance")
-
-            raise BloonsException("Server error occurred")
-        if resp.status_code >= 400:
-            if resp.status_code == 403 and "Retry-After" in resp.headers:
-                retry_after = int(resp.headers["Retry-After"]) + random.random()*3
-                if "unittest" in sys.modules.keys():
-                    print(f"Hit rate limit. Retry after {retry_after}s.")
-                request_lock = threading.Thread(target=lock_requests, args=(retry_after, ))
-                request_lock.start()
-                continue
-
-            raise BloonsException("Bad request")
-        if "application/json" not in resp.headers.get("content-type").lower():
-            raise BloonsException("Response is not JSON")
+                print(f"Hit rate limit. Retry after {retry_after}s.")
+            request_lock = threading.Thread(target=lock_requests, args=(retry_after,))
+            request_lock.start()
+            continue
 
         data = resp.json()
         if not data["success"]:
@@ -68,3 +57,15 @@ def get_lb_page(endpoint: str, page_num: int):
         if str(exc) == "No Scores Available":
             return []
         raise exc
+
+
+def check_response(status: int, content_type: str) -> None:
+    if status >= 500:
+        if status == 525:
+            raise UnderMaintenance("Server is under maintenance")
+
+        raise BloonsException("Server error occurred")
+    if status >= 400 and not status == http.HTTPStatus.FORBIDDEN:
+        raise BloonsException("Bad request")
+    if "application/json" not in content_type:
+        raise BloonsException("Response is not JSON")

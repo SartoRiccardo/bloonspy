@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Awaitable, Any
 from enum import Enum
 from ...exceptions import NotFound
 from ...utils.decorators import fetch_property
@@ -42,7 +42,7 @@ class Team(Loadable):
             team_name = team_name.split("-")[0]
         return team_name.upper()
 
-    def _parse_json(self, raw_resource: Dict[str, Any]) -> None:
+    def _parse_json(self, raw_resource: dict[str, Any]) -> None:
         self._loaded = False
 
         copy_keys = ["numMembers"]
@@ -126,7 +126,7 @@ class Team(Loadable):
         return self._data["owner_id"]
 
     @fetch_property(Loadable.load_resource)
-    def owner(self) -> User or None:
+    def owner(self) -> Awaitable[User | None] | User | None:
         """Fetch the owner of the team.
 
         .. warning::
@@ -136,6 +136,16 @@ class Team(Loadable):
         :return: The owner of the team.
         :rtype: User or None
         """
+        async def async_owner() -> User | None:
+            if self.owner_id is None:
+                return None
+            usr = User(self.owner_id, async_client=self._async_client)
+            await usr.load_resource()
+            return usr
+
+        if self._async_client:
+            return async_owner()
+
         if self.owner_id is None:
             return None
-        return User(self.owner_id, eager=True)
+        return User(self.owner_id, eager=True, async_client=self._async_client)

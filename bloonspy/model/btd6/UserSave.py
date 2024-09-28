@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import aiohttp
 from ..GameVersion import GameVersion
 from .Tower import Tower, HeroSkin
 from .Power import Power, PowerAmount
@@ -8,8 +9,9 @@ from .Rewards import InstaMonkey
 from .Progress import MonkeyKnowledge, Upgrade, Achievement
 from .Map import MapProgress, Map, GamemodeCompletionData
 from .Cosmetics import TrophyStoreItemStatus
-from typing import Any
+from typing import Any, Awaitable
 from ...utils.api import get
+from ...utils.asyncapi import aget
 from ...exceptions import NotFound
 from ...utils.decorators import exception_handler
 
@@ -66,25 +68,33 @@ class UserSave:
 
     def _handle_exception(self, exception: Exception) -> None:
         error_msg = str(exception)
-        if error_msg == "Invalid user ID / Player Does not play this game":
+        if error_msg == "Invalid user ID / Player Does not play this game" or \
+                error_msg == "This endpoint requires an OAK id. An invalid oak ID was given or the player does not play this game":
             raise NotFound(error_msg)
         raise exception
 
     @staticmethod
     @exception_handler(_handle_exception)
-    def fetch(oak: str) -> "UserSave":
+    def fetch(oak: str, client: aiohttp.ClientSession | None = None) -> Awaitable["UserSave"] | "UserSave":
         """
         Get an UserSave object through an OAK.
 
         :param oak: The OAK used to get the save of.
         :type oak: str
+        :param client: An aiohttp client session, if working in an asynchronous environment.
+        :type client: aiohttp.ClientSession
         :return: The UserSave belonging to the User who owns the OAK.
         :rtype: ~bloonspy.model.btd6.UserSave
 
         :raises bloonspy.exceptions.NotFound: If the player is not found.
         """
-        data = get("/btd6/save/{}".format(oak))
-        return UserSave._parse_json(data)
+        async def async_fetch():
+            return UserSave._parse_json(
+                await aget(client, "/btd6/save/{}".format(oak))
+            )
+        if client:
+            return async_fetch()
+        return UserSave._parse_json(get("/btd6/save/{}".format(oak)))
 
     @staticmethod
     def _parse_json(data: dict[str, Any]) -> "UserSave":

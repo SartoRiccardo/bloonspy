@@ -3,10 +3,10 @@ from bloonspy import btd6, Client
 from bloonspy.model import Asset
 
 
-class TestFetchTeamOwner(unittest.TestCase):
-    def test_team_owner(self) -> None:
+class TestFetchUser(unittest.TestCase):
+    def test_user(self) -> None:
         """
-        Test getting a team's owner.
+        Test getting an user.
         """
         user_id = "9cee138c8c94ffac1910864c0b73e577ca554ce8cb18db6c"
         user = Client.get_user(user_id)

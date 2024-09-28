@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from enum import Enum
 from datetime import datetime
-from typing import List, Dict, Union, Any
+from typing import Awaitable, Any
 from ...utils.decorators import fetch_property
 from ...exceptions import NotFound
 from ..GameVersion import GameVersion
@@ -43,10 +43,16 @@ class Challenge(Loadable):
 
     endpoint = "/btd6/challenges/challenge/{}"
 
-    def __init__(self, challenge_id: str, eager: bool = False, name: str = None, created_at: int = None,
-                 creator_id: str = None, raw_challenge: Dict[str, Any] = None):
+    def __init__(
+            self,
+            challenge_id: str,
+            name: str = None, created_at: int = None,
+            creator_id: str = None,
+            raw_challenge: dict[str, Any] = None,
+            **kwargs,
+    ):
         """Constructor method."""
-        super().__init__(challenge_id, eager=eager)
+        super().__init__(challenge_id, **kwargs)
         if raw_challenge:
             self._parse_json(raw_challenge)
         if name:
@@ -61,7 +67,7 @@ class Challenge(Loadable):
         if error_msg == "No challenge with that ID exists":
             raise NotFound(error_msg)
 
-    def _parse_json(self, raw_challenge: Dict[str, Any]) -> None:
+    def _parse_json(self, raw_challenge: dict[str, Any]) -> None:
         self._loaded = False
 
         copy_keys = [
@@ -173,7 +179,7 @@ class Challenge(Loadable):
         return self._data["creatorId"]
 
     @fetch_property(Loadable.load_resource, should_load=Loadable._should_load_property("creatorId"))
-    def creator(self) -> User or None:
+    def creator(self) -> Awaitable[User | None] | User | None:
         """Fetch the creator of the challenge.
 
         .. warning::
@@ -183,9 +189,19 @@ class Challenge(Loadable):
         :return: The creator of the challenge of `None` if there isn't one.
         :rtype: User or None
         """
+        async def async_creator() -> User | None:
+            if self.creator_id is None:
+                return None
+            usr = User(self.creator_id, async_client=self._async_client)
+            await usr.load_resource()
+            return usr
+
+        if self._async_client:
+            return async_creator()
+
         if self.creator_id is None:
             return None
-        return User(self.creator_id, eager=True)
+        return User(self.creator_id, eager=True, async_client=self._async_client)
 
     @property
     @fetch_property(Loadable.load_resource)
@@ -329,13 +345,13 @@ class Challenge(Loadable):
 
     @property
     @fetch_property(Loadable.load_resource)
-    def least_cash_used(self) -> Union[int, Infinity]:
+    def least_cash_used(self) -> int | Infinity:
         """Least Cash restriction on the challenge. If there's none, it's :class:`Infinity`."""
         return self._data["leastCash"]
 
     @property
     @fetch_property(Loadable.load_resource)
-    def least_tiers_used(self) -> Union[int, Infinity]:
+    def least_tiers_used(self) -> int | Infinity:
         """Least Tiers restriction on the challenge. If there's none, it's :class:`Infinity`."""
         return self._data["leastTiers"]
 
@@ -347,24 +363,24 @@ class Challenge(Loadable):
 
     @property
     @fetch_property(Loadable.load_resource)
-    def round_sets(self) -> List[str]:
+    def round_sets(self) -> list[str]:
         """Names of the round sets of the challenge."""
         return self._data["roundSets"]
 
     @property
     @fetch_property(Loadable.load_resource)
-    def powers(self) -> Dict[Power, Union[int, Infinity]]:
+    def powers(self) -> dict[Power, int | Infinity]:
         """The powers allowed for the challenge, and how many you can use of each."""
         return self._data["powers"]
 
     @property
     @fetch_property(Loadable.load_resource)
-    def modifiers(self) -> Dict[ChallengeModifier, float]:
+    def modifiers(self) -> dict[ChallengeModifier, float]:
         """Challenge modifiers, such as bloon speeds and health."""
         return self._data["modifiers"]
 
     @property
     @fetch_property(Loadable.load_resource)
-    def towers(self) -> Dict[Tower, Restriction]:
+    def towers(self) -> dict[Tower, Restriction]:
         """Tower and Hero restrictions on the challenge."""
         return self._data["towers"]
