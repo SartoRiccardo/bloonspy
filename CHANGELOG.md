@@ -1,5 +1,13 @@
 # Changelog
 
+# [0.9.1](https://pypi.org/project/bloonspy/0.9.1) - 2024-09-28
+
+### Fixed
+- `ContestedTerritoryEvent` loads correctly from `Client.contested_territories()`
+
+### Removed
+- `AsyncClient`'s `aiohttp_client` parameter is mandatory, will no longer create one if not provided. This will be added in a future release, with `async with` support.
+
 # [0.9.0](https://pypi.org/project/bloonspy/0.9.0) - 2024-09-27
 
 ### Added

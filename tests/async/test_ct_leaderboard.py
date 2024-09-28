@@ -1,5 +1,5 @@
 import random
-
+from datetime import datetime
 import aiohttp
 from bloonspy import btd6, AsyncClient
 
@@ -34,3 +34,20 @@ class TestCtLeaderboard:
             for attr_name, attr_type in check_instance:
                 assert isinstance(getattr(some_team, attr_name), attr_type), \
                     f"Assert if CtTeam.{attr_name} is {attr_type}"
+
+    async def test_ct(self) -> None:
+        """
+        Test a CT event's data.
+        """
+        async with aiohttp.ClientSession() as session:
+            client = AsyncClient(aiohttp_client=session)
+            cts = await client.contested_territories()
+            ct_event = cts[1]
+
+            check_instance = [
+                ("name", str), ("start", datetime), ("end", datetime), ("id", str), ("total_scores_player", int),
+                ("total_scores_team", int), ("event_number", int)
+            ]
+            for attr_name, attr_type in check_instance:
+                assert isinstance(getattr(ct_event, attr_name), attr_type), \
+                    f"Assert if ContestedTerritoryEvent.{attr_name} is {attr_type}"
