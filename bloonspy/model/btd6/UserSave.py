@@ -68,7 +68,8 @@ class UserSave:
 
     def _handle_exception(self, exception: Exception) -> None:
         error_msg = str(exception)
-        if error_msg == "Invalid user ID / Player Does not play this game":
+        if error_msg == "Invalid user ID / Player Does not play this game" or \
+                error_msg == "This endpoint requires an OAK id. An invalid oak ID was given or the player does not play this game":
             raise NotFound(error_msg)
         raise exception
 

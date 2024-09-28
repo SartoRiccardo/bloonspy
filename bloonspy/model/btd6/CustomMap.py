@@ -38,7 +38,8 @@ class CustomMap(Loadable):
 
     def _handle_exceptions(self, exception: Exception) -> None:
         error_msg = str(exception)
-        if error_msg.lower() == "no map with that id exists":
+        if error_msg.lower() == "no map with that id exists" or \
+                error_msg.lower() == "invalid map id":
             raise NotFound(error_msg)
 
     def _parse_json(self, raw_map: dict) -> None:
