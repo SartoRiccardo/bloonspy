@@ -24,32 +24,33 @@ class AsyncClient:
        properties do not have to be awaited. Only methods do.
        **If you have to use parenthesis, you should await.**
 
+    :param aiohttp_client: An aiohttp Client.
+    :type aiohttp_client: aiohttp.ClientSession
     :param open_access_key: Your OAK for the Ninja Kiwi Open Data API.
     :type open_access_key: str
-    :param aiohttp_client: An aiohttp Client. Will create one if not provided.
-    :type aiohttp_client: aiohttp.ClientSession
     """
 
-    def __init__(self, open_access_key: str = None, aiohttp_client: aiohttp.ClientSession = None):
+    def __init__(self, aiohttp_client: aiohttp.ClientSession, open_access_key: str = None):
         self.__oak = open_access_key
-        self.__aclient = aiohttp_client
-        if self.__aclient is None:
-            asyncio.create_task(self.__create_aclient())
+        self._async_client = aiohttp_client
+        # if self._async_client is None:
+        #     asyncio.create_task(self._create_async_client())
 
-    async def __create_aclient(self):
-        async with aiohttp.ClientSession() as aclient:
-            self.__aclient = aclient
-            await asyncio.Future()
+    # async def _create_async_client(self):
+    #     async with aiohttp.ClientSession() as aclient:
+    #         self._async_client = aclient
+    #         while True:
+    #             await asyncio.sleep(60)
 
     async def odysseys(self) -> list[OdysseyEvent]:
         """Get a list of Odyssey events."""
-        odysseys_data = await aget(self.__aclient, "/btd6/odyssey")
+        odysseys_data = await aget(self._async_client, "/btd6/odyssey")
         odyssey_list = []
         for odyssey in odysseys_data:
             odyssey_list.append(OdysseyEvent(
                 odyssey["id"],
                 event_json=odyssey,
-                async_client=self.__aclient,
+                async_client=self._async_client,
             ))
         return odyssey_list
 
@@ -72,20 +73,20 @@ class AsyncClient:
 
         :raise ~bloonspy.exceptions.NotFound: If no odyssey with that ID is found.
         """
-        odyssey = OdysseyEvent(odyssey_id, async_client=self.__aclient)
+        odyssey = OdysseyEvent(odyssey_id, async_client=self._async_client)
         if eager:
             await odyssey.load_event()
         return odyssey
 
     async def contested_territories(self) -> list[ContestedTerritoryEvent]:
         """Get a list of Contested Territory events."""
-        ct_data = await aget(self.__aclient, "/btd6/ct")
+        ct_data = await aget(self._async_client, "/btd6/ct")
         ct_list = []
         for ct in ct_data:
             ct_list.append(ContestedTerritoryEvent(
                 ct["id"],
                 event_json=ct,
-                async_client=self.__aclient,
+                async_client=self._async_client,
             ))
         return ct_list
 
@@ -108,7 +109,7 @@ class AsyncClient:
 
         :raise ~bloonspy.exceptions.NotFound: If no CT with that ID is found.
         """
-        ct = ContestedTerritoryEvent(ct_id, async_client=self.__aclient)
+        ct = ContestedTerritoryEvent(ct_id, async_client=self._async_client)
         if eager:
             await ct.load_event()
         return ct
@@ -124,7 +125,7 @@ class AsyncClient:
 
         :raise ~bloonspy.exceptions.NotFound: If no team with that ID is found.
         """
-        tm = Team(team_id, async_client=self.__aclient)
+        tm = Team(team_id, async_client=self._async_client)
         await tm.load_resource()
         return tm
 
@@ -137,13 +138,13 @@ class AsyncClient:
            :attr:`~bloonspy.model.btd6.Race.start`, :attr:`~bloonspy.model.btd6.Race.end`, and
            :attr:`~bloonspy.model.btd6.Race.total_scores` loaded.
         """
-        races_data = await aget(self.__aclient, "/btd6/races")
+        races_data = await aget(self._async_client, "/btd6/races")
         race_list = []
         for race in races_data:
             race_list.append(Race(
                 race["id"],
                 race_json=race,
-                async_client=self.__aclient,
+                async_client=self._async_client,
             ))
         return race_list
 
@@ -166,20 +167,20 @@ class AsyncClient:
 
         :raise ~bloonspy.exceptions.NotFound: If no race with that ID is found.
         """
-        race = Race(race_id, async_client=self.__aclient)
+        race = Race(race_id, async_client=self._async_client)
         if eager:
             await race.load_resource()
         return race
 
     async def bosses(self) -> list[BossEvent]:
         """Get a list of Boss events."""
-        bosses_data = await aget(self.__aclient, "/btd6/bosses")
+        bosses_data = await aget(self._async_client, "/btd6/bosses")
         boss_list = []
         for boss in bosses_data:
             boss_list.append(BossEvent(
                 boss["id"],
                 event_json=boss,
-                async_client=self.__aclient,
+                async_client=self._async_client,
             ))
         return boss_list
 
@@ -202,7 +203,7 @@ class AsyncClient:
 
         :raise ~bloonspy.exceptions.NotFound: If no boss event with that ID is found.
         """
-        boss = BossEvent(boss_id, async_client=self.__aclient)
+        boss = BossEvent(boss_id, async_client=self._async_client)
         if eager:
             await boss.load_event()
         return boss
@@ -238,7 +239,7 @@ class AsyncClient:
             nonlocal challenge_pages
             challenge_pages.append(
                 await aget(
-                    self.__aclient,
+                    self._async_client,
                     f"/btd6/challenges/filter/{challenge_filter.value}",
                     {"page": page_num}
                 )
@@ -274,7 +275,7 @@ class AsyncClient:
 
         :raise ~bloonspy.exceptions.NotFound: If no challenge with the given ID is found.
         """
-        chal = Challenge(challenge_id, async_client=self.__aclient)
+        chal = Challenge(challenge_id, async_client=self._async_client)
         await chal.load_resource()
         return chal
 
@@ -289,7 +290,7 @@ class AsyncClient:
 
         :raise ~bloonspy.exceptions.NotFound: If no user with the given ID/OAK is found.
         """
-        usr = User(identifier, async_client=self.__aclient)
+        usr = User(identifier, async_client=self._async_client)
         await usr.load_resource()
         return usr
 
@@ -304,7 +305,7 @@ class AsyncClient:
 
         :raise ~bloonspy.exceptions.NotFound: If no custom map with the given ID is found.
         """
-        cmap = CustomMap(map_id, async_client=self.__aclient)
+        cmap = CustomMap(map_id, async_client=self._async_client)
         await cmap.load_resource()
         return cmap
 
@@ -339,7 +340,7 @@ class AsyncClient:
             nonlocal custom_map_pages
             custom_map_pages.append(
                 await aget(
-                    self.__aclient,
+                    self._async_client,
                     f"/btd6/maps/filter/{custom_map_fliter.value}",
                     {"page": page_num}
                 )
@@ -356,7 +357,7 @@ class AsyncClient:
                     name=cmap["name"],
                     created_at=cmap["createdAt"],
                     creator_id=cmap["creator"].split("/")[-1],
-                    async_client=self.__aclient,
+                    async_client=self._async_client,
                 ))
 
         return custom_map_list

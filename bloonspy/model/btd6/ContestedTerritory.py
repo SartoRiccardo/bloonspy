@@ -183,7 +183,7 @@ class ContestedTerritoryEvent(Event):
     event_endpoint = "/btd6/ct"
     lb_endpoint_player = "/btd6/ct/{}/leaderboard/player"
     lb_endpoint_team = "/btd6/ct/{}/leaderboard/team"
-    event_dict_keys = ["name", "start", "end", "totalScores_player", "totalScores_team"]
+    event_dict_keys = ["start", "end", "totalScores_player", "totalScores_team"]
     event_name = "CT"
 
     def _parse_event(self, data: dict[str, Any]) -> None:
@@ -198,20 +198,20 @@ class ContestedTerritoryEvent(Event):
         return f"Contested Territory #{self.event_number}"
 
     @property
-    @fetch_property(Event.load_event, should_load=Event._should_load_property)
+    @fetch_property(Event.load_event, should_load=Event._should_load_property("start"))
     def event_number(self) -> int:
         """Number of the event."""
         first_event_start = datetime.strptime('2022-08-09 22', '%Y-%m-%d %H')
         return int((self.start-first_event_start).days/14) + 1
 
     @property
-    @fetch_property(Event.load_event, should_load=Event._should_load_property)
+    @fetch_property(Event.load_event, should_load=Event._should_load_property("totalScores_player"))
     def total_scores_player(self) -> int:
         """Number of players who participated in the event."""
         return self._data["totalScores_player"]
 
     @property
-    @fetch_property(Event.load_event, should_load=Event._should_load_property)
+    @fetch_property(Event.load_event, should_load=Event._should_load_property("totalScores_team"))
     def total_scores_team(self) -> int:
         """Number of teams who participated in the event."""
         return self._data["totalScores_team"]
