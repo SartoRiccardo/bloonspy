@@ -19,6 +19,11 @@ class AsyncClient:
        **raise ~bloonspy.exceptions.NotLoaded instead of loading it.** Either eager
        load it or call the load methods beforehand.
 
+    .. note::
+       When accessing objects through `AsyncClient`, the API is exactly the same. However,
+       properties do not have to be awaited. Only methods do.
+       **If you have to use parenthesis, you should await.**
+
     :param open_access_key: Your OAK for the Ninja Kiwi Open Data API.
     :type open_access_key: str
     :param aiohttp_client: An aiohttp Client. Will create one if not provided.
