@@ -9,7 +9,7 @@ class TestUserSave(unittest.TestCase):
         """
         Test that an user is loaded correctly.
         """
-        oak = "oak_8461e54543d73c0b269539ee13b67daa"
+        oak = "oak_99b202be126fb7ad580a"
         user_save = Client.get_user(oak).get_progress()
         self.assertIsInstance(user_save, btd6.UserSave,
                               msg="Client.get_user().get_progress() should return UserSave")

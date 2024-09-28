@@ -108,8 +108,7 @@ class AsyncClient:
             await ct.load_event()
         return ct
 
-    @staticmethod
-    def get_team(team_id: str) -> Team:
+    async def get_team(self, team_id: str) -> Team:
         """Fetch a specific team by its ID.
 
         :param team_id: The ID of the team.
@@ -120,7 +119,9 @@ class AsyncClient:
 
         :raise ~bloonspy.exceptions.NotFound: If no team with that ID is found.
         """
-        return Team(team_id, eager=True)
+        tm = Team(team_id, async_client=self.__aclient)
+        await tm.load_resource()
+        return tm
 
     async def races(self) -> list[Race]:
         """Get a list of Race events.
@@ -272,8 +273,7 @@ class AsyncClient:
         await chal.load_resource()
         return chal
 
-    @staticmethod
-    def get_user(identifier: str) -> User:
+    async def get_user(self, identifier: str) -> User:
         """Fetch a specific user by an identifier.
 
         :param identifier: The user ID, or its OAK.
@@ -284,13 +284,14 @@ class AsyncClient:
 
         :raise ~bloonspy.exceptions.NotFound: If no user with the given ID/OAK is found.
         """
-        return User(identifier, eager=True)
+        usr = User(identifier, async_client=self.__aclient)
+        await usr.load_resource()
+        return usr
 
-    @staticmethod
-    def get_custom_map(map_id: str) -> CustomMap:
+    async def get_custom_map(self, map_id: str) -> CustomMap:
         """Fetch a specific custom map by its ID.
 
-        :param map_id: The challenge ID.
+        :param map_id: The map code.
         :type map_id: str
 
         :return: The found map.
@@ -298,7 +299,9 @@ class AsyncClient:
 
         :raise ~bloonspy.exceptions.NotFound: If no custom map with the given ID is found.
         """
-        return CustomMap(map_id, eager=True)
+        cmap = CustomMap(map_id, async_client=self.__aclient)
+        await cmap.load_resource()
+        return cmap
 
     async def custom_maps(
             self,

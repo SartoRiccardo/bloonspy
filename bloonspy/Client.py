@@ -238,7 +238,7 @@ class Client:
     def get_custom_map(map_id: str) -> CustomMap:
         """Fetch a specific custom map by its ID.
 
-        :param map_id: The challenge ID.
+        :param map_id: The map code.
         :type map_id: str
 
         :return: The found map.

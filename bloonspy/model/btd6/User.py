@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Dict, Any
+from typing import Awaitable, Any
 from ...exceptions import NotFound, Forbidden
 from ...utils.decorators import fetch_property
 from ...utils.dictionaries import rename_keys
@@ -66,7 +66,7 @@ class User(Loadable):
         if error_msg == "Invalid user ID / Player Does not play this game":
             raise NotFound(error_msg)
 
-    def _parse_json(self, raw_user: Dict[str, Any]) -> None:
+    def _parse_json(self, raw_user: dict[str, Any]) -> None:
         self._loaded = False
 
         copy_keys = ["displayName", "rank", "veteranRank", "achievements", "followers"]
@@ -268,11 +268,11 @@ class User(Loadable):
 
     @property
     @fetch_property(Loadable.load_resource)
-    def heroes_placed(self) -> Dict[Tower, int]:
+    def heroes_placed(self) -> dict[Tower, int]:
         """Number of times each hero has been placed."""
         return self._data["heroes_placed"]
 
-    def get_progress(self) -> UserSave:
+    def get_progress(self) -> Awaitable[UserSave] | UserSave:
         """
         *New in 0.5.0*
 
@@ -290,7 +290,7 @@ class User(Loadable):
         """
         if not self.has_oak():
             raise Forbidden()
-        return UserSave.fetch(self.id)
+        return UserSave.fetch(self.id, self._async_client)
 
     def has_oak(self) -> bool:
         """
