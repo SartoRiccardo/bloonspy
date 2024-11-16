@@ -20,11 +20,7 @@ async def aget(
         params = {}
 
     retries = 3
-    retry_after = 0
     while retries > 0:
-        if retry_after:
-            await asyncio.sleep(retry_after)
-
         async with requests_semaphore:
             async with client.get(API_URL + endpoint, params=params, headers={"User-Agent": user_agent}) as resp:
                 check_response(resp.status, resp.headers.get("content-type").lower())
@@ -33,6 +29,7 @@ async def aget(
                     retries -= 1
                     if retries:
                         print(f"[bloonspy] Hit rate limit on {endpoint}. Retry after {retry_after}s")
+                    await asyncio.sleep(retry_after)
 
                 data = await resp.json()
                 if not data["success"]:

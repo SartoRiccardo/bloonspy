@@ -25,11 +25,7 @@ def get(
         params = {}
 
     retries = 3
-    retry_after = 0
     while retries > 0:
-        if retry_after:
-            time.sleep(retry_after)
-
         with requests_semaphore:
             resp = requests.get(API_URL + endpoint, params=params, headers={"User-Agent": "bloonspy Python Library"})
             check_response(resp.status_code, resp.headers.get("content-type").lower())
@@ -39,6 +35,7 @@ def get(
                 retries -= 1
                 if retries:
                     print(f"[bloonspy] Hit rate limit on {endpoint}. Retry after {retry_after}s")
+                time.sleep(retry_after)
 
             data = resp.json()
             if not data["success"]:
