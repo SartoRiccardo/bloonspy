@@ -1,6 +1,6 @@
 # Changelog
 
-# [0.9.3](https://pypi.org/project/bloonspy/0.9.2) - 2024-11-16
+# [0.9.3](https://pypi.org/project/bloonspy/0.9.3) - 2024-11-16
 
 ### Fixed
 - Rate limited API calls throw the correct error
