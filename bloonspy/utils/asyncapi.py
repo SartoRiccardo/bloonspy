@@ -30,10 +30,11 @@ async def aget(
                     if retries:
                         print(f"[bloonspy] Hit rate limit on {endpoint}. Retry after {retry_after}s")
                     await asyncio.sleep(retry_after)
+                    continue
 
                 data = await resp.json()
                 if not data["success"]:
-                    raise BloonsException(data["error"])
+                    raise BloonsException(data.get("error", data.get("reason", "Unknown exception occurred")))
                 return data["body"]
 
     raise BloonsException(f"Request to {endpoint} failed")

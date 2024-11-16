@@ -36,10 +36,11 @@ def get(
                 if retries:
                     print(f"[bloonspy] Hit rate limit on {endpoint}. Retry after {retry_after}s")
                 time.sleep(retry_after)
+                continue
 
             data = resp.json()
             if not data["success"]:
-                raise BloonsException(data["error"])
+                raise BloonsException(data.get("error", data.get("reason", "Unknown exception occurred")))
 
             return data["body"]
 
