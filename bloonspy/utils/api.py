@@ -10,49 +10,52 @@ import http
 
 API_URL = "https://data.ninjakiwi.com"
 
-request_lock = None
+requests_semaphore = threading.Semaphore(20)
 
 
-def lock_requests(lock_time: float) -> None:
-    global request_lock
-    time.sleep(lock_time)
-    request_lock = None
-
-
-def get(endpoint: str, params: Dict[str, Any] = None) -> Union[List[Dict[str, Any]], Dict[str, Any]]:
-    global request_lock
-
+def get(
+        endpoint: str,
+        params: Dict[str, Any] = None,
+        user_agent: str = "bloonspy Python Library",
+) -> Union[List[Dict[str, Any]], Dict[str, Any]]:
     if "unittest" in sys.modules.keys():
         print(f"GET {endpoint}, {params=}")
 
     if params is None:
         params = {}
 
-    while True:
-        while request_lock is not None:
-            request_lock.join()
+    retries = 3
+    retry_after = 0
+    while retries > 0:
+        if retry_after:
+            time.sleep(retry_after)
 
-        resp = requests.get(API_URL + endpoint, params=params, headers={"User-Agent": "bloonspy Python Library"})
-        check_response(resp.status_code, resp.headers.get("content-type").lower())
+        with requests_semaphore:
+            resp = requests.get(API_URL + endpoint, params=params, headers={"User-Agent": "bloonspy Python Library"})
+            check_response(resp.status_code, resp.headers.get("content-type").lower())
 
-        if resp.status_code == 403 and "Retry-After" in resp.headers:
-            retry_after = int(resp.headers["Retry-After"]) + random.random() * 3
-            if "unittest" in sys.modules.keys():
-                print(f"Hit rate limit. Retry after {retry_after}s.")
-            request_lock = threading.Thread(target=lock_requests, args=(retry_after,))
-            request_lock.start()
-            continue
+            if resp.status_code == 403 and "Retry-After" in resp.headers:
+                retry_after = int(resp.headers["Retry-After"]) + random.random() * 3
+                retries -= 1
+                if retries:
+                    print(f"[bloonspy] Hit rate limit on {endpoint}. Retry after {retry_after}s")
 
-        data = resp.json()
-        if not data["success"]:
-            raise BloonsException(data["error"])
+            data = resp.json()
+            if not data["success"]:
+                raise BloonsException(data["error"])
 
-        return data["body"]
+            return data["body"]
+
+    raise BloonsException(f"Request to {endpoint} failed")
 
 
-def get_lb_page(endpoint: str, page_num: int):
+def get_lb_page(
+        endpoint: str,
+        page_num: int,
+        user_agent: str = "bloonspy Python Library",
+):
     try:
-        return get(endpoint, params={"page": page_num})
+        return get(endpoint, params={"page": page_num}, user_agent=user_agent)
     except BloonsException as exc:
         if str(exc) == "No Scores Available":
             return []

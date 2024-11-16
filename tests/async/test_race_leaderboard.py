@@ -25,7 +25,7 @@ class TestRaceLeaderboard:
                 ("name", str), ("score", btd6.Score), ("submission_time", datetime)
             ]
             for attr_name, attr_type in check_instance:
-                assert (getattr(some_player, attr_name), attr_type), \
+                assert isinstance(getattr(some_player, attr_name), attr_type), \
                     f"Assert if RacePlayer.{attr_name} is {attr_type}"
 
             some_player = race_leaderboard[random.randint(0, len(race_leaderboard)-1)]
@@ -35,5 +35,5 @@ class TestRaceLeaderboard:
                 ("achievements", int), ("boss_normal_medals", btd6.EventMedals)
             ]
             for attr_name, attr_type in check_instance:
-                assert (getattr(some_player, attr_name), attr_type), \
+                assert isinstance(getattr(some_player, attr_name), attr_type), \
                     f"Assert if RacePlayer.{attr_name} is {attr_type}"

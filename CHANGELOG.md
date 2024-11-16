@@ -1,5 +1,18 @@
 # Changelog
 
+# [0.9.2](https://pypi.org/project/bloonspy/0.9.2) - 2024-11-16
+
+### Added
+- `Tower.MERMONKEY`
+
+### Fixed
+- Rate limited API calls on async environments should correctly wait
+
+### Changed
+- You can only make up to 20 API calls concurrently
+  - Async and non-async environments have different counters
+- Requests throw `BloonsException` after 3 failed attempts
+
 # [0.9.1](https://pypi.org/project/bloonspy/0.9.1) - 2024-09-28
 
 ### Fixed

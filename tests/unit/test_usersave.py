@@ -6,9 +6,9 @@ from bloonspy.exceptions import NotFound
 class TestUserSave(unittest.TestCase):
     def test_usersave(self) -> None:
         """
-        Test that an user is loaded correctly.
+        Test that a user is loaded correctly.
         """
-        oak = "oak_8461e54543d73c0b269539ee13b67daa"
+        oak = "oak_99b202be126fb7ad580a"
         user_save: btd6.UserSave = btd6.UserSave.fetch(oak)
 
         expected_results = [
@@ -25,7 +25,7 @@ class TestUserSave(unittest.TestCase):
         # Greater or Equal cause these can increase in the future.
         expected_results_ge = [
             ("games_played", 2894),
-            ("monkey_money", 5000),
+            ("monkey_money", 1000),
             ("rank", 155),
             ("veteran_xp", 161489560),
             ("veteran_rank", 9),

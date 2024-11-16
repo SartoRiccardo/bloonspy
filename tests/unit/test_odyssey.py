@@ -51,10 +51,10 @@ class TestOdyssey(unittest.TestCase):
             self.assertIsInstance(medium_mode.default_towers[tower], int,
                                   msg=f"Assert if Odyssey.default_towers is Dict[Tower, int]")
 
-        for power in medium_mode.available_towers.keys():
-            self.assertIsInstance(power, btd6.Tower,
+        for avail_twr in medium_mode.available_towers.keys():
+            self.assertIsInstance(avail_twr, btd6.Tower,
                                   msg=f"Assert if Odyssey.available_towers is Dict[Tower, Restriction]")
-            self.assertIsInstance(medium_mode.available_towers[power], btd6.Restriction,
+            self.assertIsInstance(medium_mode.available_towers[avail_twr], btd6.Restriction,
                                   msg=f"Assert if Odyssey.available_towers is Dict[Tower, Restriction]")
 
         maps = easy_mode.maps()

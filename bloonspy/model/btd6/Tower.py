@@ -39,6 +39,7 @@ class Tower(Enum):
     SUPER_MONKEY = "Super Monkey"
     DRUID = "Druid"
     ALCHEMIST = "Alchemist"
+    MERMONKEY = "Mermonkey"
 
     MONKEY_VILLAGE = "Monkey Village"
     BANANA_FARM = "Banana Farm"
@@ -86,6 +87,7 @@ class Tower(Enum):
             "EngineerMonkey": Tower.ENGINEER_MONKEY,
             "SpikeFactory": Tower.SPIKE_FACTORY,
             "BeastHandler": Tower.BEAST_HANDLER,
+            "Mermonkey": Tower.MERMONKEY,
         }
         return tower_switch[value] if value in tower_switch else None
 

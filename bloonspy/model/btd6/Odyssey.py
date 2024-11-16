@@ -168,7 +168,7 @@ class Odyssey(Loadable):
 
     @exception_handler(Loadable.handle_exceptions)
     def maps(self) -> list[Challenge] | Awaitable[list[Challenge]]:
-        """Get all of the odyssey's challenges."""
+        """Get all the odyssey's challenges."""
         def on_data_load(data) -> list[Challenge]:
             islands = []
             for island in data:
