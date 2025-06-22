@@ -21,12 +21,12 @@ async def aget(
 
     retries = 3
     while retries > 0:
+        retries -= 1
         async with requests_semaphore:
             async with client.get(API_URL + endpoint, params=params, headers={"User-Agent": user_agent}) as resp:
                 check_response(resp.status, resp.headers.get("content-type").lower())
                 if resp.status == http.HTTPStatus.FORBIDDEN and "Retry-After" in resp.headers:
-                    retry_after = int(resp.headers["Retry-After"]) + random.random()*3
-                    retries -= 1
+                    retry_after = max(1, int(resp.headers["Retry-After"])) + random.random()*3
                     if retries:
                         print(f"[bloonspy] Hit rate limit on {endpoint}. Retry after {retry_after}s")
                     await asyncio.sleep(retry_after)
