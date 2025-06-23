@@ -1,6 +1,6 @@
 # Changelog
 
-# [0.10.0](https://pypi.org/project/bloonspy/0.9.3) - 2024-06-23
+# [0.10.0](https://pypi.org/project/bloonspy/0.10.0) - 2024-06-23
 
 ### Added
 - `Tower.DESPERADO`
