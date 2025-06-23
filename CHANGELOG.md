@@ -1,5 +1,13 @@
 # Changelog
 
+# [0.10.0](https://pypi.org/project/bloonspy/0.9.3) - 2024-06-23
+
+### Added
+- `Tower.DESPERADO`
+
+### Fixed
+- Fixed the rate limit logic to retry correctly
+
 # [0.9.3](https://pypi.org/project/bloonspy/0.9.3) - 2024-11-16
 
 ### Fixed
