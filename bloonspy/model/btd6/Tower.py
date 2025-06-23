@@ -25,6 +25,7 @@ class Tower(Enum):
     BOMB_SHOOTER = "Bomb Shooter"
     GLUE_GUNNER = "Glue Gunner"
     ICE_MONKEY = "Ice Monkey"
+    DESPERADO = "Desperado"
 
     SNIPER_MONKEY = "Sniper Monkey"
     MONKEY_BUCCANEER = "Monkey Buccaneer"
@@ -88,6 +89,7 @@ class Tower(Enum):
             "SpikeFactory": Tower.SPIKE_FACTORY,
             "BeastHandler": Tower.BEAST_HANDLER,
             "Mermonkey": Tower.MERMONKEY,
+            "Desperado": Tower.DESPERADO,
         }
         return tower_switch[value] if value in tower_switch else None
 
