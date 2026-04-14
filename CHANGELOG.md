@@ -1,5 +1,10 @@
 # Changelog
 
+# [0.11.0](https://pypi.org/project/bloonspy/0.11.0) - 2026-04-14
+
+### Added
+- `BossBloon.DIAMONDBACK`
+
 # [0.10.0](https://pypi.org/project/bloonspy/0.10.0) - 2024-06-23
 
 ### Added

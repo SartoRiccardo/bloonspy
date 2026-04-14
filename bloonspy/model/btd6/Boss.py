@@ -22,6 +22,7 @@ class BossBloon(Enum):
     DREADBLOON = "dreadbloon"
     PHAYZE = "phayze"
     BLASTAPOPOULOS = "blastapopoulos"
+    DIAMONDBACK = "diamondback"
 
     @staticmethod
     def from_string(boss: str) -> "BossBloon":
@@ -32,6 +33,7 @@ class BossBloon(Enum):
             "dreadbloon": BossBloon.DREADBLOON,
             "phayze": BossBloon.PHAYZE,
             "blastapopoulos": BossBloon.BLASTAPOPOULOS,
+            "diamondback": BossBloon.DIAMONDBACK,
         }
         return boss_switch.get(boss, None)
 
